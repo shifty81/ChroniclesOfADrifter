@@ -7,7 +7,8 @@ namespace ChroniclesOfADrifter.Engine;
 /// </summary>
 public static class EngineInterop
 {
-    private const string DllName = "ChroniclesEngine.dll";
+    // Platform-specific library name
+    private const string DllName = "ChroniclesEngine";
     
     // ===== Engine Initialization =====
     

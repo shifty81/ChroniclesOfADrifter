@@ -1,4 +1,5 @@
 using ChroniclesOfADrifter.Engine;
+using ChroniclesOfADrifter.Scenes;
 
 namespace ChroniclesOfADrifter;
 
@@ -10,7 +11,7 @@ class Program
     static void Main(string[] args)
     {
         Console.WriteLine("===========================================");
-        Console.WriteLine("  Chronicles of a Drifter - Planning Phase");
+        Console.WriteLine("  Chronicles of a Drifter - ECS Demo");
         Console.WriteLine("  C++/.NET 9/Lua Custom Voxel Game Engine");
         Console.WriteLine("===========================================\n");
         
@@ -25,21 +26,30 @@ class Program
             return;
         }
         
-        Console.WriteLine("[Game] Engine initialized successfully");
+        Console.WriteLine("[Game] Engine initialized successfully\n");
+        
+        // Load demo scene
+        var scene = new DemoScene();
+        scene.OnLoad();
+        
+        Console.WriteLine("\n[Game] Starting game loop...");
         Console.WriteLine("[Game] Press Ctrl+C to exit\n");
         
         // Main game loop
         int frameCount = 0;
-        while (EngineInterop.Engine_IsRunning() && frameCount < 100) // Limit frames for planning phase
+        while (EngineInterop.Engine_IsRunning() && frameCount < 300) // Run for ~5 seconds
         {
             EngineInterop.Engine_BeginFrame();
             
             float deltaTime = EngineInterop.Engine_GetDeltaTime();
-            float totalTime = EngineInterop.Engine_GetTotalTime();
             
-            // Game logic would go here
+            // Update the scene (which updates the ECS world)
+            scene.Update(deltaTime);
+            
+            // Log progress periodically
             if (frameCount % 60 == 0)
             {
+                float totalTime = EngineInterop.Engine_GetTotalTime();
                 Console.WriteLine($"[Game] Frame: {frameCount}, DeltaTime: {deltaTime:F4}s, TotalTime: {totalTime:F2}s");
             }
             
@@ -48,6 +58,9 @@ class Program
             frameCount++;
             Thread.Sleep(16); // Simulate ~60 FPS
         }
+        
+        // Unload scene
+        scene.OnUnload();
         
         // Shutdown
         Console.WriteLine("\n[Game] Shutting down...");
