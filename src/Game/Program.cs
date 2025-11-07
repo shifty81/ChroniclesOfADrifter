@@ -11,7 +11,7 @@ class Program
     static void Main(string[] args)
     {
         Console.WriteLine("===========================================");
-        Console.WriteLine("  Chronicles of a Drifter - ECS Demo");
+        Console.WriteLine("  Chronicles of a Drifter - Lua Scripting");
         Console.WriteLine("  C++/.NET 9/Lua Custom Voxel Game Engine");
         Console.WriteLine("===========================================\n");
         
@@ -28,8 +28,8 @@ class Program
         
         Console.WriteLine("[Game] Engine initialized successfully\n");
         
-        // Load demo scene
-        var scene = new DemoScene();
+        // Load scripting demo scene
+        var scene = new ScriptingDemoScene();
         scene.OnLoad();
         
         Console.WriteLine("\n[Game] Starting game loop...");
