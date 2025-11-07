@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Copy native engine DLL to output -->
+    <None Include="..\..\build\bin\ChroniclesEngine.dll" Condition="Exists('..\..\build\bin\ChroniclesEngine.dll')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    
+    <!-- Copy Lua scripts to output -->
+    <None Include="..\..\scripts\lua\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>scripts\lua\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </None>
+    
+    <!-- Copy assets to output -->
+    <None Include="..\..\assets\**\*" Condition="Exists('..\..\assets')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>assets\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Lua integration -->
+    <PackageReference Include="NLua" Version="1.7.3" />
+    
+    <!-- JSON configuration -->
+    <PackageReference Include="System.Text.Json" Version="9.0.0" />
+  </ItemGroup>
+
+</Project>
