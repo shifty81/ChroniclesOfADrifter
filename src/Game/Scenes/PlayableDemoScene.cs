@@ -20,6 +20,8 @@ public class PlayableDemoScene : Scene
         World.AddSystem(new MovementSystem());
         World.AddSystem(new CameraSystem());
         World.AddSystem(new CameraLookAheadSystem()); // New: Camera look-ahead based on velocity
+        World.AddSystem(new ScreenShakeSystem()); // New: Screen shake effects
+        World.AddSystem(new CameraZoneSystem()); // New: Camera zones with different behaviors
         World.AddSystem(new ParallaxSystem()); // New: Parallax scrolling for depth
         World.AddSystem(new CombatSystem());
         World.AddSystem(new RenderingSystem());
@@ -42,6 +44,7 @@ public class PlayableDemoScene : Scene
         };
         World.AddComponent(camera, cameraComponent);
         World.AddComponent(camera, new PositionComponent(960, 540));
+        World.AddComponent(camera, new ScreenShakeComponent()); // Enable screen shake
         CameraSystem.SetFollowTarget(World, camera, player, followSpeed: 8.0f);
         
         // Enable camera look-ahead for smooth camera movement
@@ -53,6 +56,9 @@ public class PlayableDemoScene : Scene
         // Create parallax background layers for depth
         CreateParallaxLayers();
         
+        // Create camera zones for different areas
+        CreateCameraZones();
+        
         // Create multiple goblin enemies in different positions
         CreateGoblin(World, 600, 300);
         CreateGoblin(World, 1200, 300);
@@ -63,29 +69,77 @@ public class PlayableDemoScene : Scene
         Console.WriteLine("[PlayableDemo] Demo scene loaded!");
         Console.WriteLine("[PlayableDemo] Fight the goblins! Use SPACE to attack when near enemies.");
         Console.WriteLine("[PlayableDemo] Use +/- keys to zoom in/out");
-        Console.WriteLine("[PlayableDemo] Camera now features smooth look-ahead and parallax depth!");
+        Console.WriteLine("[PlayableDemo] Move between areas to see camera zones change behavior!");
+        Console.WriteLine("[PlayableDemo] Camera features: look-ahead, parallax depth, screen shake, and dynamic zones!");
     }
     
     private void CreateParallaxLayers()
     {
-        // Layer 0: Far background (moves slowest)
-        var farBg = ParallaxSystem.CreateParallaxLayer(World, "Far Background", 
-            parallaxFactor: 0.2f, 
+        // Layer 0: Sky (static background)
+        var sky = ParallaxSystem.CreateParallaxLayer(World, "Sky", 
+            parallaxFactor: 0.0f, 
+            zOrder: -150,
+            visualType: ParallaxVisualType.Sky,
+            color: ConsoleColor.DarkBlue,
+            density: 0.5f);
+        
+        // Layer 1: Clouds (slowly scrolling)
+        var clouds = ParallaxSystem.CreateParallaxLayer(World, "Clouds",
+            parallaxFactor: 0.2f,
             zOrder: -100,
-            autoScrollX: 2.0f);  // Slowly scrolls like distant clouds
+            visualType: ParallaxVisualType.Clouds,
+            color: ConsoleColor.DarkGray,
+            density: 0.3f,
+            autoScrollX: 2.0f);
         
-        // Layer 1: Mid background
-        var midBg = ParallaxSystem.CreateParallaxLayer(World, "Mid Background",
-            parallaxFactor: 0.5f,
-            zOrder: -50);
+        // Layer 2: Distant mountains
+        var mountains = ParallaxSystem.CreateParallaxLayer(World, "Mountains",
+            parallaxFactor: 0.4f,
+            zOrder: -75,
+            visualType: ParallaxVisualType.Mountains,
+            color: ConsoleColor.DarkCyan,
+            density: 0.6f);
         
-        // Layer 2: Near background
-        var nearBg = ParallaxSystem.CreateParallaxLayer(World, "Near Background",
-            parallaxFactor: 0.8f,
-            zOrder: -10);
+        // Layer 3: Mid background (subtle mist)
+        var mist = ParallaxSystem.CreateParallaxLayer(World, "Mist",
+            parallaxFactor: 0.6f,
+            zOrder: -25,
+            visualType: ParallaxVisualType.Mist,
+            color: ConsoleColor.DarkGray,
+            density: 0.15f,
+            autoScrollX: 1.0f);
         
         // Note: Main gameplay layer has parallax factor 1.0 (moves with camera)
         // Foreground layers would have parallax > 1.0 (move faster)
+    }
+    
+    private void CreateCameraZones()
+    {
+        // Zone 1: Safe zone (left side) - slower camera, zoomed in
+        CameraZoneSystem.CreateCameraZone(World, "Safe Zone",
+            minX: 0, maxX: 640, minY: 0, maxY: 1080,
+            zoom: 1.3f,           // Zoomed in for detail
+            followSpeed: 3.0f,    // Slower follow for calm area
+            enableLookAhead: false, // No look-ahead in safe zones
+            priority: 1);
+        
+        // Zone 2: Combat zone (center) - normal settings
+        CameraZoneSystem.CreateCameraZone(World, "Combat Zone",
+            minX: 640, maxX: 1280, minY: 0, maxY: 1080,
+            zoom: 1.0f,           // Normal zoom
+            followSpeed: 8.0f,    // Fast follow for action
+            enableLookAhead: true,
+            lookAheadDistance: 100.0f,
+            priority: 1);
+        
+        // Zone 3: Boss arena (right side) - zoomed out, very responsive
+        CameraZoneSystem.CreateCameraZone(World, "Boss Arena",
+            minX: 1280, maxX: 1920, minY: 0, maxY: 1080,
+            zoom: 0.8f,           // Zoomed out to see more
+            followSpeed: 12.0f,   // Very fast follow
+            enableLookAhead: true,
+            lookAheadDistance: 150.0f,
+            priority: 1);
     }
     
     private void CreateGoblin(World world, float x, float y)

@@ -64,4 +64,27 @@ public class ParallaxSystem : ISystem
         
         return entity;
     }
+    
+    /// <summary>
+    /// Create a parallax layer with visual properties
+    /// </summary>
+    public static Entity CreateParallaxLayer(World world, string name, float parallaxFactor, int zOrder,
+        ParallaxVisualType visualType, ConsoleColor color, float density = 0.3f,
+        float autoScrollX = 0f, float autoScrollY = 0f)
+    {
+        var entity = world.CreateEntity();
+        
+        world.AddComponent(entity, new ParallaxLayerComponent(name, parallaxFactor, zOrder)
+        {
+            AutoScrollX = autoScrollX,
+            AutoScrollY = autoScrollY,
+            VisualType = visualType,
+            Color = color,
+            Density = density
+        });
+        
+        world.AddComponent(entity, new PositionComponent());
+        
+        return entity;
+    }
 }

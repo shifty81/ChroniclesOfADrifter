@@ -20,6 +20,9 @@ public class ConsoleRenderer
         // Clear buffer
         ClearBuffer();
         
+        // Draw parallax background layers (sorted by ZOrder)
+        DrawParallaxLayers(world);
+        
         // Draw boundaries
         DrawBoundaries();
         
@@ -42,6 +45,185 @@ public class ConsoleRenderer
             {
                 _buffer[x, y] = ' ';
                 _colorBuffer[x, y] = ConsoleColor.White;
+            }
+        }
+    }
+    
+    private void DrawParallaxLayers(World world)
+    {
+        // Get active camera
+        var camera = CameraSystem.GetActiveCamera(world);
+        if (camera == null)
+            return;
+        
+        // Get all parallax layers and sort by ZOrder (lower = rendered first/behind)
+        var parallaxLayers = new List<(Entity entity, ParallaxLayerComponent layer, PositionComponent position)>();
+        
+        foreach (var entity in world.GetEntitiesWithComponent<ParallaxLayerComponent>())
+        {
+            var layer = world.GetComponent<ParallaxLayerComponent>(entity);
+            var position = world.GetComponent<PositionComponent>(entity);
+            
+            if (layer != null && position != null && layer.IsVisible)
+            {
+                parallaxLayers.Add((entity, layer, position));
+            }
+        }
+        
+        // Sort by ZOrder (ascending)
+        parallaxLayers.Sort((a, b) => a.layer.ZOrder.CompareTo(b.layer.ZOrder));
+        
+        // Render each layer
+        foreach (var (entity, layer, position) in parallaxLayers)
+        {
+            DrawParallaxLayer(layer, position, camera);
+        }
+    }
+    
+    private void DrawParallaxLayer(ParallaxLayerComponent layer, PositionComponent position, CameraComponent camera)
+    {
+        // Calculate offset based on layer position and parallax factor
+        float offsetX = position.X;
+        float offsetY = position.Y;
+        
+        // Draw based on visual type
+        switch (layer.VisualType)
+        {
+            case ParallaxVisualType.Sky:
+                DrawSkyLayer(layer, offsetX, offsetY);
+                break;
+                
+            case ParallaxVisualType.Clouds:
+                DrawCloudsLayer(layer, offsetX, offsetY);
+                break;
+                
+            case ParallaxVisualType.Mountains:
+                DrawMountainsLayer(layer, offsetX, offsetY);
+                break;
+                
+            case ParallaxVisualType.Stars:
+                DrawStarsLayer(layer, offsetX, offsetY);
+                break;
+                
+            case ParallaxVisualType.Mist:
+                DrawMistLayer(layer, offsetX, offsetY);
+                break;
+        }
+    }
+    
+    private void DrawSkyLayer(ParallaxLayerComponent layer, float offsetX, float offsetY)
+    {
+        // Fill entire background with sky color
+        for (int x = 1; x < MapWidth - 1; x++)
+        {
+            for (int y = 1; y < MapHeight - 1; y++)
+            {
+                if (_buffer[x, y] == ' ')
+                {
+                    _buffer[x, y] = '·';
+                    _colorBuffer[x, y] = layer.Color;
+                }
+            }
+        }
+    }
+    
+    private void DrawCloudsLayer(ParallaxLayerComponent layer, float offsetX, float offsetY)
+    {
+        // Draw cloud patterns that move with auto-scroll
+        int cloudOffset = (int)(offsetX * 0.1f) % MapWidth;
+        
+        for (int x = 1; x < MapWidth - 1; x++)
+        {
+            for (int y = 1; y < MapHeight / 3; y++) // Clouds in upper portion
+            {
+                // Use noise-like pattern for clouds
+                int worldX = (x + cloudOffset) % MapWidth;
+                float noise = (MathF.Sin(worldX * 0.3f + y * 0.5f) + MathF.Cos(worldX * 0.2f)) * 0.5f + 0.5f;
+                
+                if (noise > (1.0f - layer.Density))
+                {
+                    if (_buffer[x, y] == ' ' || _buffer[x, y] == '·')
+                    {
+                        _buffer[x, y] = '░';
+                        _colorBuffer[x, y] = layer.Color;
+                    }
+                }
+            }
+        }
+    }
+    
+    private void DrawMountainsLayer(ParallaxLayerComponent layer, float offsetX, float offsetY)
+    {
+        // Draw mountain silhouette at bottom of layer
+        int mountainOffset = (int)(offsetX * 0.05f) % MapWidth;
+        
+        for (int x = 1; x < MapWidth - 1; x++)
+        {
+            int worldX = (x + mountainOffset) % MapWidth;
+            
+            // Create mountain profile using sine waves
+            float height = MathF.Abs(MathF.Sin(worldX * 0.15f)) * 6 + 
+                          MathF.Abs(MathF.Sin(worldX * 0.08f + 2.5f)) * 4;
+            int peakY = MapHeight - 2 - (int)height;
+            
+            for (int y = peakY; y < MapHeight - 1; y++)
+            {
+                if (_buffer[x, y] == ' ' || _buffer[x, y] == '·')
+                {
+                    _buffer[x, y] = '▲';
+                    _colorBuffer[x, y] = layer.Color;
+                }
+            }
+        }
+    }
+    
+    private void DrawStarsLayer(ParallaxLayerComponent layer, float offsetX, float offsetY)
+    {
+        // Draw stars scattered across the sky
+        int starSeed = (int)(offsetX * 0.01f);
+        var random = new Random(42 + starSeed); // Consistent seed for stable stars
+        
+        int starCount = (int)(MapWidth * MapHeight * layer.Density * 0.01f);
+        
+        for (int i = 0; i < starCount; i++)
+        {
+            int x = random.Next(1, MapWidth - 1);
+            int y = random.Next(1, MapHeight / 2); // Stars in upper half
+            
+            if (_buffer[x, y] == ' ' || _buffer[x, y] == '·')
+            {
+                _buffer[x, y] = random.Next(4) switch
+                {
+                    0 => '·',
+                    1 => '*',
+                    2 => '✦',
+                    _ => '+'
+                };
+                _colorBuffer[x, y] = layer.Color;
+            }
+        }
+    }
+    
+    private void DrawMistLayer(ParallaxLayerComponent layer, float offsetX, float offsetY)
+    {
+        // Draw mist effect in lower portion
+        int mistOffset = (int)(offsetX * 0.2f) % MapWidth;
+        
+        for (int x = 1; x < MapWidth - 1; x++)
+        {
+            for (int y = MapHeight * 2 / 3; y < MapHeight - 1; y++) // Mist in lower portion
+            {
+                int worldX = (x + mistOffset) % MapWidth;
+                float noise = (MathF.Sin(worldX * 0.4f + y * 0.3f) + 1.0f) * 0.5f;
+                
+                if (noise > (1.0f - layer.Density))
+                {
+                    if (_buffer[x, y] == ' ')
+                    {
+                        _buffer[x, y] = '░';
+                        _colorBuffer[x, y] = layer.Color;
+                    }
+                }
             }
         }
     }
