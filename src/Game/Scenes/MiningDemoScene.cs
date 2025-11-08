@@ -6,14 +6,14 @@ using ChroniclesOfADrifter.Terrain;
 namespace ChroniclesOfADrifter.Scenes;
 
 /// <summary>
-/// Demo scene showcasing terrain generation with mining/digging mechanics
+/// Demo scene showcasing terrain generation with mining/digging and building mechanics
 /// </summary>
 public class MiningDemoScene : Scene
 {
     private ChunkManager? chunkManager;
     private TerrainGenerator? terrainGenerator;
     private Entity playerEntity;
-    private MiningSystem? miningSystem;
+    private BlockInteractionSystem? blockInteractionSystem;
     
     public override void OnLoad()
     {
@@ -24,9 +24,9 @@ public class MiningDemoScene : Scene
         World.AddSystem(new MovementSystem());
         World.AddSystem(new CameraSystem());
         
-        // Add mining system
-        miningSystem = new MiningSystem();
-        World.AddSystem(miningSystem);
+        // Add block interaction system (mining and placing)
+        blockInteractionSystem = new BlockInteractionSystem();
+        World.AddSystem(blockInteractionSystem);
         
         // Initialize terrain generation
         terrainGenerator = new TerrainGenerator(seed: 12345);
@@ -85,6 +85,8 @@ public class MiningDemoScene : Scene
         Console.WriteLine("[MiningDemo] Controls:");
         Console.WriteLine("[MiningDemo]   - WASD or Arrow keys to move");
         Console.WriteLine("[MiningDemo]   - Hold 'M' key to mine blocks near you");
+        Console.WriteLine("[MiningDemo]   - Press 'P' key to place blocks");
+        Console.WriteLine("[MiningDemo]   - Press 1-9 to select block type from inventory");
         Console.WriteLine("[MiningDemo]   - Currently equipped: Stone Pickaxe");
     }
     
@@ -100,11 +102,10 @@ public class MiningDemoScene : Scene
         }
         
         // Display mining progress if mining
-        if (miningSystem != null && miningSystem.IsMining())
+        if (blockInteractionSystem != null && blockInteractionSystem.IsMining())
         {
-            float progress = miningSystem.GetMiningProgress();
+            float progress = blockInteractionSystem.GetMiningProgress();
             // This would be displayed visually in a real game
-            // For console, we could print it periodically
         }
         
         // Display inventory every few seconds (for demo purposes)
