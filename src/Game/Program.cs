@@ -35,6 +35,13 @@ class Program
             return;
         }
         
+        // Check for lighting test mode
+        if (args.Length > 0 && args[0].ToLower() == "lighting-test")
+        {
+            Tests.LightingTest.Run();
+            return;
+        }
+        
         // Check if terrain demo was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "terrain")
         {
@@ -59,6 +66,7 @@ class Program
         Console.WriteLine("  Tip: Run with 'test' for terrain tests");
         Console.WriteLine("       Run with 'camera-test' for camera tests");
         Console.WriteLine("       Run with 'vegetation-test' for vegetation tests");
+        Console.WriteLine("       Run with 'lighting-test' for lighting tests");
         Console.WriteLine("       Run with 'terrain' for terrain demo");
         Console.WriteLine("       Run with 'mining' for mining/digging demo");
         Console.WriteLine("===========================================\n");
