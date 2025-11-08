@@ -48,6 +48,7 @@ ChroniclesOfADrifter/
 
 - **[Architecture](docs/ARCHITECTURE.md)** - System design and technical overview
 - **[Animation System](docs/ANIMATION_SYSTEM.md)** - Sprite animation and character customization
+- **[Camera System](docs/CAMERA_SYSTEM.md)** - 2D camera with following, zoom, and bounds
 - **[Sprite Assets](docs/SPRITE_ASSETS.md)** - Sprite creation guidelines and specifications
 - **[Procedural Generation](docs/PROCEDURAL_GENERATION.md)** - Dungeon generation algorithms
 - **[Lua Scripting](docs/LUA_SCRIPTING.md)** - Scripting API and examples
@@ -113,10 +114,10 @@ This repository contains the **initial implementation** of Chronicles of a Drift
 - [x] **Character creator with multiple customization options**
 - [x] **Clothing color customization system**
 - [x] **Armor/clothing visibility system**
+- [x] **2D Camera system with smooth following and zoom**
 
 ### 🔄 Next Steps
 - [ ] Implement C++ rendering engine (DirectX 12)
-- [ ] Create camera system
 - [ ] Add actual sprite assets (high-resolution character sprites)
 - [ ] Implement procedural dungeon generator
 - [ ] Add collision detection system
