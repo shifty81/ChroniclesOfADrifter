@@ -68,7 +68,7 @@ public class BlockInteractionSystem : ISystem
         // Placing logic
         if (EngineInterop.Input_IsKeyPressed(KEY_P))
         {
-            HandlePlacement(chunkManager, playerPos, inventory);
+            HandlePlacement(world, chunkManager, playerPos, inventory);
         }
     }
     
@@ -141,7 +141,7 @@ public class BlockInteractionSystem : ISystem
         }
     }
     
-    private void HandlePlacement(ChunkManager chunkManager, PositionComponent playerPos, InventoryComponent inventory)
+    private void HandlePlacement(World world, ChunkManager chunkManager, PositionComponent playerPos, InventoryComponent inventory)
     {
         // Check if player has the selected block in inventory
         if (!inventory.HasItem(selectedBlockType, 1))
@@ -181,10 +181,36 @@ public class BlockInteractionSystem : ISystem
         // Place the block
         SetBlockAt(chunkManager, targetX, targetY, selectedBlockType);
         
+        // If placing a torch, create a light source entity
+        if (selectedBlockType == TileType.Torch)
+        {
+            CreateTorchLightSource(world, targetX, targetY);
+        }
+        
         // Remove from inventory
         inventory.RemoveItem(selectedBlockType, 1);
         
         Console.WriteLine($"[BlockInteraction] Placed {selectedBlockType} at ({targetX}, {targetY})");
+    }
+    
+    /// <summary>
+    /// Creates a light source entity for a placed torch
+    /// </summary>
+    private void CreateTorchLightSource(World world, int blockX, int blockY)
+    {
+        var torchEntity = world.CreateEntity();
+        
+        // Position in world coordinates (convert from block coordinates)
+        world.AddComponent(torchEntity, new PositionComponent(blockX * 32, blockY * 32));
+        
+        // Light source component
+        world.AddComponent(torchEntity, new LightSourceComponent(
+            radius: 8.0f,
+            intensity: 1.0f,
+            type: LightSourceType.Torch
+        ));
+        
+        Console.WriteLine($"[BlockInteraction] Created torch light source at ({blockX}, {blockY})");
     }
     
     private void StartMining(Entity entity, int x, int y, TileType block, ToolComponent tool)
@@ -236,7 +262,41 @@ public class BlockInteractionSystem : ISystem
             }
         }
         
+        // If mining a torch, remove its light source entity
+        if (block == TileType.Torch)
+        {
+            RemoveTorchLightSource(world, x, y);
+        }
+        
         SetBlockAt(chunkManager, x, y, TileType.Air);
+    }
+    
+    /// <summary>
+    /// Removes the light source entity for a mined torch
+    /// </summary>
+    private void RemoveTorchLightSource(World world, int blockX, int blockY)
+    {
+        // Find light source entities at this position
+        var lightSources = world.GetEntitiesWithComponent<LightSourceComponent>();
+        foreach (var entity in lightSources)
+        {
+            var lightSource = world.GetComponent<LightSourceComponent>(entity);
+            var position = world.GetComponent<PositionComponent>(entity);
+            
+            if (lightSource != null && position != null && lightSource.Type == LightSourceType.Torch)
+            {
+                // Check if this torch is at the target block position
+                int entityBlockX = (int)(position.X / 32);
+                int entityBlockY = (int)(position.Y / 32);
+                
+                if (entityBlockX == blockX && entityBlockY == blockY)
+                {
+                    world.DestroyEntity(entity);
+                    Console.WriteLine($"[BlockInteraction] Removed torch light source at ({blockX}, {blockY})");
+                    break;
+                }
+            }
+        }
     }
     
     private void ResetMining()
