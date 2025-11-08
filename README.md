@@ -51,6 +51,7 @@ ChroniclesOfADrifter/
 - **[Terrain Generation](docs/TERRAIN_GENERATION.md)** - 2D procedural terrain with biomes and caves
 - **[Animation System](docs/ANIMATION_SYSTEM.md)** - Sprite animation and character customization
 - **[Camera System](docs/CAMERA_SYSTEM.md)** - 2D camera with following, zoom, and bounds
+- **[Camera Features](docs/CAMERA_FEATURES.md)** - Parallax scrolling and look-ahead systems
 - **[Sprite Assets](docs/SPRITE_ASSETS.md)** - Sprite creation guidelines and specifications
 - **[Procedural Generation](docs/PROCEDURAL_GENERATION.md)** - Dungeon generation algorithms
 - **[Lua Scripting](docs/LUA_SCRIPTING.md)** - Scripting API and examples
@@ -117,7 +118,9 @@ This repository contains the **initial implementation** of Chronicles of a Drift
 - [x] **Clothing color customization system**
 - [x] **Armor/clothing visibility system**
 - [x] **2D Camera system with smooth following and zoom**
-- [x] **2D Terrain Generation System (NEW!)**
+- [x] **Parallax scrolling system for depth illusion (NEW!)**
+- [x] **Camera look-ahead based on player velocity (NEW!)**
+- [x] **2D Terrain Generation System**
   - [x] Chunk-based world (32×30 blocks per chunk)
   - [x] Perlin noise terrain generation
   - [x] 3 biomes (Plains, Desert, Forest)
@@ -126,8 +129,6 @@ This repository contains the **initial implementation** of Chronicles of a Drift
   - [x] Dynamic chunk loading/unloading
 
 ### 🔄 Next Steps
-- [ ] Implement parallax scrolling system
-- [ ] Add camera look-ahead feature
 - [ ] Implement C++ rendering engine (DirectX 12)
 - [ ] Add actual sprite assets (high-resolution character sprites)
 - [ ] Expand biome system to 8+ types

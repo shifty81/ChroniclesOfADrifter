@@ -641,8 +641,8 @@ All Areas:           Hard stone + rare ores
 2. ✅ Lua scripting integration (COMPLETED)
 3. ✅ 2D camera system with smooth following (COMPLETED)
 4. ✅ Orthographic projection camera (COMPLETED - inherent in 2D design)
-5. ⬜ Parallax scrolling system for depth illusion
-6. ⬜ Camera look-ahead based on player movement
+5. ✅ Parallax scrolling system for depth illusion (COMPLETED)
+6. ✅ Camera look-ahead based on player movement (COMPLETED)
 7. ⬜ Semi-angled sprite art (25-45° perspective in sprites)
 8. ⬜ Basic 2D tile/block system (32 tiles wide × 30 tiles tall per chunk)
 9. ⬜ Simple terrain generation with Perlin noise for surface
