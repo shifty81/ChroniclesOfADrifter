@@ -158,6 +158,19 @@ This repository contains the **initial implementation** of Chronicles of a Drift
   - [x] Biome-specific water placement rules
   - [x] Noise-based natural water patterns
   - [x] Water generation test suite
+- [x] **Advanced Camera System**
+  - [x] Multi-layer parallax backgrounds (Sky, Clouds, Mountains, Stars, Mist)
+  - [x] Screen shake effects for combat feedback (light, medium, heavy)
+  - [x] Camera zones with dynamic behavior per area
+  - [x] Smooth zoom transitions
+  - [x] Camera look-ahead based on velocity
+- [x] **Underground Lighting and Fog of War**
+  - [x] Depth-based ambient lighting (bright surface, dark underground)
+  - [x] Player personal lantern (8-block radius)
+  - [x] Torch placement system (8-block radius per torch)
+  - [x] Light intensity falloff with distance
+  - [x] Fog of war with exploration tracking
+  - [x] Dynamic lighting for all light sources
 
 ### 🔄 Next Steps
 - [ ] Implement C++ rendering engine (DirectX 12)
@@ -168,7 +181,7 @@ This repository contains the **initial implementation** of Chronicles of a Drift
 - [ ] Implement combat mechanics
 - [ ] Add weather and time systems
 - [ ] Create UI framework
-- [ ] Add underground lighting and fog of war
+- [ ] Implement multithreaded chunk generation
 
 ## 🎨 Game Features
 

@@ -651,26 +651,26 @@ All Areas:           Hard stone + rare ores
 12. ✅ Chunk loading/unloading (horizontal) (COMPLETED)
 
 ### Medium Priority (Phase 2)
-1. ⬜ Multi-layer parallax backgrounds (3-5 layers)
-2. ⬜ Advanced camera features (screen shake, camera zones)
+1. ✅ Multi-layer parallax backgrounds (3-5 layers) (COMPLETED - Sky, Clouds, Mountains, Stars, Mist)
+2. ✅ Advanced camera features (screen shake, camera zones) (COMPLETED)
 3. ✅ Underground cave pocket generation (COMPLETED)
-4. ⬜ Multiple biome types (8+ biomes)
+4. ✅ Multiple biome types (8+ biomes) (COMPLETED - 8 biomes implemented)
 5. ✅ Tree and vegetation generation on surface (COMPLETED - 7 vegetation types)
 6. ✅ Water body generation (rivers, lakes, oceans) (COMPLETED - 3 water types)
-7. ⬜ Block digging/mining system
-8. ⬜ Underground lighting and fog of war
-9. ⬜ Resource drops and inventory
+7. ✅ Block digging/mining system (COMPLETED)
+8. ✅ Underground lighting and fog of war (COMPLETED)
+9. ✅ Resource drops and inventory (COMPLETED)
 10. ⬜ Multithreaded chunk generation
 
 ### Lower Priority (Phase 3)
-1. ⬜ Advanced parallax effects (animated clouds, weather)
+1. ✅ Advanced parallax effects (animated clouds, weather) (COMPLETED - Clouds and mist with auto-scroll)
 2. ⬜ Cinematic camera movements for cutscenes
 3. ⬜ Creature spawning system by biome and depth
 4. ⬜ Structure generation (ruins, villages, treasure rooms)
-5. ⬜ Advanced lighting effects (torches, dynamic shadows)
+5. ✅ Advanced lighting effects (torches, dynamic shadows) (COMPLETED - Light sources with distance falloff)
 6. ⬜ Weather and atmospheric effects (rain, snow)
 7. ⬜ Seasonal changes affecting surface appearance
-8. ⬜ Tool progression system (better tools = dig faster/deeper)
+8. ✅ Tool progression system (better tools = dig faster/deeper) (COMPLETED)
 9. ⬜ Structural integrity for large underground chambers
 
 ## Phase 4: Camera System for Semi-Angled Top-Down View
