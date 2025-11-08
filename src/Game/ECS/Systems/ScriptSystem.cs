@@ -33,6 +33,14 @@ public class ScriptSystem : ISystem
             }
         }
         
+        // Find player position for AI
+        PositionComponent? playerPosition = null;
+        foreach (var playerEntity in world.GetEntitiesWithComponent<PlayerComponent>())
+        {
+            playerPosition = world.GetComponent<PositionComponent>(playerEntity);
+            break;
+        }
+        
         // Update all scripted entities
         foreach (var entity in world.GetEntitiesWithComponent<ScriptComponent>())
         {
@@ -41,7 +49,18 @@ public class ScriptSystem : ISystem
                 try
                 {
                     var position = world.GetComponent<PositionComponent>(entity);
-                    updateFunc.Call(entity.Id, deltaTime, position);
+                    var velocity = world.GetComponent<VelocityComponent>(entity);
+                    
+                    // Calculate distance to player
+                    float? playerDistance = null;
+                    if (playerPosition != null && position != null)
+                    {
+                        float dx = playerPosition.X - position.X;
+                        float dy = playerPosition.Y - position.Y;
+                        playerDistance = MathF.Sqrt(dx * dx + dy * dy);
+                    }
+                    
+                    updateFunc.Call(entity.Id, deltaTime, position, velocity, playerPosition, playerDistance);
                 }
                 catch (Exception ex)
                 {

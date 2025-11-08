@@ -23,6 +23,10 @@ public class MovementSystem : ISystem
             {
                 position.X += velocity.VX * deltaTime;
                 position.Y += velocity.VY * deltaTime;
+                
+                // Clamp to world boundaries (matching the 1920x1080 resolution)
+                position.X = Math.Clamp(position.X, 0, 1920);
+                position.Y = Math.Clamp(position.Y, 0, 1080);
             }
         }
     }
