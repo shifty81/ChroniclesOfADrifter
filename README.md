@@ -50,6 +50,7 @@ ChroniclesOfADrifter/
 - **[Architecture](docs/ARCHITECTURE.md)** - System design and technical overview
 - **[Terrain Generation](docs/TERRAIN_GENERATION.md)** - 2D procedural terrain with biomes and caves
 - **[Vegetation System](docs/VEGETATION_SYSTEM.md)** - Tree and flora generation with biome-specific placement
+- **[Water System](docs/WATER_SYSTEM.md)** - River, lake, and ocean generation
 - **[Mining & Building System](docs/MINING_BUILDING_SYSTEM.md)** - Block mining, resource collection, and building mechanics
 - **[Animation System](docs/ANIMATION_SYSTEM.md)** - Sprite animation and character customization
 - **[Camera System](docs/CAMERA_SYSTEM.md)** - 2D camera with following, zoom, and bounds
@@ -150,11 +151,18 @@ This repository contains the **initial implementation** of Chronicles of a Drift
   - [x] Resource drops from mined blocks
   - [x] Block placement from inventory
   - [x] Interactive mining demo scene
+- [x] **Water Body Generation**
+  - [x] Rivers with meandering patterns (2 blocks deep)
+  - [x] Lakes in natural depressions (3 blocks deep)
+  - [x] Ocean zones in beach biomes (5 blocks deep)
+  - [x] Biome-specific water placement rules
+  - [x] Noise-based natural water patterns
+  - [x] Water generation test suite
 
 ### 🔄 Next Steps
 - [ ] Implement C++ rendering engine (DirectX 12)
 - [ ] Add actual sprite assets (high-resolution character sprites)
-- [ ] Expand biome system to 8+ types
+- [ ] Add water flow mechanics and swimming
 - [ ] Add collision detection system
 - [ ] Create crafting system for tools
 - [ ] Implement combat mechanics
