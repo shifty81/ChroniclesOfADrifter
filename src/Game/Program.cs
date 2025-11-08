@@ -21,6 +21,13 @@ class Program
             return;
         }
         
+        // Check for camera test mode
+        if (args.Length > 0 && args[0].ToLower() == "camera-test")
+        {
+            Tests.CameraFeaturesTest.Run();
+            return;
+        }
+        
         // Check if terrain demo was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "terrain")
         {
@@ -36,6 +43,7 @@ class Program
         Console.WriteLine("  C++/.NET 9/Lua Custom Voxel Game Engine");
         Console.WriteLine("===========================================\n");
         Console.WriteLine("  Tip: Run with 'test' for terrain tests");
+        Console.WriteLine("       Run with 'camera-test' for camera tests");
         Console.WriteLine("       Run with 'terrain' for terrain demo");
         Console.WriteLine("===========================================\n");
         
