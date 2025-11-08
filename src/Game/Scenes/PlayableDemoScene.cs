@@ -68,21 +68,39 @@ public class PlayableDemoScene : Scene
     
     private void CreateParallaxLayers()
     {
-        // Layer 0: Far background (moves slowest)
-        var farBg = ParallaxSystem.CreateParallaxLayer(World, "Far Background", 
-            parallaxFactor: 0.2f, 
+        // Layer 0: Sky (static background)
+        var sky = ParallaxSystem.CreateParallaxLayer(World, "Sky", 
+            parallaxFactor: 0.0f, 
+            zOrder: -150,
+            visualType: ParallaxVisualType.Sky,
+            color: ConsoleColor.DarkBlue,
+            density: 0.5f);
+        
+        // Layer 1: Clouds (slowly scrolling)
+        var clouds = ParallaxSystem.CreateParallaxLayer(World, "Clouds",
+            parallaxFactor: 0.2f,
             zOrder: -100,
-            autoScrollX: 2.0f);  // Slowly scrolls like distant clouds
+            visualType: ParallaxVisualType.Clouds,
+            color: ConsoleColor.DarkGray,
+            density: 0.3f,
+            autoScrollX: 2.0f);
         
-        // Layer 1: Mid background
-        var midBg = ParallaxSystem.CreateParallaxLayer(World, "Mid Background",
-            parallaxFactor: 0.5f,
-            zOrder: -50);
+        // Layer 2: Distant mountains
+        var mountains = ParallaxSystem.CreateParallaxLayer(World, "Mountains",
+            parallaxFactor: 0.4f,
+            zOrder: -75,
+            visualType: ParallaxVisualType.Mountains,
+            color: ConsoleColor.DarkCyan,
+            density: 0.6f);
         
-        // Layer 2: Near background
-        var nearBg = ParallaxSystem.CreateParallaxLayer(World, "Near Background",
-            parallaxFactor: 0.8f,
-            zOrder: -10);
+        // Layer 3: Mid background (subtle mist)
+        var mist = ParallaxSystem.CreateParallaxLayer(World, "Mist",
+            parallaxFactor: 0.6f,
+            zOrder: -25,
+            visualType: ParallaxVisualType.Mist,
+            color: ConsoleColor.DarkGray,
+            density: 0.15f,
+            autoScrollX: 1.0f);
         
         // Note: Main gameplay layer has parallax factor 1.0 (moves with camera)
         // Foreground layers would have parallax > 1.0 (move faster)

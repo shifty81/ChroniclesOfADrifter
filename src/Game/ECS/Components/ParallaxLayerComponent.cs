@@ -44,10 +44,39 @@ public class ParallaxLayerComponent : IComponent
     /// </summary>
     public float AccumulatedTime { get; set; } = 0.0f;
     
+    /// <summary>
+    /// Visual pattern type for this layer
+    /// </summary>
+    public ParallaxVisualType VisualType { get; set; } = ParallaxVisualType.None;
+    
+    /// <summary>
+    /// Color for this parallax layer
+    /// </summary>
+    public ConsoleColor Color { get; set; } = ConsoleColor.DarkBlue;
+    
+    /// <summary>
+    /// Opacity/density of the visual pattern (0.0 to 1.0)
+    /// </summary>
+    public float Density { get; set; } = 0.3f;
+    
     public ParallaxLayerComponent(string name, float parallaxFactor, int zOrder)
     {
         Name = name;
         ParallaxFactor = parallaxFactor;
         ZOrder = zOrder;
     }
+}
+
+/// <summary>
+/// Visual pattern types for parallax layers
+/// </summary>
+public enum ParallaxVisualType
+{
+    None,           // No visual
+    Sky,            // Solid sky color
+    Clouds,         // Moving clouds pattern
+    Mountains,      // Distant mountains silhouette
+    Stars,          // Starfield for night sky
+    Trees,          // Foreground tree silhouettes
+    Mist            // Fog/mist effect
 }
