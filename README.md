@@ -47,6 +47,8 @@ ChroniclesOfADrifter/
 ## 📚 Documentation
 
 - **[Architecture](docs/ARCHITECTURE.md)** - System design and technical overview
+- **[Animation System](docs/ANIMATION_SYSTEM.md)** - Sprite animation and character customization
+- **[Sprite Assets](docs/SPRITE_ASSETS.md)** - Sprite creation guidelines and specifications
 - **[Procedural Generation](docs/PROCEDURAL_GENERATION.md)** - Dungeon generation algorithms
 - **[Lua Scripting](docs/LUA_SCRIPTING.md)** - Scripting API and examples
 - **[C++/C# Integration](docs/CPP_CSHARP_INTEGRATION.md)** - Interop patterns and best practices
@@ -105,10 +107,17 @@ This repository contains the **initial implementation** of Chronicles of a Drift
 - [x] **Lua scripting integration with NLua**
 - [x] **Scene management system**
 - [x] **Example AI scripts (Goblin patrol)**
+- [x] **Sprite animation system with frame-by-frame support**
+- [x] **Character customization system with clothing layers**
+- [x] **High-resolution sprite support (64x64, 128x128)**
+- [x] **Character creator with multiple customization options**
+- [x] **Clothing color customization system**
+- [x] **Armor/clothing visibility system**
 
 ### 🔄 Next Steps
 - [ ] Implement C++ rendering engine (DirectX 12)
 - [ ] Create camera system
+- [ ] Add actual sprite assets (high-resolution character sprites)
 - [ ] Implement procedural dungeon generator
 - [ ] Add collision detection system
 - [ ] Create crafting system
@@ -117,6 +126,25 @@ This repository contains the **initial implementation** of Chronicles of a Drift
 - [ ] Create UI framework
 
 ## 🎨 Game Features
+
+### Character Customization
+- **Sprite Animation System** with frame-by-frame animations
+- **Character Creator** with extensive customization options
+  - 6 skin tones (pale to dark)
+  - 7 hair styles (short, long, ponytail, bald, curly, braided, spiky)
+  - 4 body types (slim, average, athletic, heavy)
+- **Layered Clothing System**
+  - Multiple clothing categories (shirts, pants, boots, gloves, hats)
+  - 5+ styles per category
+  - Dynamic color customization with primary and secondary colors
+  - 8 preset color palettes (Earth Tones, Forest, Ocean, Crimson, Royal, Neutral, Midnight, Desert)
+- **Armor System**
+  - Armor overrides clothing visibility when equipped
+  - Clothing automatically reappears when armor is removed
+- **High-Resolution Sprites**
+  - Support for 64x64 and 128x128 per-frame sprites
+  - Smooth animations at 6-8 frames per second
+  - Scalable rendering for different resolutions
 
 ### Procedural Generation
 - **BSP Algorithm** for structured dungeons
