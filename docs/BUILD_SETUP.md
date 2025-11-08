@@ -1,5 +1,25 @@
 # Chronicles of a Drifter - Build and Setup Guide
 
+## Overview
+
+This guide covers building and running Chronicles of a Drifter on your local development machine. The project is currently in active development with a focus on **local iteration and debugging** rather than production releases.
+
+### Quick Start for Local Development
+
+The easiest way to build and run the game locally:
+
+```bash
+# Quick build (runs both C++ and C# builds)
+./build.sh        # Linux/macOS
+build.bat         # Windows
+
+# Run the game
+cd src/Game
+dotnet run -c Release
+```
+
+**Note:** GitHub Actions and automated releases are not configured yet, as the project is still in the debugging and prototyping phase. Focus is on rapid local iteration.
+
 ## Prerequisites
 
 ### Required Software
@@ -381,6 +401,57 @@ cd src/Game/bin/Release/net9.0/win-x64/publish
 ### Installer Creation
 
 Use **Inno Setup** or **WiX Toolset** to create an installer.
+
+## Game Scale and Constants
+
+### Player Character Scale Reference
+
+**The player character is approximately 2.5 blocks tall.** This is the fundamental scale reference for all game content:
+
+```csharp
+// From GameConstants.cs
+public const float PlayerHeightInBlocks = 2.5f;
+public const float PlayerWidthInBlocks = 0.8f;
+public const int BlockSize = 32; // pixels at 1:1 scale
+```
+
+### Scale Guidelines for Content Creation
+
+When generating or creating game content, use the player scale as reference:
+
+- **Doors**: Minimum 3 blocks tall (player height + headroom)
+- **Cave/Tunnel Passages**: Minimum 3 blocks high for comfortable navigation
+- **Trees**: 4-8 blocks tall for visual variety and proper scale
+- **Building Ceilings**: ~4 blocks high for spacious indoor areas
+- **NPC Characters**: Scale relative to player (2.5 blocks for human-sized)
+
+### Using Scale Constants in Code
+
+All scale constants are centralized in `src/Game/GameConstants.cs`:
+
+```csharp
+using ChroniclesOfADrifter;
+
+// When creating player collision box
+var collision = new CollisionComponent(
+    width: GameConstants.PlayerCollisionWidth,
+    height: GameConstants.PlayerCollisionHeight
+);
+
+// When generating doorways
+if (doorHeight < GameConstants.MinDoorHeight * GameConstants.BlockSize)
+{
+    doorHeight = GameConstants.MinDoorHeight * GameConstants.BlockSize;
+}
+
+// When placing trees procedurally
+float treeHeight = Random.Range(
+    GameConstants.MinTreeHeight, 
+    GameConstants.MaxTreeHeight
+) * GameConstants.BlockSize;
+```
+
+This ensures consistent scale throughout the game world and makes procedural generation feel natural and properly proportioned.
 
 ## Additional Resources
 
