@@ -5,59 +5,49 @@ using ChroniclesOfADrifter.Rendering;
 namespace ChroniclesOfADrifter;
 
 /// <summary>
-/// Main entry point for Chronicles of a Drifter
+/// Main entry point for the Terrain Demo
 /// </summary>
-class Program
+class TerrainDemoProgram
 {
     private const int KEY_Q = 81;
     private const int KEY_ESC = 27;
     
-    static void Main(string[] args)
+    public static void Run()
     {
-        // Check if terrain demo was requested via command line argument
-        if (args.Length > 0 && args[0].ToLower() == "terrain")
-        {
-            TerrainDemoProgram.Run();
-            return;
-        }
-        
         // Initialize console
-        ConsoleRenderer.InitializeConsole();
+        TerrainConsoleRenderer.InitializeConsole();
         
         Console.WriteLine("===========================================");
-        Console.WriteLine("  Chronicles of a Drifter - Playable Demo");
-        Console.WriteLine("  C++/.NET 9/Lua Custom Voxel Game Engine");
-        Console.WriteLine("===========================================\n");
-        Console.WriteLine("  Tip: Run with 'terrain' argument for terrain demo");
+        Console.WriteLine("  Chronicles of a Drifter - Terrain Demo");
+        Console.WriteLine("  2D Procedural Terrain Generation");
         Console.WriteLine("===========================================\n");
         
         // Initialize engine
-        Console.WriteLine("[Game] Initializing engine...");
-        bool success = EngineInterop.Engine_Initialize(1920, 1080, "Chronicles of a Drifter");
+        Console.WriteLine("[TerrainDemo] Initializing engine...");
+        bool success = EngineInterop.Engine_Initialize(1920, 1080, "Chronicles of a Drifter - Terrain Demo");
         
         if (!success)
         {
-            Console.WriteLine("[Game] ERROR: Failed to initialize engine!");
-            Console.WriteLine($"[Game] Error: {EngineInterop.Engine_GetErrorMessage()}");
+            Console.WriteLine("[TerrainDemo] ERROR: Failed to initialize engine!");
+            Console.WriteLine($"[TerrainDemo] Error: {EngineInterop.Engine_GetErrorMessage()}");
             return;
         }
         
-        Console.WriteLine("[Game] Engine initialized successfully\n");
+        Console.WriteLine("[TerrainDemo] Engine initialized successfully\n");
         
-        // Load playable demo scene
-        var scene = new PlayableDemoScene();
+        // Load terrain demo scene
+        var scene = new TerrainDemoScene();
         scene.OnLoad();
         
-        Console.WriteLine("\n[Game] Starting game loop...");
-        Console.WriteLine("[Game] Press Q or ESC to exit\n");
+        Console.WriteLine("\n[TerrainDemo] Starting game loop...");
+        Console.WriteLine("[TerrainDemo] Press Q or ESC to exit\n");
         
         Thread.Sleep(2000); // Give user time to read initial messages
         
-        // Create console renderer
-        var renderer = new ConsoleRenderer();
+        // Create terrain console renderer
+        var renderer = new TerrainConsoleRenderer();
         
         // Main game loop
-        int frameCount = 0;
         var lastTime = DateTime.Now;
         float fps = 60.0f;
         
@@ -66,7 +56,7 @@ class Program
             // Check for quit key
             if (EngineInterop.Input_IsKeyPressed(KEY_Q) || EngineInterop.Input_IsKeyPressed(KEY_ESC))
             {
-                Console.WriteLine("\n[Game] Quit key pressed...");
+                Console.WriteLine("\n[TerrainDemo] Quit key pressed...");
                 break;
             }
             
@@ -74,15 +64,17 @@ class Program
             
             float deltaTime = EngineInterop.Engine_GetDeltaTime();
             
-            // Update the scene (which updates the ECS world)
+            // Update the scene
             scene.Update(deltaTime);
             
-            // Render the game state to console
-            renderer.Render(scene.World, fps);
+            // Render the terrain and game state to console
+            var chunkManager = scene.GetChunkManager();
+            if (chunkManager != null && scene.World != null)
+            {
+                renderer.Render(scene.World, chunkManager, fps);
+            }
             
             EngineInterop.Engine_EndFrame();
-            
-            frameCount++;
             
             // Calculate FPS
             var currentTime = DateTime.Now;
@@ -102,8 +94,8 @@ class Program
         // Shutdown
         Console.Clear();
         Console.CursorVisible = true;
-        Console.WriteLine("\n[Game] Shutting down...");
+        Console.WriteLine("\n[TerrainDemo] Shutting down...");
         EngineInterop.Engine_Shutdown();
-        Console.WriteLine("[Game] Goodbye!");
+        Console.WriteLine("[TerrainDemo] Goodbye!");
     }
 }
