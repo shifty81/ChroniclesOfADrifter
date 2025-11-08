@@ -48,6 +48,7 @@ ChroniclesOfADrifter/
 
 - **[Roadmap](ROADMAP.md)** - Development roadmap with 2D world generation plans
 - **[Architecture](docs/ARCHITECTURE.md)** - System design and technical overview
+- **[Terrain Generation](docs/TERRAIN_GENERATION.md)** - 2D procedural terrain with biomes and caves
 - **[Animation System](docs/ANIMATION_SYSTEM.md)** - Sprite animation and character customization
 - **[Camera System](docs/CAMERA_SYSTEM.md)** - 2D camera with following, zoom, and bounds
 - **[Sprite Assets](docs/SPRITE_ASSETS.md)** - Sprite creation guidelines and specifications
@@ -116,11 +117,22 @@ This repository contains the **initial implementation** of Chronicles of a Drift
 - [x] **Clothing color customization system**
 - [x] **Armor/clothing visibility system**
 - [x] **2D Camera system with smooth following and zoom**
+- [x] **2D Terrain Generation System (NEW!)**
+  - [x] Chunk-based world (32×30 blocks per chunk)
+  - [x] Perlin noise terrain generation
+  - [x] 3 biomes (Plains, Desert, Forest)
+  - [x] 20-layer underground system with ores
+  - [x] Cave generation
+  - [x] Dynamic chunk loading/unloading
 
 ### 🔄 Next Steps
+- [ ] Implement parallax scrolling system
+- [ ] Add camera look-ahead feature
 - [ ] Implement C++ rendering engine (DirectX 12)
 - [ ] Add actual sprite assets (high-resolution character sprites)
-- [ ] Implement procedural dungeon generator
+- [ ] Expand biome system to 8+ types
+- [ ] Add tree and vegetation generation
+- [ ] Implement block digging/mining system
 - [ ] Add collision detection system
 - [ ] Create crafting system
 - [ ] Implement combat mechanics
