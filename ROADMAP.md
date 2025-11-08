@@ -656,7 +656,7 @@ All Areas:           Hard stone + rare ores
 3. ✅ Underground cave pocket generation (COMPLETED)
 4. ⬜ Multiple biome types (8+ biomes)
 5. ✅ Tree and vegetation generation on surface (COMPLETED - 7 vegetation types)
-6. ⬜ Water body generation (rivers, lakes, oceans)
+6. ✅ Water body generation (rivers, lakes, oceans) (COMPLETED - 3 water types)
 7. ⬜ Block digging/mining system
 8. ⬜ Underground lighting and fog of war
 9. ⬜ Resource drops and inventory
