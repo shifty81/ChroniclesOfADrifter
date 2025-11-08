@@ -1,5 +1,6 @@
 using ChroniclesOfADrifter.ECS;
 using ChroniclesOfADrifter.ECS.Components;
+using ChroniclesOfADrifter.ECS.Systems;
 
 namespace ChroniclesOfADrifter.Rendering;
 
@@ -74,6 +75,9 @@ public class ConsoleRenderer
     
     private void DrawEntities(World world)
     {
+        // Get active camera
+        var camera = CameraSystem.GetActiveCamera(world);
+        
         // Draw all entities with position and sprite components
         foreach (var entity in world.GetEntitiesWithComponent<PositionComponent>())
         {
@@ -83,14 +87,27 @@ public class ConsoleRenderer
             
             if (position != null && sprite != null)
             {
-                // Convert world coordinates (0-1920 x 0-1080) to screen coordinates (1-78 x 1-22)
-                // Map world space to screen space
-                int screenX = (int)((position.X / 1920.0f) * (MapWidth - 2)) + 1;
-                int screenY = (int)((position.Y / 1080.0f) * (MapHeight - 2)) + 1;
+                int screenX, screenY;
                 
-                // Clamp to buffer bounds
-                screenX = Math.Clamp(screenX, 1, MapWidth - 2);
-                screenY = Math.Clamp(screenY, 1, MapHeight - 2);
+                if (camera != null)
+                {
+                    // Use camera to transform world coordinates to screen coordinates
+                    var (camScreenX, camScreenY) = camera.WorldToScreen(position.X, position.Y);
+                    
+                    // Map camera screen space (0-1920 x 0-1080) to console buffer (1-78 x 1-22)
+                    screenX = (int)((camScreenX / camera.ViewportWidth) * (MapWidth - 2)) + 1;
+                    screenY = (int)((camScreenY / camera.ViewportHeight) * (MapHeight - 2)) + 1;
+                }
+                else
+                {
+                    // Fallback: Convert world coordinates (0-1920 x 0-1080) to screen coordinates (1-78 x 1-22)
+                    screenX = (int)((position.X / 1920.0f) * (MapWidth - 2)) + 1;
+                    screenY = (int)((position.Y / 1080.0f) * (MapHeight - 2)) + 1;
+                }
+                
+                // Check if entity is visible in viewport
+                if (screenX < 1 || screenX >= MapWidth - 1 || screenY < 1 || screenY >= MapHeight - 1)
+                    continue;
                 
                 // Determine character and color
                 char displayChar = '?';

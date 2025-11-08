@@ -16,7 +16,9 @@ public class PlayableDemoScene : Scene
         // Add systems
         World.AddSystem(new ScriptSystem());
         World.AddSystem(new PlayerInputSystem());
+        World.AddSystem(new CameraInputSystem());
         World.AddSystem(new MovementSystem());
+        World.AddSystem(new CameraSystem());
         World.AddSystem(new CombatSystem());
         World.AddSystem(new RenderingSystem());
         
@@ -29,6 +31,17 @@ public class PlayableDemoScene : Scene
         World.AddComponent(player, new HealthComponent(100));
         World.AddComponent(player, new CombatComponent(damage: 15f, range: 100f, cooldown: 0.3f));
         
+        // Create camera entity that follows player
+        var camera = World.CreateEntity();
+        var cameraComponent = new CameraComponent(1920, 1080)
+        {
+            Zoom = 1.0f,
+            FollowSpeed = 8.0f
+        };
+        World.AddComponent(camera, cameraComponent);
+        World.AddComponent(camera, new PositionComponent(960, 540));
+        CameraSystem.SetFollowTarget(World, camera, player, followSpeed: 8.0f);
+        
         // Create multiple goblin enemies in different positions
         CreateGoblin(World, 600, 300);
         CreateGoblin(World, 1200, 300);
@@ -38,6 +51,7 @@ public class PlayableDemoScene : Scene
         
         Console.WriteLine("[PlayableDemo] Demo scene loaded!");
         Console.WriteLine("[PlayableDemo] Fight the goblins! Use SPACE to attack when near enemies.");
+        Console.WriteLine("[PlayableDemo] Use +/- keys to zoom in/out");
     }
     
     private void CreateGoblin(World world, float x, float y)
