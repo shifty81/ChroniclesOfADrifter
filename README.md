@@ -55,9 +55,9 @@ ChroniclesOfADrifter/
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Visual Studio 2022 (v17.8+)
-- .NET 9 SDK
+- Visual Studio 2022 (v17.8+) or .NET 9 SDK
 - CMake 3.20+
+- C++ compiler (GCC/Clang on Linux, MSVC on Windows)
 
 ### Building
 
@@ -68,7 +68,7 @@ cd ChroniclesOfADrifter
 
 # Build C++ engine
 mkdir build && cd build
-cmake .. -G "Visual Studio 17 2022" -A x64
+cmake ..
 cmake --build . --config Release
 
 # Build C# game
@@ -79,11 +79,19 @@ dotnet build -c Release
 dotnet run
 ```
 
+### Running the Demo
+
+The current implementation includes:
+- **ECS Demo**: Player entity with WASD/Arrow key movement
+- **Lua Scripting Demo**: Goblin AI controlled by Lua script
+
+The demo will run for ~5 seconds showing the game loop in action with console output from the Lua-controlled goblin AI.
+
 See [BUILD_SETUP.md](docs/BUILD_SETUP.md) for detailed instructions.
 
-## 🎯 Current Status: Planning Phase
+## 🎯 Current Status: Implementation Phase
 
-This repository contains the **planning and architecture** for Chronicles of a Drifter. The following has been completed:
+This repository contains the **initial implementation** of Chronicles of a Drifter. The following has been completed:
 
 ### ✅ Completed
 - [x] Project structure defined
@@ -92,17 +100,21 @@ This repository contains the **planning and architecture** for Chronicles of a D
 - [x] Lua scripting API design
 - [x] C++/C# integration patterns
 - [x] Build system configuration
-- [x] Example code and stubs
+- [x] **Entity Component System (ECS) implementation**
+- [x] **Player movement with keyboard input**
+- [x] **Lua scripting integration with NLua**
+- [x] **Scene management system**
+- [x] **Example AI scripts (Goblin patrol)**
 
 ### 🔄 Next Steps
 - [ ] Implement C++ rendering engine (DirectX 12)
-- [ ] Implement ECS system in C#
-- [ ] Create player movement and camera
+- [ ] Create camera system
 - [ ] Implement procedural dungeon generator
-- [ ] Add Lua scripting integration
+- [ ] Add collision detection system
 - [ ] Create crafting system
 - [ ] Implement combat mechanics
 - [ ] Add weather and time systems
+- [ ] Create UI framework
 
 ## 🎨 Game Features
 

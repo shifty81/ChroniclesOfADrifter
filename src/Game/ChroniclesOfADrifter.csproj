@@ -12,8 +12,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Copy native engine DLL to output -->
+    <!-- Copy native engine DLL to output (Windows) -->
     <None Include="..\..\build\bin\ChroniclesEngine.dll" Condition="Exists('..\..\build\bin\ChroniclesEngine.dll')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    
+    <!-- Copy native engine SO to output (Linux) -->
+    <None Include="..\..\build\lib\libChroniclesEngine.so" Condition="Exists('..\..\build\lib\libChroniclesEngine.so')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     

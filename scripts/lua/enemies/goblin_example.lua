@@ -1,5 +1,5 @@
 -- Example Goblin Enemy AI for Chronicles of a Drifter
--- This is a planning phase example
+-- Demonstrates Lua scripting integration with the ECS
 
 local State = {
     IDLE = 1,
@@ -12,22 +12,31 @@ local goblin = {
     state = State.IDLE,
     detectionRange = 10.0,
     attackRange = 2.0,
-    speed = 3.0
+    speed = 3.0,
+    spawnTime = 0
 }
 
-function OnSpawn(entity)
-    print("Goblin spawned at position: " .. entity.position.x .. ", " .. entity.position.y)
+function goblin.OnSpawn(entityId, position)
+    print("Goblin spawned! Entity ID: " .. entityId)
+    if position then
+        print("  Position: " .. position.X .. ", " .. position.Y)
+    end
     goblin.state = State.PATROL
+    goblin.spawnTime = 0
 end
 
-function OnUpdate(entity, deltaTime)
-    -- AI logic would be implemented here
-    -- This is a placeholder for the planning phase
+function goblin.OnUpdate(entityId, deltaTime, position)
+    goblin.spawnTime = goblin.spawnTime + deltaTime
+    
+    -- Simple patrol behavior - just log occasionally
+    if math.floor(goblin.spawnTime * 2) % 5 == 0 and goblin.spawnTime - deltaTime < math.floor(goblin.spawnTime * 2) / 2 then
+        print("Goblin " .. entityId .. " is patrolling...")
+    end
 end
 
-function OnDeath(entity)
-    print("Goblin defeated!")
-    -- Spawn loot
+function goblin.OnDeath(entityId)
+    print("Goblin " .. entityId .. " defeated!")
+    -- Spawn loot would go here
 end
 
 return goblin
