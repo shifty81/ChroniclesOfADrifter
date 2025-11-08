@@ -1,0 +1,144 @@
+{
+  "presets": [
+    {
+      "name": "Forest Ranger",
+      "description": "A skilled hunter from the deep woods",
+      "appearance": {
+        "skinTone": "medium",
+        "hairStyle": "short",
+        "hairColor": { "r": 100, "g": 70, "b": 40, "a": 255 },
+        "eyeColor": { "r": 70, "g": 130, "b": 180, "a": 255 },
+        "bodyType": "athletic"
+      },
+      "clothing": {
+        "shirt": {
+          "style": "tunic",
+          "primaryColor": { "r": 34, "g": 139, "b": 34, "a": 255 },
+          "secondaryColor": { "r": 85, "g": 107, "b": 47, "a": 255 }
+        },
+        "pants": {
+          "style": "leggings",
+          "primaryColor": { "r": 70, "g": 50, "b": 30, "a": 255 },
+          "secondaryColor": { "r": 50, "g": 35, "b": 20, "a": 255 }
+        },
+        "boots": {
+          "style": "leather",
+          "primaryColor": { "r": 80, "g": 50, "b": 20, "a": 255 },
+          "secondaryColor": { "r": 60, "g": 40, "b": 15, "a": 255 }
+        }
+      }
+    },
+    {
+      "name": "Knight Errant",
+      "description": "A wandering warrior seeking glory",
+      "appearance": {
+        "skinTone": "light",
+        "hairStyle": "long",
+        "hairColor": { "r": 180, "g": 140, "b": 90, "a": 255 },
+        "eyeColor": { "r": 120, "g": 100, "b": 80, "a": 255 },
+        "bodyType": "heavy"
+      },
+      "clothing": {
+        "shirt": {
+          "style": "armor_shirt",
+          "primaryColor": { "r": 105, "g": 105, "b": 105, "a": 255 },
+          "secondaryColor": { "r": 169, "g": 169, "b": 169, "a": 255 }
+        },
+        "pants": {
+          "style": "armor_pants",
+          "primaryColor": { "r": 80, "g": 80, "b": 80, "a": 255 },
+          "secondaryColor": { "r": 60, "g": 60, "b": 60, "a": 255 }
+        },
+        "boots": {
+          "style": "heavy",
+          "primaryColor": { "r": 70, "g": 70, "b": 70, "a": 255 },
+          "secondaryColor": { "r": 50, "g": 50, "b": 50, "a": 255 }
+        }
+      }
+    },
+    {
+      "name": "Desert Nomad",
+      "description": "A traveler from the distant sands",
+      "appearance": {
+        "skinTone": "tan",
+        "hairStyle": "braided",
+        "hairColor": { "r": 50, "g": 30, "b": 20, "a": 255 },
+        "eyeColor": { "r": 100, "g": 70, "b": 50, "a": 255 },
+        "bodyType": "slim"
+      },
+      "clothing": {
+        "shirt": {
+          "style": "robe",
+          "primaryColor": { "r": 210, "g": 180, "b": 140, "a": 255 },
+          "secondaryColor": { "r": 244, "g": 164, "b": 96, "a": 255 }
+        },
+        "pants": {
+          "style": "trousers",
+          "primaryColor": { "r": 180, "g": 140, "b": 100, "a": 255 },
+          "secondaryColor": { "r": 150, "g": 110, "b": 70, "a": 255 }
+        },
+        "boots": {
+          "style": "light",
+          "primaryColor": { "r": 160, "g": 120, "b": 80, "a": 255 },
+          "secondaryColor": { "r": 130, "g": 90, "b": 60, "a": 255 }
+        }
+      }
+    },
+    {
+      "name": "Mystic Scholar",
+      "description": "A seeker of ancient knowledge",
+      "appearance": {
+        "skinTone": "pale",
+        "hairStyle": "long",
+        "hairColor": { "r": 200, "g": 200, "b": 200, "a": 255 },
+        "eyeColor": { "r": 138, "g": 43, "b": 226, "a": 255 },
+        "bodyType": "slim"
+      },
+      "clothing": {
+        "shirt": {
+          "style": "robe",
+          "primaryColor": { "r": 75, "g": 0, "b": 130, "a": 255 },
+          "secondaryColor": { "r": 138, "g": 43, "b": 226, "a": 255 }
+        },
+        "pants": {
+          "style": "trousers",
+          "primaryColor": { "r": 25, "g": 25, "b": 112, "a": 255 },
+          "secondaryColor": { "r": 0, "g": 0, "b": 0, "a": 255 }
+        },
+        "boots": {
+          "style": "cloth",
+          "primaryColor": { "r": 50, "g": 50, "b": 50, "a": 255 },
+          "secondaryColor": { "r": 30, "g": 30, "b": 30, "a": 255 }
+        }
+      }
+    },
+    {
+      "name": "Pirate Captain",
+      "description": "A seafaring adventurer",
+      "appearance": {
+        "skinTone": "medium",
+        "hairStyle": "ponytail",
+        "hairColor": { "r": 50, "g": 30, "b": 20, "a": 255 },
+        "eyeColor": { "r": 70, "g": 130, "b": 180, "a": 255 },
+        "bodyType": "average"
+      },
+      "clothing": {
+        "shirt": {
+          "style": "vest",
+          "primaryColor": { "r": 178, "g": 34, "b": 34, "a": 255 },
+          "secondaryColor": { "r": 139, "g": 0, "b": 0, "a": 255 }
+        },
+        "pants": {
+          "style": "trousers",
+          "primaryColor": { "r": 25, "g": 25, "b": 112, "a": 255 },
+          "secondaryColor": { "r": 0, "g": 0, "b": 139, "a": 255 }
+        },
+        "boots": {
+          "style": "leather",
+          "primaryColor": { "r": 80, "g": 50, "b": 20, "a": 255 },
+          "secondaryColor": { "r": 60, "g": 40, "b": 15, "a": 255 }
+        }
+      }
+    }
+  ]
+}
