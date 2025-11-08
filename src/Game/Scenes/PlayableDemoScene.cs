@@ -19,6 +19,8 @@ public class PlayableDemoScene : Scene
         World.AddSystem(new CameraInputSystem());
         World.AddSystem(new MovementSystem());
         World.AddSystem(new CameraSystem());
+        World.AddSystem(new CameraLookAheadSystem()); // New: Camera look-ahead based on velocity
+        World.AddSystem(new ParallaxSystem()); // New: Parallax scrolling for depth
         World.AddSystem(new CombatSystem());
         World.AddSystem(new RenderingSystem());
         
@@ -42,6 +44,15 @@ public class PlayableDemoScene : Scene
         World.AddComponent(camera, new PositionComponent(960, 540));
         CameraSystem.SetFollowTarget(World, camera, player, followSpeed: 8.0f);
         
+        // Enable camera look-ahead for smooth camera movement
+        CameraLookAheadSystem.EnableLookAhead(World, camera, 
+            lookAheadDistance: 100.0f, 
+            lookAheadSpeed: 3.0f, 
+            offsetScale: 0.15f);
+        
+        // Create parallax background layers for depth
+        CreateParallaxLayers();
+        
         // Create multiple goblin enemies in different positions
         CreateGoblin(World, 600, 300);
         CreateGoblin(World, 1200, 300);
@@ -52,6 +63,29 @@ public class PlayableDemoScene : Scene
         Console.WriteLine("[PlayableDemo] Demo scene loaded!");
         Console.WriteLine("[PlayableDemo] Fight the goblins! Use SPACE to attack when near enemies.");
         Console.WriteLine("[PlayableDemo] Use +/- keys to zoom in/out");
+        Console.WriteLine("[PlayableDemo] Camera now features smooth look-ahead and parallax depth!");
+    }
+    
+    private void CreateParallaxLayers()
+    {
+        // Layer 0: Far background (moves slowest)
+        var farBg = ParallaxSystem.CreateParallaxLayer(World, "Far Background", 
+            parallaxFactor: 0.2f, 
+            zOrder: -100,
+            autoScrollX: 2.0f);  // Slowly scrolls like distant clouds
+        
+        // Layer 1: Mid background
+        var midBg = ParallaxSystem.CreateParallaxLayer(World, "Mid Background",
+            parallaxFactor: 0.5f,
+            zOrder: -50);
+        
+        // Layer 2: Near background
+        var nearBg = ParallaxSystem.CreateParallaxLayer(World, "Near Background",
+            parallaxFactor: 0.8f,
+            zOrder: -10);
+        
+        // Note: Main gameplay layer has parallax factor 1.0 (moves with camera)
+        // Foreground layers would have parallax > 1.0 (move faster)
     }
     
     private void CreateGoblin(World world, float x, float y)
