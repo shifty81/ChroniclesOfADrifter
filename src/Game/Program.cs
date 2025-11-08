@@ -28,6 +28,13 @@ class Program
             return;
         }
         
+        // Check for vegetation test mode
+        if (args.Length > 0 && args[0].ToLower() == "vegetation-test")
+        {
+            Tests.VegetationGenerationTest.Run();
+            return;
+        }
+        
         // Check if terrain demo was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "terrain")
         {
@@ -44,6 +51,7 @@ class Program
         Console.WriteLine("===========================================\n");
         Console.WriteLine("  Tip: Run with 'test' for terrain tests");
         Console.WriteLine("       Run with 'camera-test' for camera tests");
+        Console.WriteLine("       Run with 'vegetation-test' for vegetation tests");
         Console.WriteLine("       Run with 'terrain' for terrain demo");
         Console.WriteLine("===========================================\n");
         

@@ -644,18 +644,18 @@ All Areas:           Hard stone + rare ores
 5. ✅ Parallax scrolling system for depth illusion (COMPLETED)
 6. ✅ Camera look-ahead based on player movement (COMPLETED)
 7. ⬜ Semi-angled sprite art (25-45° perspective in sprites)
-8. ⬜ Basic 2D tile/block system (32 tiles wide × 30 tiles tall per chunk)
-9. ⬜ Simple terrain generation with Perlin noise for surface
-10. ⬜ Basic biome system (3-4 biomes)
-11. ⬜ Underground layer generation (20 blocks deep)
-12. ⬜ Chunk loading/unloading (horizontal)
+8. ✅ Basic 2D tile/block system (32 tiles wide × 30 tiles tall per chunk) (COMPLETED)
+9. ✅ Simple terrain generation with Perlin noise for surface (COMPLETED)
+10. ✅ Basic biome system (3-4 biomes) (COMPLETED - Forest, Plains, Desert)
+11. ✅ Underground layer generation (20 blocks deep) (COMPLETED)
+12. ✅ Chunk loading/unloading (horizontal) (COMPLETED)
 
 ### Medium Priority (Phase 2)
 1. ⬜ Multi-layer parallax backgrounds (3-5 layers)
 2. ⬜ Advanced camera features (screen shake, camera zones)
-3. ⬜ Underground cave pocket generation
+3. ✅ Underground cave pocket generation (COMPLETED)
 4. ⬜ Multiple biome types (8+ biomes)
-5. ⬜ Tree and vegetation generation on surface
+5. ✅ Tree and vegetation generation on surface (COMPLETED - 7 vegetation types)
 6. ⬜ Water body generation (rivers, lakes, oceans)
 7. ⬜ Block digging/mining system
 8. ⬜ Underground lighting and fog of war
