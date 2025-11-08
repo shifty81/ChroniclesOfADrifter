@@ -14,12 +14,29 @@ class Program
     
     static void Main(string[] args)
     {
+        // Check for test mode
+        if (args.Length > 0 && args[0].ToLower() == "test")
+        {
+            Tests.TerrainGenerationTest.Run();
+            return;
+        }
+        
+        // Check if terrain demo was requested via command line argument
+        if (args.Length > 0 && args[0].ToLower() == "terrain")
+        {
+            TerrainDemoProgram.Run();
+            return;
+        }
+        
         // Initialize console
         ConsoleRenderer.InitializeConsole();
         
         Console.WriteLine("===========================================");
         Console.WriteLine("  Chronicles of a Drifter - Playable Demo");
         Console.WriteLine("  C++/.NET 9/Lua Custom Voxel Game Engine");
+        Console.WriteLine("===========================================\n");
+        Console.WriteLine("  Tip: Run with 'test' for terrain tests");
+        Console.WriteLine("       Run with 'terrain' for terrain demo");
         Console.WriteLine("===========================================\n");
         
         // Initialize engine
