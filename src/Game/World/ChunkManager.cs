@@ -116,4 +116,28 @@ public class ChunkManager
     {
         return loadedChunks.Count;
     }
+    
+    /// <summary>
+    /// Gets the vegetation at a world X coordinate (surface only)
+    /// </summary>
+    public ECS.Components.TileType? GetVegetation(int worldX)
+    {
+        int chunkX = Chunk.WorldToChunkCoord(worldX);
+        int localX = Chunk.WorldToLocalCoord(worldX);
+        
+        var chunk = GetChunk(chunkX);
+        return chunk.GetVegetation(localX);
+    }
+    
+    /// <summary>
+    /// Sets the vegetation at a world X coordinate (surface only)
+    /// </summary>
+    public void SetVegetation(int worldX, ECS.Components.TileType? type)
+    {
+        int chunkX = Chunk.WorldToChunkCoord(worldX);
+        int localX = Chunk.WorldToLocalCoord(worldX);
+        
+        var chunk = GetChunk(chunkX);
+        chunk.SetVegetation(localX, type);
+    }
 }

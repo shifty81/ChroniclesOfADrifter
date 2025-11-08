@@ -88,11 +88,46 @@ public class TerrainConsoleRenderer
                     int bufferX = screenX + 1; // +1 for border
                     int bufferY = screenY + 1; // +1 for border
                     
+                    // Check if there's vegetation at this position (only on surface)
+                    // Display vegetation on top of terrain if it exists at surface level
+                    var vegetation = chunkManager.GetVegetation(worldX);
+                    
+                    if (vegetation.HasValue && chunkY <= 9) // Vegetation only visible in surface area
+                    {
+                        // Find surface tile Y for this X column
+                        int surfaceY = FindSurfaceY(chunkManager, worldX);
+                        
+                        // If we're rendering the surface or just above it, show vegetation
+                        if (chunkY <= surfaceY + 1 && chunkY >= surfaceY - 1)
+                        {
+                            _buffer[bufferX, bufferY] = vegetation.Value.GetChar();
+                            _colorBuffer[bufferX, bufferY] = vegetation.Value.GetColor();
+                            continue;
+                        }
+                    }
+                    
+                    // Normal tile rendering
                     _buffer[bufferX, bufferY] = tileType.GetChar();
                     _colorBuffer[bufferX, bufferY] = tileType.GetColor();
                 }
             }
         }
+    }
+    
+    /// <summary>
+    /// Finds the surface Y coordinate for a given world X position
+    /// </summary>
+    private int FindSurfaceY(ChunkManager chunkManager, int worldX)
+    {
+        for (int y = 0; y < Chunk.CHUNK_HEIGHT; y++)
+        {
+            var tile = chunkManager.GetTile(worldX, y);
+            if (tile.IsSolid())
+            {
+                return y;
+            }
+        }
+        return 0;
     }
     
     private void DrawEntities(World world, CameraComponent camera)
