@@ -8,15 +8,15 @@ namespace ChroniclesOfADrifter.ECS.Systems;
 /// </summary>
 public class PlayerInputSystem : ISystem
 {
-    // Key codes matching standard keyboard layout
-    private const int KEY_W = 87;
-    private const int KEY_A = 65;
-    private const int KEY_S = 83;
-    private const int KEY_D = 68;
-    private const int KEY_UP = 265;
-    private const int KEY_DOWN = 264;
-    private const int KEY_LEFT = 263;
-    private const int KEY_RIGHT = 262;
+    // SDL2 key codes (lowercase ASCII for letters, special codes for arrows)
+    private const int KEY_W = 119;  // 'w'
+    private const int KEY_A = 97;   // 'a'
+    private const int KEY_S = 115;  // 's'
+    private const int KEY_D = 100;  // 'd'
+    private const int KEY_UP = 1073741906;     // SDL_SCANCODE_UP
+    private const int KEY_DOWN = 1073741905;   // SDL_SCANCODE_DOWN
+    private const int KEY_LEFT = 1073741904;   // SDL_SCANCODE_LEFT
+    private const int KEY_RIGHT = 1073741903;  // SDL_SCANCODE_RIGHT
     
     public void Initialize(World world)
     {
