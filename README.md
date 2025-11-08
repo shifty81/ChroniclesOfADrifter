@@ -52,6 +52,7 @@ ChroniclesOfADrifter/
 - **[Vegetation System](docs/VEGETATION_SYSTEM.md)** - Tree and flora generation with biome-specific placement
 - **[Water System](docs/WATER_SYSTEM.md)** - River, lake, and ocean generation
 - **[Mining & Building System](docs/MINING_BUILDING_SYSTEM.md)** - Block mining, resource collection, and building mechanics
+- **[Collision Detection](docs/COLLISION_SYSTEM.md)** - AABB collision detection, entity and terrain collision, sliding response
 - **[Animation System](docs/ANIMATION_SYSTEM.md)** - Sprite animation and character customization
 - **[Camera System](docs/CAMERA_SYSTEM.md)** - 2D camera with following, zoom, and bounds
 - **[Camera Features](docs/CAMERA_FEATURES.md)** - Parallax scrolling and look-ahead systems
@@ -171,12 +172,20 @@ This repository contains the **initial implementation** of Chronicles of a Drift
   - [x] Light intensity falloff with distance
   - [x] Fog of war with exploration tracking
   - [x] Dynamic lighting for all light sources
+- [x] **Collision Detection System**
+  - [x] AABB (Axis-Aligned Bounding Box) collision detection
+  - [x] Entity-to-terrain collision with ChunkManager integration
+  - [x] Entity-to-entity collision detection
+  - [x] Collision layer system for filtering (Player, Enemy, Projectile, etc.)
+  - [x] Sliding collision response (smooth wall sliding)
+  - [x] Static vs. dynamic entity support
+  - [x] Comprehensive collision test suite
+  - [x] Interactive collision demo scene
 
 ### 🔄 Next Steps
 - [ ] Implement C++ rendering engine (DirectX 12)
 - [ ] Add actual sprite assets (high-resolution character sprites)
 - [ ] Add water flow mechanics and swimming
-- [ ] Add collision detection system
 - [ ] Create crafting system for tools
 - [ ] Implement combat mechanics
 - [ ] Add weather and time systems
