@@ -26,6 +26,9 @@ public enum TileType
     Bush,           // Bush decoration
     Cactus,         // Desert cactus
     Flower,         // Small flower decoration
+    
+    // Light sources
+    Torch,          // Placed torch (emits light)
 }
 
 /// <summary>
@@ -63,6 +66,7 @@ public static class TileTypeExtensions
             TileType.Water => false,
             TileType.TallGrass => false,
             TileType.Flower => false,
+            TileType.Torch => false,
             _ => true
         };
     }
@@ -93,6 +97,7 @@ public static class TileTypeExtensions
             TileType.Bush => '♠',
             TileType.Cactus => '‡',
             TileType.Flower => '✿',
+            TileType.Torch => '☼',
             _ => '?'
         };
     }
@@ -123,6 +128,7 @@ public static class TileTypeExtensions
             TileType.Bush => ConsoleColor.DarkGreen,
             TileType.Cactus => ConsoleColor.Green,
             TileType.Flower => ConsoleColor.Magenta,
+            TileType.Torch => ConsoleColor.Yellow,
             _ => ConsoleColor.White
         };
     }
@@ -142,6 +148,42 @@ public static class TileTypeExtensions
             TileType.Cactus => true,
             TileType.Flower => true,
             _ => false
+        };
+    }
+    
+    /// <summary>
+    /// Checks if a tile type emits light
+    /// </summary>
+    public static bool IsLightSource(this TileType type)
+    {
+        return type switch
+        {
+            TileType.Torch => true,
+            _ => false
+        };
+    }
+    
+    /// <summary>
+    /// Gets the light radius emitted by this tile type (in blocks)
+    /// </summary>
+    public static float GetLightRadius(this TileType type)
+    {
+        return type switch
+        {
+            TileType.Torch => 8.0f,
+            _ => 0f
+        };
+    }
+    
+    /// <summary>
+    /// Gets the light intensity emitted by this tile type (0.0 to 1.0)
+    /// </summary>
+    public static float GetLightIntensity(this TileType type)
+    {
+        return type switch
+        {
+            TileType.Torch => 1.0f,
+            _ => 0f
         };
     }
     
@@ -171,6 +213,7 @@ public static class TileTypeExtensions
             TileType.GoldOre => 12.0f,
             TileType.Bedrock => float.PositiveInfinity, // Unbreakable
             TileType.Water => 0f,
+            TileType.Torch => 0.5f,
             _ => 1.0f
         };
     }
