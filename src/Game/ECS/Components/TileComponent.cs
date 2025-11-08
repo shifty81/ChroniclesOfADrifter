@@ -17,6 +17,15 @@ public enum TileType
     IronOre,        // Iron ore deposits
     CopperOre,      // Copper ore deposits
     GoldOre,        // Gold ore deposits
+    
+    // Vegetation types
+    TreeOak,        // Oak tree (Forest/Plains biome)
+    TreePine,       // Pine tree (generic)
+    TreePalm,       // Palm tree (Desert biome)
+    TallGrass,      // Tall grass decoration
+    Bush,           // Bush decoration
+    Cactus,         // Desert cactus
+    Flower,         // Small flower decoration
 }
 
 /// <summary>
@@ -52,6 +61,8 @@ public static class TileTypeExtensions
         {
             TileType.Air => false,
             TileType.Water => false,
+            TileType.TallGrass => false,
+            TileType.Flower => false,
             _ => true
         };
     }
@@ -75,6 +86,13 @@ public static class TileTypeExtensions
             TileType.IronOre => 'I',
             TileType.CopperOre => 'C',
             TileType.GoldOre => 'G',
+            TileType.TreeOak => '♣',
+            TileType.TreePine => '♠',
+            TileType.TreePalm => 'Ψ',
+            TileType.TallGrass => '"',
+            TileType.Bush => '♠',
+            TileType.Cactus => '‡',
+            TileType.Flower => '✿',
             _ => '?'
         };
     }
@@ -98,7 +116,32 @@ public static class TileTypeExtensions
             TileType.IronOre => ConsoleColor.DarkRed,
             TileType.CopperOre => ConsoleColor.DarkCyan,
             TileType.GoldOre => ConsoleColor.DarkYellow,
+            TileType.TreeOak => ConsoleColor.DarkGreen,
+            TileType.TreePine => ConsoleColor.DarkGreen,
+            TileType.TreePalm => ConsoleColor.Green,
+            TileType.TallGrass => ConsoleColor.Green,
+            TileType.Bush => ConsoleColor.DarkGreen,
+            TileType.Cactus => ConsoleColor.Green,
+            TileType.Flower => ConsoleColor.Magenta,
             _ => ConsoleColor.White
+        };
+    }
+    
+    /// <summary>
+    /// Checks if a tile type is vegetation
+    /// </summary>
+    public static bool IsVegetation(this TileType type)
+    {
+        return type switch
+        {
+            TileType.TreeOak => true,
+            TileType.TreePine => true,
+            TileType.TreePalm => true,
+            TileType.TallGrass => true,
+            TileType.Bush => true,
+            TileType.Cactus => true,
+            TileType.Flower => true,
+            _ => false
         };
     }
 }

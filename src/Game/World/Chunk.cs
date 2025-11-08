@@ -23,6 +23,12 @@ public class Chunk
     private ECS.Components.TileType[,] tiles;
     
     /// <summary>
+    /// 2D array of vegetation on the surface [x]
+    /// Only stores vegetation for surface layer
+    /// </summary>
+    private ECS.Components.TileType?[] vegetation;
+    
+    /// <summary>
     /// Whether this chunk has been generated
     /// </summary>
     public bool IsGenerated { get; private set; }
@@ -36,6 +42,7 @@ public class Chunk
     {
         ChunkX = chunkX;
         tiles = new ECS.Components.TileType[CHUNK_WIDTH, CHUNK_HEIGHT];
+        vegetation = new ECS.Components.TileType?[CHUNK_WIDTH];
         IsGenerated = false;
         IsModified = false;
     }
@@ -100,6 +107,36 @@ public class Chunk
     public void SetGenerated()
     {
         IsGenerated = true;
+    }
+    
+    /// <summary>
+    /// Gets the vegetation at local chunk X coordinate
+    /// </summary>
+    /// <param name="localX">X coordinate within chunk (0-31)</param>
+    public ECS.Components.TileType? GetVegetation(int localX)
+    {
+        if (localX < 0 || localX >= CHUNK_WIDTH)
+        {
+            return null;
+        }
+        
+        return vegetation[localX];
+    }
+    
+    /// <summary>
+    /// Sets the vegetation at local chunk X coordinate
+    /// </summary>
+    /// <param name="localX">X coordinate within chunk (0-31)</param>
+    /// <param name="type">Vegetation type (or null to clear)</param>
+    public void SetVegetation(int localX, ECS.Components.TileType? type)
+    {
+        if (localX < 0 || localX >= CHUNK_WIDTH)
+        {
+            return;
+        }
+        
+        vegetation[localX] = type;
+        IsModified = true;
     }
     
     /// <summary>

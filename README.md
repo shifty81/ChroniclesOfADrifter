@@ -49,6 +49,7 @@ ChroniclesOfADrifter/
 - **[Roadmap](ROADMAP.md)** - Development roadmap with 2D world generation plans
 - **[Architecture](docs/ARCHITECTURE.md)** - System design and technical overview
 - **[Terrain Generation](docs/TERRAIN_GENERATION.md)** - 2D procedural terrain with biomes and caves
+- **[Vegetation System](docs/VEGETATION_SYSTEM.md)** - Tree and flora generation with biome-specific placement
 - **[Animation System](docs/ANIMATION_SYSTEM.md)** - Sprite animation and character customization
 - **[Camera System](docs/CAMERA_SYSTEM.md)** - 2D camera with following, zoom, and bounds
 - **[Camera Features](docs/CAMERA_FEATURES.md)** - Parallax scrolling and look-ahead systems
@@ -127,12 +128,18 @@ This repository contains the **initial implementation** of Chronicles of a Drift
   - [x] 20-layer underground system with ores
   - [x] Cave generation
   - [x] Dynamic chunk loading/unloading
+- [x] **Vegetation Generation System (NEW!)**
+  - [x] Biome-specific vegetation (trees, grass, bushes, cacti, flowers)
+  - [x] Forest biome: 60% coverage with oak/pine trees
+  - [x] Plains biome: 30% coverage with scattered vegetation
+  - [x] Desert biome: 5% coverage with cacti and palm trees
+  - [x] Noise-based procedural placement
+  - [x] Non-blocking vegetation (grass, flowers) vs blocking (trees)
 
 ### 🔄 Next Steps
 - [ ] Implement C++ rendering engine (DirectX 12)
 - [ ] Add actual sprite assets (high-resolution character sprites)
 - [ ] Expand biome system to 8+ types
-- [ ] Add tree and vegetation generation
 - [ ] Implement block digging/mining system
 - [ ] Add collision detection system
 - [ ] Create crafting system

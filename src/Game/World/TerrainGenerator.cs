@@ -17,6 +17,7 @@ public class TerrainGenerator
 {
     private int seed;
     private Random random;
+    private VegetationGenerator vegetationGenerator;
     
     // Noise parameters
     private const float SURFACE_FREQUENCY = 0.03f;  // Controls surface terrain smoothness
@@ -27,6 +28,7 @@ public class TerrainGenerator
     {
         this.seed = seed ?? Environment.TickCount;
         this.random = new Random(this.seed);
+        this.vegetationGenerator = new VegetationGenerator(this.seed);
         SimplexNoise.Noise.Seed = this.seed;
     }
     
@@ -37,12 +39,16 @@ public class TerrainGenerator
     {
         int startX = chunk.GetWorldStartX();
         
+        // Store biome info for vegetation generation
+        BiomeType[] biomeMap = new BiomeType[Chunk.CHUNK_WIDTH];
+        
         for (int localX = 0; localX < Chunk.CHUNK_WIDTH; localX++)
         {
             int worldX = startX + localX;
             
             // Determine biome for this X coordinate
             BiomeType biome = GetBiomeAt(worldX);
+            biomeMap[localX] = biome;
             
             // Generate surface height using noise (0-9 range for surface)
             float surfaceNoise = SimplexNoise.Noise.CalcPixel1D(worldX, SURFACE_FREQUENCY);
@@ -82,6 +88,9 @@ public class TerrainGenerator
                 chunk.SetTile(localX, y, tileType);
             }
         }
+        
+        // Generate vegetation after terrain is complete
+        vegetationGenerator.GenerateVegetation(chunk, biomeMap);
         
         chunk.SetGenerated();
     }
