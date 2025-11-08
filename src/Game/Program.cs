@@ -63,6 +63,13 @@ class Program
             return;
         }
         
+        // Check for structure generation test mode
+        if (args.Length > 0 && args[0].ToLower() == "structure-test")
+        {
+            Tests.StructureGenerationTest.Run();
+            return;
+        }
+        
         // Check if terrain demo was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "terrain")
         {
