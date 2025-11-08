@@ -70,6 +70,13 @@ class Program
             return;
         }
         
+        // Check for crafting system test mode
+        if (args.Length > 0 && args[0].ToLower() == "crafting-test")
+        {
+            Tests.CraftingSystemTest.RunTests();
+            return;
+        }
+        
         // Check if terrain demo was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "terrain")
         {
@@ -105,6 +112,13 @@ class Program
             return;
         }
         
+        // Check if crafting demo was requested via command line argument
+        if (args.Length > 0 && args[0].ToLower() == "crafting")
+        {
+            RunCraftingDemo();
+            return;
+        }
+        
         // Initialize console
         ConsoleRenderer.InitializeConsole();
         
@@ -119,11 +133,13 @@ class Program
         Console.WriteLine("       Run with 'water-test' for water generation tests");
         Console.WriteLine("       Run with 'collision-test' for collision detection tests");
         Console.WriteLine("       Run with 'creature-test' for creature spawn tests");
+        Console.WriteLine("       Run with 'crafting-test' for crafting system tests");
         Console.WriteLine("       Run with 'terrain' for terrain demo");
         Console.WriteLine("       Run with 'visual' for GRAPHICAL visual demo (SDL2)");
         Console.WriteLine("       Run with 'mining' for mining/digging demo");
         Console.WriteLine("       Run with 'collision' for collision detection demo");
         Console.WriteLine("       Run with 'creatures' for creature spawning demo");
+        Console.WriteLine("       Run with 'crafting' for crafting system demo");
         Console.WriteLine("===========================================\n");
         
         // Initialize engine
@@ -514,5 +530,25 @@ class Program
         Console.WriteLine("\n[Game] Shutting down...");
         EngineInterop.Engine_Shutdown();
         Console.WriteLine("[Game] Goodbye!");
+    }
+    
+    /// <summary>
+    /// Run the crafting demo scene
+    /// </summary>
+    static void RunCraftingDemo()
+    {
+        Console.WriteLine("\n[Game] Starting crafting demo...\n");
+        
+        // Create and initialize the crafting demo scene
+        var scene = new CraftingDemoScene();
+        scene.OnLoad();
+        
+        // The demo is self-contained and completes immediately
+        Console.WriteLine("\nPress any key to exit...");
+        Console.ReadKey();
+        
+        // Cleanup
+        scene.OnUnload();
+        Console.WriteLine("[Game] Crafting demo complete!");
     }
 }
