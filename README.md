@@ -71,11 +71,26 @@ ChroniclesOfADrifter/
 
 ### Building
 
+#### Quick Build (Recommended)
+
 ```bash
 # Clone the repository
 git clone https://github.com/shifty81/ChroniclesOfADrifter.git
 cd ChroniclesOfADrifter
 
+# Run the automated build script
+./build.sh        # Linux/macOS
+# or
+build.bat         # Windows
+
+# Run the game
+cd src/Game
+dotnet run -c Release
+```
+
+#### Manual Build
+
+```bash
 # Build C++ engine
 mkdir build && cd build
 cmake ..
@@ -86,7 +101,7 @@ cd ../src/Game
 dotnet build -c Release
 
 # Run the game
-dotnet run
+dotnet run -c Release
 ```
 
 ### Running the Demo
