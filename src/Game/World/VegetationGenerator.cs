@@ -89,6 +89,7 @@ public class VegetationGenerator
             ECS.Components.TileType.Sand => true,
             ECS.Components.TileType.Dirt => true,
             ECS.Components.TileType.Snow => true,
+            ECS.Components.TileType.Stone => true, // Rocky biome
             _ => false
         };
     }
@@ -103,6 +104,11 @@ public class VegetationGenerator
             BiomeType.Forest => DetermineForestVegetation(probability),
             BiomeType.Plains => DeterminePlainsVegetation(probability),
             BiomeType.Desert => DetermineDesertVegetation(probability),
+            BiomeType.Snow => DetermineSnowVegetation(probability),
+            BiomeType.Swamp => DetermineSwampVegetation(probability),
+            BiomeType.Rocky => DetermineRockyVegetation(probability),
+            BiomeType.Jungle => DetermineJungleVegetation(probability),
+            BiomeType.Beach => DetermineBeachVegetation(probability),
             _ => null
         };
     }
@@ -192,6 +198,136 @@ public class VegetationGenerator
         {
             // 2% chance for palm trees (oasis-like)
             return ECS.Components.TileType.TreePalm;
+        }
+    }
+    
+    /// <summary>
+    /// Determines vegetation for Snow biome (sparse pine trees)
+    /// </summary>
+    private ECS.Components.TileType? DetermineSnowVegetation(float probability)
+    {
+        // Snow biome has 30% vegetation coverage, mostly pine trees
+        if (probability < 0.70f)
+        {
+            return null; // No vegetation
+        }
+        else if (probability < 0.95f)
+        {
+            // 25% chance for pine trees
+            return ECS.Components.TileType.TreePine;
+        }
+        else
+        {
+            // 5% chance for bushes
+            return ECS.Components.TileType.Bush;
+        }
+    }
+    
+    /// <summary>
+    /// Determines vegetation for Swamp biome (water plants, swamp trees)
+    /// </summary>
+    private ECS.Components.TileType? DetermineSwampVegetation(float probability)
+    {
+        // Swamp has 40% vegetation coverage
+        if (probability < 0.60f)
+        {
+            return null; // No vegetation
+        }
+        else if (probability < 0.80f)
+        {
+            // 20% chance for oak trees (swamp variant)
+            return ECS.Components.TileType.TreeOak;
+        }
+        else if (probability < 0.95f)
+        {
+            // 15% chance for tall grass (reeds/cattails)
+            return ECS.Components.TileType.TallGrass;
+        }
+        else
+        {
+            // 5% chance for bushes
+            return ECS.Components.TileType.Bush;
+        }
+    }
+    
+    /// <summary>
+    /// Determines vegetation for Rocky biome (very sparse, hardy plants)
+    /// </summary>
+    private ECS.Components.TileType? DetermineRockyVegetation(float probability)
+    {
+        // Rocky has only 10% vegetation coverage
+        if (probability < 0.90f)
+        {
+            return null; // No vegetation
+        }
+        else if (probability < 0.95f)
+        {
+            // 5% chance for bushes
+            return ECS.Components.TileType.Bush;
+        }
+        else
+        {
+            // 5% chance for tall grass
+            return ECS.Components.TileType.TallGrass;
+        }
+    }
+    
+    /// <summary>
+    /// Determines vegetation for Jungle biome (very dense vegetation)
+    /// </summary>
+    private ECS.Components.TileType? DetermineJungleVegetation(float probability)
+    {
+        // Jungle has 70% vegetation coverage - very dense!
+        if (probability < 0.30f)
+        {
+            return null; // No vegetation
+        }
+        else if (probability < 0.60f)
+        {
+            // 30% chance for oak trees (jungle variant)
+            return ECS.Components.TileType.TreeOak;
+        }
+        else if (probability < 0.80f)
+        {
+            // 20% chance for bushes
+            return ECS.Components.TileType.Bush;
+        }
+        else if (probability < 0.95f)
+        {
+            // 15% chance for tall grass (jungle undergrowth)
+            return ECS.Components.TileType.TallGrass;
+        }
+        else
+        {
+            // 5% chance for flowers
+            return ECS.Components.TileType.Flower;
+        }
+    }
+    
+    /// <summary>
+    /// Determines vegetation for Beach biome (sparse palm trees and grass)
+    /// </summary>
+    private ECS.Components.TileType? DetermineBeachVegetation(float probability)
+    {
+        // Beach has 15% vegetation coverage
+        if (probability < 0.85f)
+        {
+            return null; // No vegetation
+        }
+        else if (probability < 0.92f)
+        {
+            // 7% chance for palm trees
+            return ECS.Components.TileType.TreePalm;
+        }
+        else if (probability < 0.97f)
+        {
+            // 5% chance for tall grass
+            return ECS.Components.TileType.TallGrass;
+        }
+        else
+        {
+            // 3% chance for bushes
+            return ECS.Components.TileType.Bush;
         }
     }
 }

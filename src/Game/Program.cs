@@ -42,6 +42,13 @@ class Program
             return;
         }
         
+        // Check if mining demo was requested via command line argument
+        if (args.Length > 0 && args[0].ToLower() == "mining")
+        {
+            RunMiningDemo();
+            return;
+        }
+        
         // Initialize console
         ConsoleRenderer.InitializeConsole();
         
@@ -53,6 +60,7 @@ class Program
         Console.WriteLine("       Run with 'camera-test' for camera tests");
         Console.WriteLine("       Run with 'vegetation-test' for vegetation tests");
         Console.WriteLine("       Run with 'terrain' for terrain demo");
+        Console.WriteLine("       Run with 'mining' for mining/digging demo");
         Console.WriteLine("===========================================\n");
         
         // Initialize engine
@@ -103,6 +111,86 @@ class Program
             
             // Render the game state to console
             renderer.Render(scene.World, fps);
+            
+            EngineInterop.Engine_EndFrame();
+            
+            frameCount++;
+            
+            // Calculate FPS
+            var currentTime = DateTime.Now;
+            var elapsed = (currentTime - lastTime).TotalSeconds;
+            if (elapsed > 0)
+            {
+                fps = (float)(1.0 / elapsed);
+            }
+            lastTime = currentTime;
+            
+            Thread.Sleep(16); // Target ~60 FPS
+        }
+        
+        // Unload scene
+        scene.OnUnload();
+        
+        // Shutdown
+        Console.Clear();
+        Console.CursorVisible = true;
+        Console.WriteLine("\n[Game] Shutting down...");
+        EngineInterop.Engine_Shutdown();
+        Console.WriteLine("[Game] Goodbye!");
+    }
+    
+    static void RunMiningDemo()
+    {
+        // Initialize console
+        ConsoleRenderer.InitializeConsole();
+        
+        Console.WriteLine("===========================================");
+        Console.WriteLine("  Chronicles of a Drifter - Mining Demo");
+        Console.WriteLine("  C++/.NET 9/Lua Custom Voxel Game Engine");
+        Console.WriteLine("===========================================\n");
+        
+        // Initialize engine
+        Console.WriteLine("[Game] Initializing engine...");
+        bool success = EngineInterop.Engine_Initialize(1920, 1080, "Chronicles of a Drifter - Mining Demo");
+        
+        if (!success)
+        {
+            Console.WriteLine("[Game] ERROR: Failed to initialize engine!");
+            Console.WriteLine($"[Game] Error: {EngineInterop.Engine_GetErrorMessage()}");
+            return;
+        }
+        
+        Console.WriteLine("[Game] Engine initialized successfully\n");
+        
+        // Load mining demo scene
+        var scene = new MiningDemoScene();
+        scene.OnLoad();
+        
+        Console.WriteLine("\n[Game] Starting game loop...");
+        Console.WriteLine("[Game] Press Q or ESC to exit\n");
+        
+        Thread.Sleep(2000);
+        
+        // Main game loop
+        int frameCount = 0;
+        var lastTime = DateTime.Now;
+        float fps = 60.0f;
+        
+        while (EngineInterop.Engine_IsRunning())
+        {
+            // Check for quit key
+            if (EngineInterop.Input_IsKeyPressed(KEY_Q) || EngineInterop.Input_IsKeyPressed(KEY_ESC))
+            {
+                Console.WriteLine("\n[Game] Quit key pressed...");
+                break;
+            }
+            
+            EngineInterop.Engine_BeginFrame();
+            
+            float deltaTime = EngineInterop.Engine_GetDeltaTime();
+            
+            // Update the scene
+            scene.Update(deltaTime);
             
             EngineInterop.Engine_EndFrame();
             

@@ -50,6 +50,7 @@ ChroniclesOfADrifter/
 - **[Architecture](docs/ARCHITECTURE.md)** - System design and technical overview
 - **[Terrain Generation](docs/TERRAIN_GENERATION.md)** - 2D procedural terrain with biomes and caves
 - **[Vegetation System](docs/VEGETATION_SYSTEM.md)** - Tree and flora generation with biome-specific placement
+- **[Mining & Building System](docs/MINING_BUILDING_SYSTEM.md)** - Block mining, resource collection, and building mechanics
 - **[Animation System](docs/ANIMATION_SYSTEM.md)** - Sprite animation and character customization
 - **[Camera System](docs/CAMERA_SYSTEM.md)** - 2D camera with following, zoom, and bounds
 - **[Camera Features](docs/CAMERA_FEATURES.md)** - Parallax scrolling and look-ahead systems
@@ -119,33 +120,47 @@ This repository contains the **initial implementation** of Chronicles of a Drift
 - [x] **Clothing color customization system**
 - [x] **Armor/clothing visibility system**
 - [x] **2D Camera system with smooth following and zoom**
-- [x] **Parallax scrolling system for depth illusion (NEW!)**
-- [x] **Camera look-ahead based on player velocity (NEW!)**
+- [x] **Parallax scrolling system for depth illusion**
+- [x] **Camera look-ahead based on player velocity**
 - [x] **2D Terrain Generation System**
   - [x] Chunk-based world (32×30 blocks per chunk)
   - [x] Perlin noise terrain generation
-  - [x] 3 biomes (Plains, Desert, Forest)
+  - [x] 8 biomes (Plains, Desert, Forest, Snow, Swamp, Rocky, Jungle, Beach)
+  - [x] Temperature/moisture-based biome distribution
   - [x] 20-layer underground system with ores
   - [x] Cave generation
   - [x] Dynamic chunk loading/unloading
-- [x] **Vegetation Generation System (NEW!)**
+- [x] **Vegetation Generation System**
   - [x] Biome-specific vegetation (trees, grass, bushes, cacti, flowers)
   - [x] Forest biome: 60% coverage with oak/pine trees
   - [x] Plains biome: 30% coverage with scattered vegetation
   - [x] Desert biome: 5% coverage with cacti and palm trees
+  - [x] Snow biome: 30% coverage with pine trees
+  - [x] Swamp biome: 40% coverage with oak trees and reeds
+  - [x] Rocky biome: 10% coverage with hardy plants
+  - [x] Jungle biome: 70% coverage with dense vegetation
+  - [x] Beach biome: 15% coverage with palm trees
   - [x] Noise-based procedural placement
   - [x] Non-blocking vegetation (grass, flowers) vs blocking (trees)
+- [x] **Mining and Building System**
+  - [x] Block mining with tool requirements
+  - [x] Inventory system for resource collection (40 slots)
+  - [x] Tool progression (wood, stone, iron, steel)
+  - [x] Block hardness and mining speed mechanics
+  - [x] Resource drops from mined blocks
+  - [x] Block placement from inventory
+  - [x] Interactive mining demo scene
 
 ### 🔄 Next Steps
 - [ ] Implement C++ rendering engine (DirectX 12)
 - [ ] Add actual sprite assets (high-resolution character sprites)
 - [ ] Expand biome system to 8+ types
-- [ ] Implement block digging/mining system
 - [ ] Add collision detection system
-- [ ] Create crafting system
+- [ ] Create crafting system for tools
 - [ ] Implement combat mechanics
 - [ ] Add weather and time systems
 - [ ] Create UI framework
+- [ ] Add underground lighting and fog of war
 
 ## 🎨 Game Features
 
