@@ -23,6 +23,7 @@ public class MiningDemoScene : Scene
         World.AddSystem(new PlayerInputSystem());
         World.AddSystem(new MovementSystem());
         World.AddSystem(new CameraSystem());
+        World.AddSystem(new LightingSystem()); // Add lighting system
         
         // Add block interaction system (mining and placing)
         blockInteractionSystem = new BlockInteractionSystem();
@@ -46,15 +47,24 @@ public class MiningDemoScene : Scene
         World.AddComponent(playerEntity, new PlayerComponent { Speed = 100.0f });
         World.AddComponent(playerEntity, new HealthComponent(100));
         
+        // Add player light source (personal lantern/headlamp)
+        World.AddComponent(playerEntity, new LightSourceComponent(
+            radius: 8.0f,
+            intensity: 1.0f,
+            type: LightSourceType.Player
+        ));
+        
         // Add inventory for collecting resources
         var inventory = new InventoryComponent(maxSlots: 40);
+        // Add some starting torches for lighting
+        inventory.AddItem(TileType.Torch, 10);
         World.AddComponent(playerEntity, inventory);
         
         // Add a basic stone pickaxe to start
         var tool = new ToolComponent(ToolType.Pickaxe, ToolMaterial.Stone);
         World.AddComponent(playerEntity, tool);
         
-        Console.WriteLine($"[MiningDemo] Player spawned at (500, 150) with Stone Pickaxe");
+        Console.WriteLine($"[MiningDemo] Player spawned at (500, 150) with Stone Pickaxe, Lantern, and 10 Torches");
         
         // Create camera
         var cameraEntity = World.CreateEntity();
@@ -85,9 +95,10 @@ public class MiningDemoScene : Scene
         Console.WriteLine("[MiningDemo] Controls:");
         Console.WriteLine("[MiningDemo]   - WASD or Arrow keys to move");
         Console.WriteLine("[MiningDemo]   - Hold 'M' key to mine blocks near you");
-        Console.WriteLine("[MiningDemo]   - Press 'P' key to place blocks");
-        Console.WriteLine("[MiningDemo]   - Press 1-9 to select block type from inventory");
-        Console.WriteLine("[MiningDemo]   - Currently equipped: Stone Pickaxe");
+        Console.WriteLine("[MiningDemo]   - Press 'P' key to place blocks (torches, etc.)");
+        Console.WriteLine("[MiningDemo]   - Press 1-9 to select block/torch type from inventory");
+        Console.WriteLine("[MiningDemo]   - Currently equipped: Stone Pickaxe + Lantern");
+        Console.WriteLine("[MiningDemo]   - Underground gets dark - use torches for permanent light!");
     }
     
     public override void Update(float deltaTime)
