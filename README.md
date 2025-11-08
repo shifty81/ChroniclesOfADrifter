@@ -120,12 +120,13 @@ This repository contains the **initial implementation** of Chronicles of a Drift
 - [x] **Clothing color customization system**
 - [x] **Armor/clothing visibility system**
 - [x] **2D Camera system with smooth following and zoom**
-- [x] **Parallax scrolling system for depth illusion (NEW!)**
-- [x] **Camera look-ahead based on player velocity (NEW!)**
+- [x] **Parallax scrolling system for depth illusion**
+- [x] **Camera look-ahead based on player velocity**
 - [x] **2D Terrain Generation System**
   - [x] Chunk-based world (32×30 blocks per chunk)
   - [x] Perlin noise terrain generation
-  - [x] 3 biomes (Plains, Desert, Forest)
+  - [x] 8 biomes (Plains, Desert, Forest, Snow, Swamp, Rocky, Jungle, Beach)
+  - [x] Temperature/moisture-based biome distribution
   - [x] 20-layer underground system with ores
   - [x] Cave generation
   - [x] Dynamic chunk loading/unloading
@@ -134,13 +135,18 @@ This repository contains the **initial implementation** of Chronicles of a Drift
   - [x] Forest biome: 60% coverage with oak/pine trees
   - [x] Plains biome: 30% coverage with scattered vegetation
   - [x] Desert biome: 5% coverage with cacti and palm trees
+  - [x] Snow biome: 30% coverage with pine trees
+  - [x] Swamp biome: 40% coverage with oak trees and reeds
+  - [x] Rocky biome: 10% coverage with hardy plants
+  - [x] Jungle biome: 70% coverage with dense vegetation
+  - [x] Beach biome: 15% coverage with palm trees
   - [x] Noise-based procedural placement
   - [x] Non-blocking vegetation (grass, flowers) vs blocking (trees)
-- [x] **Mining and Building System (NEW!)**
+- [x] **Mining and Building System**
   - [x] Block mining with tool requirements
-  - [x] Inventory system for resource collection
+  - [x] Inventory system for resource collection (40 slots)
   - [x] Tool progression (wood, stone, iron, steel)
-  - [x] Block hardness and mining speed
+  - [x] Block hardness and mining speed mechanics
   - [x] Resource drops from mined blocks
   - [x] Block placement from inventory
   - [x] Interactive mining demo scene
