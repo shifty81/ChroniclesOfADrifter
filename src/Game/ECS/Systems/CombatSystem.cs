@@ -50,9 +50,14 @@ public class CombatSystem : ISystem
                             enemyHealth.CurrentHealth = Math.Max(0, enemyHealth.CurrentHealth - combat.AttackDamage);
                             Console.WriteLine($"[Combat] Player attacked enemy {targetEnemy.Value.Id} for {combat.AttackDamage} damage! Health: {enemyHealth.CurrentHealth}/{enemyHealth.MaxHealth}");
                             
+                            // Trigger screen shake on hit
+                            TriggerCameraShake(world, ShakeIntensity.Light);
+                            
                             if (enemyHealth.CurrentHealth <= 0)
                             {
                                 Console.WriteLine($"[Combat] Enemy {targetEnemy.Value.Id} defeated!");
+                                // Trigger heavier shake on kill
+                                TriggerCameraShake(world, ShakeIntensity.Medium);
                             }
                         }
                     }
@@ -87,9 +92,14 @@ public class CombatSystem : ISystem
                             playerHealth.CurrentHealth = Math.Max(0, playerHealth.CurrentHealth - combat.AttackDamage);
                             Console.WriteLine($"[Combat] Enemy {entity.Id} attacked player for {combat.AttackDamage} damage! Player health: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}");
                             
+                            // Trigger screen shake when player is hit
+                            TriggerCameraShake(world, ShakeIntensity.Light);
+                            
                             if (playerHealth.CurrentHealth <= 0)
                             {
                                 Console.WriteLine("[Combat] Player defeated! Game Over!");
+                                // Heavy shake on player death
+                                TriggerCameraShake(world, ShakeIntensity.Heavy);
                             }
                             
                             combat.TimeSinceLastAttack = 0;
@@ -130,5 +140,44 @@ public class CombatSystem : ISystem
         float dx = a.X - b.X;
         float dy = a.Y - b.Y;
         return MathF.Sqrt(dx * dx + dy * dy);
+    }
+    
+    /// <summary>
+    /// Shake intensity levels
+    /// </summary>
+    private enum ShakeIntensity
+    {
+        Light,
+        Medium,
+        Heavy
+    }
+    
+    /// <summary>
+    /// Trigger camera shake effect
+    /// </summary>
+    private void TriggerCameraShake(World world, ShakeIntensity intensity)
+    {
+        // Find the active camera
+        foreach (var cameraEntity in world.GetEntitiesWithComponent<CameraComponent>())
+        {
+            var camera = world.GetComponent<CameraComponent>(cameraEntity);
+            if (camera != null && camera.IsActive)
+            {
+                // Trigger shake based on intensity
+                switch (intensity)
+                {
+                    case ShakeIntensity.Light:
+                        ScreenShakeSystem.TriggerLightShake(world, cameraEntity);
+                        break;
+                    case ShakeIntensity.Medium:
+                        ScreenShakeSystem.TriggerMediumShake(world, cameraEntity);
+                        break;
+                    case ShakeIntensity.Heavy:
+                        ScreenShakeSystem.TriggerHeavyShake(world, cameraEntity);
+                        break;
+                }
+                break; // Only shake the first active camera
+            }
+        }
     }
 }

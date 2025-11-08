@@ -31,8 +31,29 @@ public class CameraSystem : ISystem
                 }
             }
             
+            // Apply screen shake offset (if present)
+            ApplyScreenShake(world, entity, camera);
+            
             // Apply bounds
             ApplyBounds(camera);
+        }
+    }
+    
+    /// <summary>
+    /// Apply screen shake offset to camera position
+    /// </summary>
+    private void ApplyScreenShake(World world, Entity cameraEntity, CameraComponent camera)
+    {
+        var shake = world.GetComponent<ScreenShakeComponent>(cameraEntity);
+        if (shake != null && shake.IsActive)
+        {
+            // Store original position before shake (for debugging)
+            float originalX = camera.X;
+            float originalY = camera.Y;
+            
+            // Apply shake offset
+            camera.X += shake.OffsetX;
+            camera.Y += shake.OffsetY;
         }
     }
     

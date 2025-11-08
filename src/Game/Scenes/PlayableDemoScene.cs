@@ -20,6 +20,7 @@ public class PlayableDemoScene : Scene
         World.AddSystem(new MovementSystem());
         World.AddSystem(new CameraSystem());
         World.AddSystem(new CameraLookAheadSystem()); // New: Camera look-ahead based on velocity
+        World.AddSystem(new ScreenShakeSystem()); // New: Screen shake effects
         World.AddSystem(new ParallaxSystem()); // New: Parallax scrolling for depth
         World.AddSystem(new CombatSystem());
         World.AddSystem(new RenderingSystem());
@@ -42,6 +43,7 @@ public class PlayableDemoScene : Scene
         };
         World.AddComponent(camera, cameraComponent);
         World.AddComponent(camera, new PositionComponent(960, 540));
+        World.AddComponent(camera, new ScreenShakeComponent()); // Enable screen shake
         CameraSystem.SetFollowTarget(World, camera, player, followSpeed: 8.0f);
         
         // Enable camera look-ahead for smooth camera movement
@@ -63,7 +65,7 @@ public class PlayableDemoScene : Scene
         Console.WriteLine("[PlayableDemo] Demo scene loaded!");
         Console.WriteLine("[PlayableDemo] Fight the goblins! Use SPACE to attack when near enemies.");
         Console.WriteLine("[PlayableDemo] Use +/- keys to zoom in/out");
-        Console.WriteLine("[PlayableDemo] Camera now features smooth look-ahead and parallax depth!");
+        Console.WriteLine("[PlayableDemo] Camera features: smooth look-ahead, parallax depth, and screen shake on hits!");
     }
     
     private void CreateParallaxLayers()
