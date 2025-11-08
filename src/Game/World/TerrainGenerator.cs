@@ -8,6 +8,11 @@ public enum BiomeType
     Plains,     // Grassy surface, gentle hills, standard underground
     Desert,     // Sandy surface, minimal vegetation, sandstone underground
     Forest,     // Dense trees, grass surface, dirt/stone underground
+    Snow,       // Snow-covered surface, pine trees, frozen underground
+    Swamp,      // Water-logged surface, swamp trees, peat underground
+    Rocky,      // Rocky surface, minimal topsoil, exposed stone
+    Jungle,     // Dense vegetation, vines, clay underground
+    Beach,      // Sandy transition between land and water
 }
 
 /// <summary>
@@ -96,19 +101,58 @@ public class TerrainGenerator
     }
     
     /// <summary>
-    /// Determines the biome at a given world X coordinate
+    /// Determines the biome at a given world X coordinate using temperature and moisture
     /// </summary>
     private BiomeType GetBiomeAt(int worldX)
     {
-        float biomeNoise = SimplexNoise.Noise.CalcPixel1D(worldX, BIOME_FREQUENCY);
-        float biomeValue = biomeNoise / 255.0f;
+        // Use two noise functions for temperature and moisture
+        float temperatureNoise = SimplexNoise.Noise.CalcPixel1D(worldX, BIOME_FREQUENCY);
+        float moistureNoise = SimplexNoise.Noise.CalcPixel1D(worldX + 10000, BIOME_FREQUENCY * 1.2f); // Offset seed
         
-        if (biomeValue < 0.35f)
+        float temperature = temperatureNoise / 255.0f; // 0-1 range
+        float moisture = moistureNoise / 255.0f;       // 0-1 range
+        
+        // Biome selection based on temperature and moisture
+        // Cold climates (temperature < 0.25)
+        if (temperature < 0.25f)
+        {
+            return BiomeType.Snow;
+        }
+        // Hot and dry (temperature > 0.75, moisture < 0.3)
+        else if (temperature > 0.75f && moisture < 0.3f)
+        {
             return BiomeType.Desert;
-        else if (biomeValue < 0.65f)
-            return BiomeType.Plains;
-        else
+        }
+        // Hot and wet (temperature > 0.7, moisture > 0.6)
+        else if (temperature > 0.7f && moisture > 0.6f)
+        {
+            return BiomeType.Jungle;
+        }
+        // Moderate and wet (moisture > 0.7)
+        else if (moisture > 0.7f)
+        {
+            return BiomeType.Swamp;
+        }
+        // Moderate and forested (temperature 0.4-0.7, moisture 0.4-0.7)
+        else if (temperature >= 0.4f && temperature <= 0.7f && moisture >= 0.4f && moisture <= 0.7f)
+        {
             return BiomeType.Forest;
+        }
+        // Rocky terrain (low moisture, moderate temp)
+        else if (moisture < 0.3f && temperature >= 0.3f && temperature <= 0.6f)
+        {
+            return BiomeType.Rocky;
+        }
+        // Beach/coastal (specific moisture/temp combo)
+        else if (moisture >= 0.35f && moisture <= 0.45f)
+        {
+            return BiomeType.Beach;
+        }
+        // Default to plains
+        else
+        {
+            return BiomeType.Plains;
+        }
     }
     
     /// <summary>
@@ -121,6 +165,11 @@ public class TerrainGenerator
             BiomeType.Plains => ECS.Components.TileType.Grass,
             BiomeType.Desert => ECS.Components.TileType.Sand,
             BiomeType.Forest => ECS.Components.TileType.Grass,
+            BiomeType.Snow => ECS.Components.TileType.Snow,
+            BiomeType.Swamp => ECS.Components.TileType.Grass,  // Muddy grass
+            BiomeType.Rocky => ECS.Components.TileType.Stone,  // Exposed rock
+            BiomeType.Jungle => ECS.Components.TileType.Grass, // Jungle grass
+            BiomeType.Beach => ECS.Components.TileType.Sand,   // Beach sand
             _ => ECS.Components.TileType.Grass
         };
     }
@@ -135,6 +184,11 @@ public class TerrainGenerator
             BiomeType.Plains => ECS.Components.TileType.Dirt,
             BiomeType.Desert => ECS.Components.TileType.Sand,
             BiomeType.Forest => ECS.Components.TileType.Dirt,
+            BiomeType.Snow => ECS.Components.TileType.Snow,    // Snow layers
+            BiomeType.Swamp => ECS.Components.TileType.Dirt,   // Peat/mud (using dirt)
+            BiomeType.Rocky => ECS.Components.TileType.Stone,  // Thin topsoil, mostly stone
+            BiomeType.Jungle => ECS.Components.TileType.Dirt,  // Rich soil (clay would be better)
+            BiomeType.Beach => ECS.Components.TileType.Sand,   // Deep sand
             _ => ECS.Components.TileType.Dirt
         };
     }
