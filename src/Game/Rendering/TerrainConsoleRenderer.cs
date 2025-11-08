@@ -101,17 +101,150 @@ public class TerrainConsoleRenderer
                         if (chunkY <= surfaceY + 1 && chunkY >= surfaceY - 1)
                         {
                             _buffer[bufferX, bufferY] = vegetation.Value.GetChar();
-                            _colorBuffer[bufferX, bufferY] = vegetation.Value.GetColor();
+                            _colorBuffer[bufferX, bufferY] = ApplyLighting(vegetation.Value.GetColor(), worldX, worldY, world);
                             continue;
                         }
                     }
                     
-                    // Normal tile rendering
+                    // Normal tile rendering with lighting applied
                     _buffer[bufferX, bufferY] = tileType.GetChar();
-                    _colorBuffer[bufferX, bufferY] = tileType.GetColor();
+                    _colorBuffer[bufferX, bufferY] = ApplyLighting(tileType.GetColor(), worldX, worldY, world);
                 }
             }
         }
+    }
+    
+    /// <summary>
+    /// Apply lighting effect to a color based on the tile's light level
+    /// </summary>
+    private ConsoleColor ApplyLighting(ConsoleColor originalColor, int worldX, int worldY, World world)
+    {
+        // Get ambient light level for this depth
+        float lightLevel = GetAmbientLightForDepth(worldY);
+        
+        // Check for nearby light sources (player, torches, etc.)
+        float maxLightFromSources = GetLightFromNearbyLightSources(worldX, worldY, world);
+        lightLevel = Math.Max(lightLevel, maxLightFromSources);
+        
+        // Apply lighting to color
+        return AdjustColorBrightness(originalColor, lightLevel);
+    }
+    
+    /// <summary>
+    /// Get the ambient light level for a given Y coordinate (depth)
+    /// </summary>
+    private float GetAmbientLightForDepth(int y)
+    {
+        const int SURFACE_Y_THRESHOLD = 10;
+        const int SHALLOW_UNDERGROUND_Y = 19;
+        
+        if (y < SURFACE_Y_THRESHOLD)
+        {
+            // Surface: Full daylight
+            return 1.0f;
+        }
+        else if (y < SHALLOW_UNDERGROUND_Y)
+        {
+            // Shallow underground: Dim light (0.3 to 0.0)
+            float depth = y - SURFACE_Y_THRESHOLD;
+            float maxDepth = SHALLOW_UNDERGROUND_Y - SURFACE_Y_THRESHOLD;
+            return Math.Max(0.3f - (depth / maxDepth) * 0.3f, 0f);
+        }
+        else
+        {
+            // Deep underground: Pitch black
+            return 0f;
+        }
+    }
+    
+    /// <summary>
+    /// Get light level from nearby light sources
+    /// </summary>
+    private float GetLightFromNearbyLightSources(int worldX, int worldY, World world)
+    {
+        float maxLight = 0f;
+        
+        // Check player position for player light
+        var playerEntities = world.GetEntitiesWithComponent<PlayerComponent>();
+        foreach (var entity in playerEntities)
+        {
+            var position = world.GetComponent<PositionComponent>(entity);
+            var lightSource = world.GetComponent<LightSourceComponent>(entity);
+            
+            if (position != null && lightSource != null && lightSource.IsActive)
+            {
+                float distance = MathF.Sqrt(
+                    MathF.Pow(position.X - worldX, 2) +
+                    MathF.Pow(position.Y - worldY, 2)
+                );
+                
+                if (distance <= lightSource.Radius)
+                {
+                    float light = lightSource.Intensity * (1.0f - (distance / lightSource.Radius));
+                    maxLight = Math.Max(maxLight, light);
+                }
+            }
+        }
+        
+        // Check for torch entities (placed torches)
+        var lightSources = world.GetEntitiesWithComponent<LightSourceComponent>();
+        foreach (var entity in lightSources)
+        {
+            var position = world.GetComponent<PositionComponent>(entity);
+            var lightSource = world.GetComponent<LightSourceComponent>(entity);
+            
+            if (position != null && lightSource != null && lightSource.IsActive)
+            {
+                float distance = MathF.Sqrt(
+                    MathF.Pow(position.X - worldX, 2) +
+                    MathF.Pow(position.Y - worldY, 2)
+                );
+                
+                if (distance <= lightSource.Radius)
+                {
+                    float light = lightSource.Intensity * (1.0f - (distance / lightSource.Radius));
+                    maxLight = Math.Max(maxLight, light);
+                }
+            }
+        }
+        
+        return maxLight;
+    }
+    
+    /// <summary>
+    /// Adjust color brightness based on light level
+    /// </summary>
+    private ConsoleColor AdjustColorBrightness(ConsoleColor color, float lightLevel)
+    {
+        // Clamp light level
+        lightLevel = Math.Clamp(lightLevel, 0f, 1f);
+        
+        // If very dark (< 0.1), return black
+        if (lightLevel < 0.1f)
+        {
+            return ConsoleColor.Black;
+        }
+        
+        // If dim (< 0.5), convert to darker version
+        if (lightLevel < 0.5f)
+        {
+            return color switch
+            {
+                ConsoleColor.White => ConsoleColor.Gray,
+                ConsoleColor.Gray => ConsoleColor.DarkGray,
+                ConsoleColor.Yellow => ConsoleColor.DarkYellow,
+                ConsoleColor.Green => ConsoleColor.DarkGreen,
+                ConsoleColor.Cyan => ConsoleColor.DarkCyan,
+                ConsoleColor.Red => ConsoleColor.DarkRed,
+                ConsoleColor.Magenta => ConsoleColor.DarkMagenta,
+                ConsoleColor.Blue => ConsoleColor.DarkBlue,
+                // Already dark colors stay as is
+                _ => color
+            };
+        }
+        
+        // Normal or bright lighting - return original color
+        return color;
     }
     
     /// <summary>

@@ -23,6 +23,7 @@ public class MiningDemoScene : Scene
         World.AddSystem(new PlayerInputSystem());
         World.AddSystem(new MovementSystem());
         World.AddSystem(new CameraSystem());
+        World.AddSystem(new LightingSystem()); // Add lighting system
         
         // Add block interaction system (mining and placing)
         blockInteractionSystem = new BlockInteractionSystem();
@@ -46,6 +47,13 @@ public class MiningDemoScene : Scene
         World.AddComponent(playerEntity, new PlayerComponent { Speed = 100.0f });
         World.AddComponent(playerEntity, new HealthComponent(100));
         
+        // Add player light source (personal lantern/headlamp)
+        World.AddComponent(playerEntity, new LightSourceComponent(
+            radius: 8.0f,
+            intensity: 1.0f,
+            type: LightSourceType.Player
+        ));
+        
         // Add inventory for collecting resources
         var inventory = new InventoryComponent(maxSlots: 40);
         World.AddComponent(playerEntity, inventory);
@@ -54,7 +62,7 @@ public class MiningDemoScene : Scene
         var tool = new ToolComponent(ToolType.Pickaxe, ToolMaterial.Stone);
         World.AddComponent(playerEntity, tool);
         
-        Console.WriteLine($"[MiningDemo] Player spawned at (500, 150) with Stone Pickaxe");
+        Console.WriteLine($"[MiningDemo] Player spawned at (500, 150) with Stone Pickaxe and Lantern");
         
         // Create camera
         var cameraEntity = World.CreateEntity();
