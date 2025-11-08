@@ -57,6 +57,8 @@ ChroniclesOfADrifter/
 - **[Vegetation System](docs/VEGETATION_SYSTEM.md)** - Tree and flora generation with biome-specific placement
 - **[Water System](docs/WATER_SYSTEM.md)** - River, lake, and ocean generation
 - **[Mining & Building System](docs/MINING_BUILDING_SYSTEM.md)** - Block mining, resource collection, and building mechanics
+- **[Crafting System](docs/CRAFTING_SYSTEM.md)** - Recipe-based item crafting and material processing
+- **[Swimming Mechanics](docs/SWIMMING_MECHANICS.md)** - Swimming, breath management, and water flow physics
 - **[Collision Detection](docs/COLLISION_SYSTEM.md)** - AABB collision detection, entity and terrain collision, sliding response
 - **[Animation System](docs/ANIMATION_SYSTEM.md)** - Sprite animation and character customization
 - **[Camera System](docs/CAMERA_SYSTEM.md)** - 2D camera with following, zoom, and bounds
@@ -204,16 +206,29 @@ This repository contains the **initial implementation** of Chronicles of a Drift
   - [x] Static vs. dynamic entity support
   - [x] Comprehensive collision test suite
   - [x] Interactive collision demo scene
+- [x] **Crafting System**
+  - [x] Recipe-based crafting with materials
+  - [x] 8 initial recipes (wood planks, wood blocks, bricks, torches, etc.)
+  - [x] Crafting categories (Tools, Building, Lighting)
+  - [x] Inventory integration for crafting
+  - [x] Craftable recipes viewer
+  - [x] Comprehensive crafting system tests
+  - [x] Interactive crafting demo scene
+- [x] **Swimming and Water Mechanics**
+  - [x] Swimming component with breath management
+  - [x] Water flow system with different body types (River, Lake, Ocean)
+  - [x] Drowning mechanics when out of breath
+  - [x] Swim speed reduction in water
+  - [x] Water flow affects entity movement
+  - [x] Comprehensive swimming system tests
 
 ### 🔄 Next Steps
 - [ ] Implement C++ rendering engine (DirectX 12)
 - [ ] Add actual sprite assets (high-resolution character sprites)
-- [ ] Add water flow mechanics and swimming
-- [ ] Create crafting system for tools
-- [ ] Implement combat mechanics
 - [ ] Add weather and time systems
-- [ ] Create UI framework
+- [ ] Create UI framework for crafting and inventory
 - [ ] Implement multithreaded chunk generation
+- [ ] Enhance combat mechanics with weapon crafting
 
 ## 🎨 Game Features
 
