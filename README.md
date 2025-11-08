@@ -46,6 +46,7 @@ ChroniclesOfADrifter/
 
 ## 📚 Documentation
 
+- **[Roadmap](ROADMAP.md)** - Development roadmap with 2D world generation plans
 - **[Architecture](docs/ARCHITECTURE.md)** - System design and technical overview
 - **[Animation System](docs/ANIMATION_SYSTEM.md)** - Sprite animation and character customization
 - **[Camera System](docs/CAMERA_SYSTEM.md)** - 2D camera with following, zoom, and bounds
