@@ -9,7 +9,7 @@ namespace ChroniclesOfADrifter;
 /// </summary>
 class Program
 {
-    private const int KEY_Q = 81;
+    private const int KEY_Q = 113;  // 'q' in SDL2
     private const int KEY_ESC = 27;
     
     static void Main(string[] args)
@@ -63,6 +63,13 @@ class Program
             return;
         }
         
+        // Check if visual demo was requested via command line argument
+        if (args.Length > 0 && args[0].ToLower() == "visual")
+        {
+            RunVisualDemo();
+            return;
+        }
+        
         // Check if mining demo was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "mining")
         {
@@ -91,6 +98,7 @@ class Program
         Console.WriteLine("       Run with 'water-test' for water generation tests");
         Console.WriteLine("       Run with 'collision-test' for collision detection tests");
         Console.WriteLine("       Run with 'terrain' for terrain demo");
+        Console.WriteLine("       Run with 'visual' for GRAPHICAL visual demo (SDL2)");
         Console.WriteLine("       Run with 'mining' for mining/digging demo");
         Console.WriteLine("       Run with 'collision' for collision detection demo");
         Console.WriteLine("===========================================\n");
@@ -326,6 +334,74 @@ class Program
         // Shutdown
         Console.Clear();
         Console.CursorVisible = true;
+        Console.WriteLine("\n[Game] Shutting down...");
+        EngineInterop.Engine_Shutdown();
+        Console.WriteLine("[Game] Goodbye!");
+    }
+    
+    static void RunVisualDemo()
+    {
+        Console.WriteLine("===========================================");
+        Console.WriteLine("  Chronicles of a Drifter - VISUAL Demo");
+        Console.WriteLine("  SDL2 Graphical Rendering");
+        Console.WriteLine("===========================================\n");
+        
+        // Initialize engine with SDL2 window
+        Console.WriteLine("[Game] Initializing SDL2 engine...");
+        bool success = EngineInterop.Engine_Initialize(1280, 720, "Chronicles of a Drifter - Visual Demo");
+        
+        if (!success)
+        {
+            Console.WriteLine("[Game] ERROR: Failed to initialize engine!");
+            Console.WriteLine($"[Game] Error: {EngineInterop.Engine_GetErrorMessage()}");
+            return;
+        }
+        
+        Console.WriteLine("[Game] SDL2 engine initialized successfully\n");
+        
+        // Load visual demo scene
+        var scene = new VisualDemoScene();
+        scene.OnLoad();
+        
+        Console.WriteLine("\n[Game] Starting visual game loop...");
+        Console.WriteLine("[Game] A graphical window should appear!");
+        Console.WriteLine("[Game] Press Q or ESC to exit\n");
+        
+        // Main game loop
+        int frameCount = 0;
+        var lastTime = DateTime.Now;
+        
+        while (EngineInterop.Engine_IsRunning())
+        {
+            EngineInterop.Engine_BeginFrame();
+            
+            float deltaTime = EngineInterop.Engine_GetDeltaTime();
+            
+            // Update the scene
+            scene.Update(deltaTime);
+            
+            EngineInterop.Engine_EndFrame();
+            
+            frameCount++;
+            
+            // Print FPS every 60 frames
+            if (frameCount % 60 == 0)
+            {
+                var currentTime = DateTime.Now;
+                var elapsed = (currentTime - lastTime).TotalSeconds;
+                if (elapsed > 0)
+                {
+                    float fps = 60.0f / (float)elapsed;
+                    Console.WriteLine($"[Game] FPS: {fps:F1}");
+                }
+                lastTime = currentTime;
+            }
+        }
+        
+        // Unload scene
+        scene.OnUnload();
+        
+        // Shutdown
         Console.WriteLine("\n[Game] Shutting down...");
         EngineInterop.Engine_Shutdown();
         Console.WriteLine("[Game] Goodbye!");

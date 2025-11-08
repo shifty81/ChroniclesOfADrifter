@@ -84,6 +84,12 @@ extern "C" {
     ENGINE_API void Renderer_Clear(float r, float g, float b, float a);
     
     /// <summary>
+    /// Draw a filled rectangle
+    /// </summary>
+    ENGINE_API void Renderer_DrawRect(float x, float y, float width, float height,
+                                     float r, float g, float b, float a);
+    
+    /// <summary>
     /// Present the rendered frame to the screen
     /// </summary>
     ENGINE_API void Renderer_Present();

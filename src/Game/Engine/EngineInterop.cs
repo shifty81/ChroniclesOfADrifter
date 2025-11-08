@@ -62,6 +62,17 @@ public static class EngineInterop
     public static extern void Renderer_Clear(float r, float g, float b, float a);
     
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void Renderer_DrawRect(
+        float x, 
+        float y, 
+        float width, 
+        float height,
+        float r,
+        float g,
+        float b,
+        float a);
+    
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void Renderer_Present();
     
     // ===== Input =====

@@ -4,6 +4,10 @@ project(ChroniclesEngine VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Find SDL2
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
+
 # Output directories
 # Ensure consistent output paths across all configurations (no Release/Debug subfolder)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -29,6 +33,9 @@ target_compile_definitions(ChroniclesEngine PRIVATE ENGINE_EXPORTS)
 target_include_directories(ChroniclesEngine PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Engine
 )
+
+# Link SDL2
+target_link_libraries(ChroniclesEngine PRIVATE ${SDL2_LIBRARIES})
 
 # Platform-specific settings
 if(WIN32)
