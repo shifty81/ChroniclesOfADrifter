@@ -23,6 +23,7 @@ public class TerrainGenerator
     private int seed;
     private Random random;
     private VegetationGenerator vegetationGenerator;
+    private WaterGenerator waterGenerator;
     
     // Noise parameters
     private const float SURFACE_FREQUENCY = 0.03f;  // Controls surface terrain smoothness
@@ -34,6 +35,7 @@ public class TerrainGenerator
         this.seed = seed ?? Environment.TickCount;
         this.random = new Random(this.seed);
         this.vegetationGenerator = new VegetationGenerator(this.seed);
+        this.waterGenerator = new WaterGenerator(this.seed);
         SimplexNoise.Noise.Seed = this.seed;
     }
     
@@ -94,7 +96,10 @@ public class TerrainGenerator
             }
         }
         
-        // Generate vegetation after terrain is complete
+        // Generate water bodies after terrain but before vegetation
+        waterGenerator.GenerateWater(chunk, biomeMap);
+        
+        // Generate vegetation after water is placed
         vegetationGenerator.GenerateVegetation(chunk, biomeMap);
         
         chunk.SetGenerated();
