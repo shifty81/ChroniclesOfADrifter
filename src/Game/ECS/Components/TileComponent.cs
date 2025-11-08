@@ -144,4 +144,120 @@ public static class TileTypeExtensions
             _ => false
         };
     }
+    
+    /// <summary>
+    /// Gets the hardness of a block (time to mine in seconds with bare hands)
+    /// </summary>
+    public static float GetHardness(this TileType type)
+    {
+        return type switch
+        {
+            TileType.Air => 0f,
+            TileType.TallGrass => 0.1f,
+            TileType.Flower => 0.1f,
+            TileType.Bush => 0.3f,
+            TileType.Dirt => 0.5f,
+            TileType.Sand => 0.5f,
+            TileType.Grass => 0.6f,
+            TileType.Snow => 0.6f,
+            TileType.TreeOak => 2.0f,
+            TileType.TreePine => 2.0f,
+            TileType.TreePalm => 2.0f,
+            TileType.Cactus => 1.5f,
+            TileType.Stone => 5.0f,
+            TileType.CopperOre => 6.0f,
+            TileType.IronOre => 8.0f,
+            TileType.DeepStone => 10.0f,
+            TileType.GoldOre => 12.0f,
+            TileType.Bedrock => float.PositiveInfinity, // Unbreakable
+            TileType.Water => 0f,
+            _ => 1.0f
+        };
+    }
+    
+    /// <summary>
+    /// Gets the required tool type to efficiently mine this block
+    /// </summary>
+    public static ToolType GetRequiredToolType(this TileType type)
+    {
+        return type switch
+        {
+            TileType.Stone => ToolType.Pickaxe,
+            TileType.DeepStone => ToolType.Pickaxe,
+            TileType.CopperOre => ToolType.Pickaxe,
+            TileType.IronOre => ToolType.Pickaxe,
+            TileType.GoldOre => ToolType.Pickaxe,
+            TileType.TreeOak => ToolType.Axe,
+            TileType.TreePine => ToolType.Axe,
+            TileType.TreePalm => ToolType.Axe,
+            TileType.Dirt => ToolType.Shovel,
+            TileType.Sand => ToolType.Shovel,
+            TileType.Grass => ToolType.Shovel,
+            TileType.Snow => ToolType.Shovel,
+            _ => ToolType.None
+        };
+    }
+    
+    /// <summary>
+    /// Gets the minimum tool material required to mine this block
+    /// </summary>
+    public static ToolMaterial GetMinimumToolMaterial(this TileType type)
+    {
+        return type switch
+        {
+            TileType.Stone => ToolMaterial.Wood,
+            TileType.CopperOre => ToolMaterial.Wood,
+            TileType.IronOre => ToolMaterial.Stone,
+            TileType.DeepStone => ToolMaterial.Stone,
+            TileType.GoldOre => ToolMaterial.Iron,
+            TileType.Bedrock => ToolMaterial.None, // Unbreakable
+            _ => ToolMaterial.None
+        };
+    }
+    
+    /// <summary>
+    /// Gets the item that drops when this block is mined
+    /// </summary>
+    public static TileType GetDroppedItem(this TileType type)
+    {
+        // Most blocks drop themselves
+        return type switch
+        {
+            TileType.Grass => TileType.Dirt, // Grass drops dirt
+            TileType.Air => TileType.Air,     // Air drops nothing
+            TileType.Water => TileType.Air,   // Water drops nothing
+            TileType.Bedrock => TileType.Air, // Bedrock can't be mined
+            _ => type // Everything else drops itself
+        };
+    }
+    
+    /// <summary>
+    /// Gets the quantity of items dropped when this block is mined
+    /// </summary>
+    public static int GetDropQuantity(this TileType type)
+    {
+        return type switch
+        {
+            TileType.Air => 0,
+            TileType.Water => 0,
+            TileType.Bedrock => 0,
+            TileType.TallGrass => 0, // Grass doesn't drop items
+            TileType.Flower => 0,    // Flowers don't drop items (could drop seeds later)
+            _ => 1
+        };
+    }
+    
+    /// <summary>
+    /// Checks if a block can be mined/destroyed
+    /// </summary>
+    public static bool IsMineable(this TileType type)
+    {
+        return type switch
+        {
+            TileType.Air => false,
+            TileType.Water => false,
+            TileType.Bedrock => false,
+            _ => true
+        };
+    }
 }

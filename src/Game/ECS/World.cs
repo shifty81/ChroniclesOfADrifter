@@ -9,6 +9,7 @@ public class World
     private readonly Dictionary<int, HashSet<Type>> _entityComponents = new();
     private readonly Dictionary<Type, Dictionary<int, IComponent>> _componentsByType = new();
     private readonly List<ISystem> _systems = new();
+    private readonly Dictionary<string, object> _sharedResources = new();
     
     /// <summary>
     /// Create a new entity
@@ -135,5 +136,25 @@ public class World
         {
             system.Update(this, deltaTime);
         }
+    }
+    
+    /// <summary>
+    /// Set a shared resource that can be accessed by systems
+    /// </summary>
+    public void SetSharedResource<T>(string key, T resource) where T : class
+    {
+        _sharedResources[key] = resource;
+    }
+    
+    /// <summary>
+    /// Get a shared resource by key
+    /// </summary>
+    public T? GetSharedResource<T>(string key) where T : class
+    {
+        if (_sharedResources.TryGetValue(key, out var resource))
+        {
+            return resource as T;
+        }
+        return null;
     }
 }
