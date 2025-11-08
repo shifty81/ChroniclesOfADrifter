@@ -7,7 +7,7 @@ namespace ChroniclesOfADrifter.Scenes;
 /// </summary>
 public abstract class Scene
 {
-    protected World World { get; private set; }
+    public World World { get; private set; }
     
     public Scene()
     {

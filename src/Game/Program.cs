@@ -1,5 +1,6 @@
 using ChroniclesOfADrifter.Engine;
 using ChroniclesOfADrifter.Scenes;
+using ChroniclesOfADrifter.Rendering;
 
 namespace ChroniclesOfADrifter;
 
@@ -8,10 +9,16 @@ namespace ChroniclesOfADrifter;
 /// </summary>
 class Program
 {
+    private const int KEY_Q = 81;
+    private const int KEY_ESC = 27;
+    
     static void Main(string[] args)
     {
+        // Initialize console
+        ConsoleRenderer.InitializeConsole();
+        
         Console.WriteLine("===========================================");
-        Console.WriteLine("  Chronicles of a Drifter - Lua Scripting");
+        Console.WriteLine("  Chronicles of a Drifter - Playable Demo");
         Console.WriteLine("  C++/.NET 9/Lua Custom Voxel Game Engine");
         Console.WriteLine("===========================================\n");
         
@@ -28,17 +35,32 @@ class Program
         
         Console.WriteLine("[Game] Engine initialized successfully\n");
         
-        // Load scripting demo scene
-        var scene = new ScriptingDemoScene();
+        // Load playable demo scene
+        var scene = new PlayableDemoScene();
         scene.OnLoad();
         
         Console.WriteLine("\n[Game] Starting game loop...");
-        Console.WriteLine("[Game] Press Ctrl+C to exit\n");
+        Console.WriteLine("[Game] Press Q or ESC to exit\n");
+        
+        Thread.Sleep(2000); // Give user time to read initial messages
+        
+        // Create console renderer
+        var renderer = new ConsoleRenderer();
         
         // Main game loop
         int frameCount = 0;
-        while (EngineInterop.Engine_IsRunning() && frameCount < 300) // Run for ~5 seconds
+        var lastTime = DateTime.Now;
+        float fps = 60.0f;
+        
+        while (EngineInterop.Engine_IsRunning())
         {
+            // Check for quit key
+            if (EngineInterop.Input_IsKeyPressed(KEY_Q) || EngineInterop.Input_IsKeyPressed(KEY_ESC))
+            {
+                Console.WriteLine("\n[Game] Quit key pressed...");
+                break;
+            }
+            
             EngineInterop.Engine_BeginFrame();
             
             float deltaTime = EngineInterop.Engine_GetDeltaTime();
@@ -46,23 +68,31 @@ class Program
             // Update the scene (which updates the ECS world)
             scene.Update(deltaTime);
             
-            // Log progress periodically
-            if (frameCount % 60 == 0)
-            {
-                float totalTime = EngineInterop.Engine_GetTotalTime();
-                Console.WriteLine($"[Game] Frame: {frameCount}, DeltaTime: {deltaTime:F4}s, TotalTime: {totalTime:F2}s");
-            }
+            // Render the game state to console
+            renderer.Render(scene.World, fps);
             
             EngineInterop.Engine_EndFrame();
             
             frameCount++;
-            Thread.Sleep(16); // Simulate ~60 FPS
+            
+            // Calculate FPS
+            var currentTime = DateTime.Now;
+            var elapsed = (currentTime - lastTime).TotalSeconds;
+            if (elapsed > 0)
+            {
+                fps = (float)(1.0 / elapsed);
+            }
+            lastTime = currentTime;
+            
+            Thread.Sleep(16); // Target ~60 FPS
         }
         
         // Unload scene
         scene.OnUnload();
         
         // Shutdown
+        Console.Clear();
+        Console.CursorVisible = true;
         Console.WriteLine("\n[Game] Shutting down...");
         EngineInterop.Engine_Shutdown();
         Console.WriteLine("[Game] Goodbye!");

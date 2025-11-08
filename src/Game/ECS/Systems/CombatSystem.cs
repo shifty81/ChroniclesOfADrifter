@@ -1,0 +1,134 @@
+using ChroniclesOfADrifter.ECS.Components;
+using ChroniclesOfADrifter.Engine;
+
+namespace ChroniclesOfADrifter.ECS.Systems;
+
+/// <summary>
+/// Combat system - handles attacking and damage
+/// </summary>
+public class CombatSystem : ISystem
+{
+    private const int KEY_SPACE = 32;
+    
+    public void Initialize(World world)
+    {
+        // No initialization needed
+    }
+    
+    public void Update(World world, float deltaTime)
+    {
+        // Update attack cooldowns
+        foreach (var entity in world.GetEntitiesWithComponent<CombatComponent>())
+        {
+            var combat = world.GetComponent<CombatComponent>(entity);
+            if (combat != null)
+            {
+                combat.TimeSinceLastAttack += deltaTime;
+            }
+        }
+        
+        // Handle player attacks
+        foreach (var entity in world.GetEntitiesWithComponent<PlayerComponent>())
+        {
+            var combat = world.GetComponent<CombatComponent>(entity);
+            var position = world.GetComponent<PositionComponent>(entity);
+            
+            if (combat != null && position != null)
+            {
+                // Check for attack input
+                if (EngineInterop.Input_IsKeyPressed(KEY_SPACE) && 
+                    combat.TimeSinceLastAttack >= combat.AttackCooldown)
+                {
+                    // Find nearest enemy in range
+                    Entity? targetEnemy = FindNearestEnemy(world, position, combat.AttackRange);
+                    
+                    if (targetEnemy != null)
+                    {
+                        var enemyHealth = world.GetComponent<HealthComponent>(targetEnemy.Value);
+                        if (enemyHealth != null && enemyHealth.CurrentHealth > 0)
+                        {
+                            enemyHealth.CurrentHealth = Math.Max(0, enemyHealth.CurrentHealth - combat.AttackDamage);
+                            Console.WriteLine($"[Combat] Player attacked enemy {targetEnemy.Value.Id} for {combat.AttackDamage} damage! Health: {enemyHealth.CurrentHealth}/{enemyHealth.MaxHealth}");
+                            
+                            if (enemyHealth.CurrentHealth <= 0)
+                            {
+                                Console.WriteLine($"[Combat] Enemy {targetEnemy.Value.Id} defeated!");
+                            }
+                        }
+                    }
+                    
+                    combat.TimeSinceLastAttack = 0;
+                }
+            }
+        }
+        
+        // Handle enemy attacks
+        foreach (var entity in world.GetEntitiesWithComponent<ScriptComponent>())
+        {
+            var combat = world.GetComponent<CombatComponent>(entity);
+            var position = world.GetComponent<PositionComponent>(entity);
+            var health = world.GetComponent<HealthComponent>(entity);
+            
+            // Only alive enemies can attack
+            if (combat != null && position != null && health != null && health.CurrentHealth > 0)
+            {
+                // Check if player is in range
+                foreach (var playerEntity in world.GetEntitiesWithComponent<PlayerComponent>())
+                {
+                    var playerPosition = world.GetComponent<PositionComponent>(playerEntity);
+                    var playerHealth = world.GetComponent<HealthComponent>(playerEntity);
+                    
+                    if (playerPosition != null && playerHealth != null)
+                    {
+                        float distance = Distance(position, playerPosition);
+                        
+                        if (distance <= combat.AttackRange && combat.TimeSinceLastAttack >= combat.AttackCooldown)
+                        {
+                            playerHealth.CurrentHealth = Math.Max(0, playerHealth.CurrentHealth - combat.AttackDamage);
+                            Console.WriteLine($"[Combat] Enemy {entity.Id} attacked player for {combat.AttackDamage} damage! Player health: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}");
+                            
+                            if (playerHealth.CurrentHealth <= 0)
+                            {
+                                Console.WriteLine("[Combat] Player defeated! Game Over!");
+                            }
+                            
+                            combat.TimeSinceLastAttack = 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private Entity? FindNearestEnemy(World world, PositionComponent playerPos, float maxRange)
+    {
+        Entity? nearest = null;
+        float nearestDistance = maxRange;
+        
+        foreach (var entity in world.GetEntitiesWithComponent<ScriptComponent>())
+        {
+            var enemyPos = world.GetComponent<PositionComponent>(entity);
+            var health = world.GetComponent<HealthComponent>(entity);
+            
+            if (enemyPos != null && health != null && health.CurrentHealth > 0)
+            {
+                float distance = Distance(playerPos, enemyPos);
+                
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearest = entity;
+                }
+            }
+        }
+        
+        return nearest;
+    }
+    
+    private float Distance(PositionComponent a, PositionComponent b)
+    {
+        float dx = a.X - b.X;
+        float dy = a.Y - b.Y;
+        return MathF.Sqrt(dx * dx + dy * dy);
+    }
+}
