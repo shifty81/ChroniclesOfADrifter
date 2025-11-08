@@ -2,6 +2,8 @@
 
 This document describes the 2D terrain generation system implemented for Chronicles of a Drifter.
 
+> **Scale Reference**: The player character is approximately 2.5 blocks tall. See [SCALE_REFERENCE.md](SCALE_REFERENCE.md) for comprehensive scale guidelines when generating terrain features.
+
 ## Overview
 
 The terrain generation system creates procedurally generated 2D worlds with:

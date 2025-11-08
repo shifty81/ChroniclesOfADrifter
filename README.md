@@ -46,7 +46,12 @@ ChroniclesOfADrifter/
 
 ## 📚 Documentation
 
+### Getting Started
+- **[Build Setup](docs/BUILD_SETUP.md)** - Build instructions and local development workflow
+- **[Scale Reference](docs/SCALE_REFERENCE.md)** - Game scale constants and design guidelines (Player is 2.5 blocks tall)
 - **[Roadmap](ROADMAP.md)** - Development roadmap with 2D world generation plans
+
+### Systems Documentation
 - **[Architecture](docs/ARCHITECTURE.md)** - System design and technical overview
 - **[Terrain Generation](docs/TERRAIN_GENERATION.md)** - 2D procedural terrain with biomes and caves
 - **[Vegetation System](docs/VEGETATION_SYSTEM.md)** - Tree and flora generation with biome-specific placement
@@ -56,11 +61,12 @@ ChroniclesOfADrifter/
 - **[Animation System](docs/ANIMATION_SYSTEM.md)** - Sprite animation and character customization
 - **[Camera System](docs/CAMERA_SYSTEM.md)** - 2D camera with following, zoom, and bounds
 - **[Camera Features](docs/CAMERA_FEATURES.md)** - Parallax scrolling and look-ahead systems
+
+### Development Resources
 - **[Sprite Assets](docs/SPRITE_ASSETS.md)** - Sprite creation guidelines and specifications
 - **[Procedural Generation](docs/PROCEDURAL_GENERATION.md)** - Dungeon generation algorithms
 - **[Lua Scripting](docs/LUA_SCRIPTING.md)** - Scripting API and examples
 - **[C++/C# Integration](docs/CPP_CSHARP_INTEGRATION.md)** - Interop patterns and best practices
-- **[Build Setup](docs/BUILD_SETUP.md)** - Build instructions and development workflow
 
 ## 🚀 Quick Start
 
@@ -69,9 +75,11 @@ ChroniclesOfADrifter/
 - CMake 3.20+
 - C++ compiler (GCC/Clang on Linux, MSVC on Windows)
 
-### Building
+### Building Locally
 
-#### Quick Build (Recommended)
+**Note:** This project is currently in active development. Focus is on **local iteration and debugging** rather than production releases. There are no GitHub Actions or CI/CD pipelines configured yet.
+
+#### Quick Build (Recommended for Local Development)
 
 ```bash
 # Clone the repository

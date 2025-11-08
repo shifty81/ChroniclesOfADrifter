@@ -12,7 +12,6 @@ namespace ChroniclesOfADrifter.Scenes;
 public class CollisionDemoScene : Scene
 {
     private ChunkManager? chunkManager;
-    private const float BLOCK_SIZE = 32.0f;
     
     public override void OnLoad()
     {
@@ -48,10 +47,10 @@ public class CollisionDemoScene : Scene
         World.AddComponent(player, new VelocityComponent());
         World.AddComponent(player, new SpriteComponent(0, 32, 32));
         
-        // Add collision component to player
+        // Add collision component to player using standard player dimensions
         World.AddComponent(player, new CollisionComponent(
-            width: 28,           // Slightly smaller than sprite for better feel
-            height: 28,
+            width: GameConstants.PlayerCollisionWidth,
+            height: GameConstants.PlayerCollisionHeight,
             offsetX: 0,
             offsetY: 0,
             isStatic: false,
