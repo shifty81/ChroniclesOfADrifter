@@ -175,7 +175,7 @@ public class StructureGenerator
         }
         
         // Try to place the structure
-        TryPlaceStructure(chunkManager, startX + 5, surfaceY + 1, structureType);
+        TryPlaceStructure(chunkManager, structureType, startX + 5, surfaceY + 1);
     }
     
     /// <summary>

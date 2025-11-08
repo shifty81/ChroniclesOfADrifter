@@ -18,6 +18,12 @@ public enum TileType
     CopperOre,      // Copper ore deposits
     GoldOre,        // Gold ore deposits
     
+    // Building materials
+    Wood,           // Wood planks for building
+    WoodPlank,      // Processed wood planks
+    Cobblestone,    // Cobblestone blocks
+    Brick,          // Brick blocks
+    
     // Vegetation types
     TreeOak,        // Oak tree (Forest/Plains biome)
     TreePine,       // Pine tree (generic)
@@ -90,6 +96,10 @@ public static class TileTypeExtensions
             TileType.IronOre => 'I',
             TileType.CopperOre => 'C',
             TileType.GoldOre => 'G',
+            TileType.Wood => '╬',
+            TileType.WoodPlank => '═',
+            TileType.Cobblestone => '▒',
+            TileType.Brick => '▓',
             TileType.TreeOak => '♣',
             TileType.TreePine => '♠',
             TileType.TreePalm => 'Ψ',
@@ -121,6 +131,10 @@ public static class TileTypeExtensions
             TileType.IronOre => ConsoleColor.DarkRed,
             TileType.CopperOre => ConsoleColor.DarkCyan,
             TileType.GoldOre => ConsoleColor.DarkYellow,
+            TileType.Wood => ConsoleColor.DarkYellow,
+            TileType.WoodPlank => ConsoleColor.Yellow,
+            TileType.Cobblestone => ConsoleColor.Gray,
+            TileType.Brick => ConsoleColor.DarkRed,
             TileType.TreeOak => ConsoleColor.DarkGreen,
             TileType.TreePine => ConsoleColor.DarkGreen,
             TileType.TreePalm => ConsoleColor.Green,
@@ -211,6 +225,10 @@ public static class TileTypeExtensions
             TileType.IronOre => 8.0f,
             TileType.DeepStone => 10.0f,
             TileType.GoldOre => 12.0f,
+            TileType.Wood => 2.5f,
+            TileType.WoodPlank => 2.0f,
+            TileType.Cobblestone => 4.0f,
+            TileType.Brick => 3.5f,
             TileType.Bedrock => float.PositiveInfinity, // Unbreakable
             TileType.Water => 0f,
             TileType.Torch => 0.5f,
@@ -230,9 +248,13 @@ public static class TileTypeExtensions
             TileType.CopperOre => ToolType.Pickaxe,
             TileType.IronOre => ToolType.Pickaxe,
             TileType.GoldOre => ToolType.Pickaxe,
+            TileType.Cobblestone => ToolType.Pickaxe,
+            TileType.Brick => ToolType.Pickaxe,
             TileType.TreeOak => ToolType.Axe,
             TileType.TreePine => ToolType.Axe,
             TileType.TreePalm => ToolType.Axe,
+            TileType.Wood => ToolType.Axe,
+            TileType.WoodPlank => ToolType.Axe,
             TileType.Dirt => ToolType.Shovel,
             TileType.Sand => ToolType.Shovel,
             TileType.Grass => ToolType.Shovel,
