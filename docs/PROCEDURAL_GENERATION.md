@@ -4,6 +4,8 @@
 
 This document details the procedural generation algorithms suitable for creating Zelda-like dungeons and worlds in Chronicles of a Drifter.
 
+> **Scale Reference**: The player character is approximately 2.5 blocks tall. When generating dungeons and rooms, ensure corridors are at least 3 blocks high and doorways accommodate player passage. See [SCALE_REFERENCE.md](SCALE_REFERENCE.md) for detailed guidelines.
+
 ## Dungeon Generation Algorithms
 
 ### 1. Binary Space Partitioning (BSP)
