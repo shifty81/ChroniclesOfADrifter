@@ -159,6 +159,18 @@ bool D3D11Renderer::Initialize(int width, int height, const char* title) {
         return false;
     }
     
+    // Create sampler state
+    if (!CreateSamplerState()) {
+        printf("[D3D11Renderer] Failed to create sampler state\n");
+        return false;
+    }
+    
+    // Create white texture for solid color rendering
+    if (!CreateWhiteTexture()) {
+        printf("[D3D11Renderer] Failed to create white texture\n");
+        return false;
+    }
+    
     // Set viewport
     m_viewport.TopLeftX = 0.0f;
     m_viewport.TopLeftY = 0.0f;
@@ -289,6 +301,9 @@ void D3D11Renderer::DrawRect(float x, float y, float width, float height,
         cbData->tintColor = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
         m_deviceContext->Unmap(m_constantBuffer.Get(), 0);
     }
+    
+    // Bind white texture for solid color rendering
+    m_deviceContext->PSSetShaderResources(0, 1, m_whiteTextureSRV.GetAddressOf());
     
     // Set vertex buffer
     UINT stride = sizeof(Vertex);
@@ -666,6 +681,78 @@ bool D3D11Renderer::CreateConstantBuffers() {
     
     // Set constant buffer
     m_deviceContext->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
+    
+    return true;
+}
+
+bool D3D11Renderer::CreateSamplerState() {
+    D3D11_SAMPLER_DESC samplerDesc = {};
+    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.MipLODBias = 0.0f;
+    samplerDesc.MaxAnisotropy = 1;
+    samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+    samplerDesc.BorderColor[0] = 0.0f;
+    samplerDesc.BorderColor[1] = 0.0f;
+    samplerDesc.BorderColor[2] = 0.0f;
+    samplerDesc.BorderColor[3] = 0.0f;
+    samplerDesc.MinLOD = 0.0f;
+    samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+    
+    HRESULT hr = m_device->CreateSamplerState(&samplerDesc, m_samplerState.GetAddressOf());
+    if (FAILED(hr)) {
+        printf("[D3D11Renderer] Failed to create sampler state\n");
+        return false;
+    }
+    
+    // Set sampler state
+    m_deviceContext->PSSetSamplers(0, 1, m_samplerState.GetAddressOf());
+    
+    return true;
+}
+
+bool D3D11Renderer::CreateWhiteTexture() {
+    // Create a 1x1 white texture for solid color rendering
+    D3D11_TEXTURE2D_DESC textureDesc = {};
+    textureDesc.Width = 1;
+    textureDesc.Height = 1;
+    textureDesc.MipLevels = 1;
+    textureDesc.ArraySize = 1;
+    textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    textureDesc.SampleDesc.Count = 1;
+    textureDesc.SampleDesc.Quality = 0;
+    textureDesc.Usage = D3D11_USAGE_DEFAULT;
+    textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    textureDesc.CPUAccessFlags = 0;
+    textureDesc.MiscFlags = 0;
+    
+    // White pixel data
+    UINT whitePixel = 0xFFFFFFFF;
+    D3D11_SUBRESOURCE_DATA initData = {};
+    initData.pSysMem = &whitePixel;
+    initData.SysMemPitch = 4;
+    initData.SysMemSlicePitch = 4;
+    
+    HRESULT hr = m_device->CreateTexture2D(&textureDesc, &initData, m_whiteTexture.GetAddressOf());
+    if (FAILED(hr)) {
+        printf("[D3D11Renderer] Failed to create white texture\n");
+        return false;
+    }
+    
+    // Create shader resource view
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+    srvDesc.Format = textureDesc.Format;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+    srvDesc.Texture2D.MipLevels = 1;
+    
+    hr = m_device->CreateShaderResourceView(m_whiteTexture.Get(), &srvDesc, m_whiteTextureSRV.GetAddressOf());
+    if (FAILED(hr)) {
+        printf("[D3D11Renderer] Failed to create white texture SRV\n");
+        return false;
+    }
     
     return true;
 }
