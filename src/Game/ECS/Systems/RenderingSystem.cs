@@ -91,6 +91,9 @@ public class RenderingSystem : ISystem
             }
         }
         
+        // Render UI on top of everything else
+        UISystem.RenderUI(world);
+        
         // Present the frame
         EngineInterop.Renderer_Present();
     }
