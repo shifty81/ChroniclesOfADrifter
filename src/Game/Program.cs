@@ -112,10 +112,24 @@ class Program
             return;
         }
         
+        // Check for hybrid gameplay test mode
+        if (args.Length > 0 && args[0].ToLower() == "hybrid-test")
+        {
+            Tests.HybridGameplayTest.Run();
+            return;
+        }
+        
         // Check if terrain demo was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "terrain")
         {
             TerrainDemoProgram.Run();
+            return;
+        }
+        
+        // Check if hybrid demo was requested
+        if (args.Length > 0 && args[0].ToLower() == "hybrid")
+        {
+            RunHybridDemo();
             return;
         }
         
@@ -170,12 +184,14 @@ class Program
         Console.WriteLine("       Run with 'creature-test' for creature spawn tests");
         Console.WriteLine("       Run with 'crafting-test' for crafting system tests");
         Console.WriteLine("       Run with 'swimming-test' for swimming mechanics tests");
+        Console.WriteLine("       Run with 'hybrid-test' for hybrid gameplay tests");
         Console.WriteLine("       Run with 'terrain' for terrain demo");
         Console.WriteLine("       Run with 'visual' for GRAPHICAL visual demo (SDL2)");
         Console.WriteLine("       Run with 'mining' for mining/digging demo");
         Console.WriteLine("       Run with 'collision' for collision detection demo");
         Console.WriteLine("       Run with 'creatures' for creature spawning demo");
         Console.WriteLine("       Run with 'crafting' for crafting system demo");
+        Console.WriteLine("       Run with 'hybrid' for hybrid gameplay demo");
         Console.WriteLine("===========================================\n");
         
         // Initialize engine
@@ -586,5 +602,25 @@ class Program
         // Cleanup
         scene.OnUnload();
         Console.WriteLine("[Game] Crafting demo complete!");
+    }
+    
+    /// <summary>
+    /// Run the hybrid gameplay demo scene
+    /// </summary>
+    static void RunHybridDemo()
+    {
+        Console.WriteLine("\n[Game] Starting hybrid gameplay demo...\n");
+        
+        // Create and initialize the hybrid gameplay demo scene
+        var scene = new HybridGameplayDemoScene();
+        scene.OnLoad();
+        
+        // The demo is self-contained and completes immediately
+        Console.WriteLine("\nPress any key to exit...");
+        Console.ReadKey();
+        
+        // Cleanup
+        scene.OnUnload();
+        Console.WriteLine("[Game] Hybrid gameplay demo complete!");
     }
 }
