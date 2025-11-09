@@ -15,6 +15,10 @@ public class TerrainRenderingSystem : ISystem
     private ChunkManager? chunkManager;
     private bool lightingEnabled = true;
     
+    // Constants from Chunk class
+    private const int ChunkWidth = 32;
+    private const int ChunkHeight = 30;
+    
     public void Initialize(World world)
     {
         // Get chunk manager from world shared resources
@@ -95,7 +99,7 @@ public class TerrainRenderingSystem : ISystem
         int minTileX = Math.Max(0, (int)(screenLeft / BlockSize));
         int maxTileX = (int)(screenRight / BlockSize) + 1;
         int minTileY = Math.Max(0, (int)(screenTop / BlockSize));
-        int maxTileY = Math.Min(Chunk.ChunkHeight - 1, (int)(screenBottom / BlockSize) + 1);
+        int maxTileY = Math.Min(ChunkHeight - 1, (int)(screenBottom / BlockSize) + 1);
         
         // Get player position for lighting
         float playerWorldX = 0;
@@ -123,8 +127,8 @@ public class TerrainRenderingSystem : ISystem
             for (int worldY = minTileY; worldY <= maxTileY; worldY++)
             {
                 // Calculate chunk coordinate
-                int chunkX = worldX / Chunk.ChunkWidth;
-                int localX = worldX % Chunk.ChunkWidth;
+                int chunkX = worldX / ChunkWidth;
+                int localX = worldX % ChunkWidth;
                 
                 // Get chunk
                 var chunk = chunkManager.GetChunk(chunkX);
@@ -173,11 +177,11 @@ public class TerrainRenderingSystem : ISystem
     private void DrawSurfaceDecoration(int worldX, int worldY, float screenX, float screenY, float size, Chunk chunk)
     {
         // Get vegetation at this position
-        var vegetation = chunk.GetVegetation(worldX % Chunk.ChunkWidth, worldY);
+        var vegetation = chunk.GetVegetation(worldX % ChunkWidth);
         
-        if (vegetation != VegetationType.None)
+        if (vegetation.HasValue && vegetation.Value.IsVegetation())
         {
-            var (r, g, b) = GetVegetationColor(vegetation);
+            var (r, g, b) = GetVegetationColor(vegetation.Value);
             
             // Draw vegetation on top of tile (smaller, offset)
             float vegSize = size * 0.6f;
@@ -245,6 +249,8 @@ public class TerrainRenderingSystem : ISystem
             
             // Stone blocks
             TileType.Stone => (0.50f, 0.50f, 0.50f),       // Gray stone
+            TileType.DeepStone => (0.35f, 0.35f, 0.35f),   // Dark gray
+            TileType.Bedrock => (0.15f, 0.15f, 0.15f),     // Almost black
             TileType.Sandstone => (0.76f, 0.70f, 0.50f),   // Light tan
             TileType.Limestone => (0.85f, 0.85f, 0.80f),   // Off-white
             
@@ -263,26 +269,36 @@ public class TerrainRenderingSystem : ISystem
             // Special
             TileType.Torch => (1.0f, 0.80f, 0.20f),        // Warm yellow
             TileType.Wood => (0.55f, 0.35f, 0.16f),        // Brown wood
-            TileType.Planks => (0.65f, 0.45f, 0.26f),      // Light brown
-            TileType.Bricks => (0.70f, 0.35f, 0.25f),      // Red bricks
+            TileType.WoodPlank => (0.65f, 0.45f, 0.26f),   // Light brown
+            TileType.Cobblestone => (0.45f, 0.45f, 0.45f), // Gray cobblestone
+            TileType.Brick => (0.70f, 0.35f, 0.25f),       // Red bricks
+            
+            // Vegetation (if rendered as tiles)
+            TileType.TreeOak => (0.10f, 0.40f, 0.10f),     // Dark green
+            TileType.TreePine => (0.08f, 0.35f, 0.08f),    // Darker green
+            TileType.TreePalm => (0.15f, 0.50f, 0.15f),    // Palm green
+            TileType.TallGrass => (0.18f, 0.70f, 0.18f),   // Light green
+            TileType.Bush => (0.10f, 0.50f, 0.10f),        // Dark green
+            TileType.Cactus => (0.20f, 0.60f, 0.30f),      // Green cactus
+            TileType.Flower => (1.0f, 0.20f, 0.40f),       // Pink/red
             
             // Default
             _ => (0.60f, 0.60f, 0.60f)                     // Gray default
         };
     }
     
-    private (float r, float g, float b) GetVegetationColor(VegetationType vegetation)
+    private (float r, float g, float b) GetVegetationColor(TileType vegetation)
     {
         return vegetation switch
         {
-            VegetationType.Grass => (0.18f, 0.70f, 0.18f),       // Light green
-            VegetationType.TallGrass => (0.15f, 0.60f, 0.15f),   // Medium green
-            VegetationType.Flower => (1.0f, 0.20f, 0.40f),       // Pink/red
-            VegetationType.Bush => (0.10f, 0.50f, 0.10f),        // Dark green
-            VegetationType.Cactus => (0.20f, 0.60f, 0.30f),      // Green cactus
-            VegetationType.DeadBush => (0.65f, 0.55f, 0.40f),    // Brown
-            VegetationType.Reed => (0.30f, 0.70f, 0.30f),        // Swamp green
-            _ => (0.20f, 0.60f, 0.20f)                           // Default green
+            TileType.TallGrass => (0.18f, 0.70f, 0.18f),       // Light green
+            TileType.Flower => (1.0f, 0.20f, 0.40f),           // Pink/red
+            TileType.Bush => (0.10f, 0.50f, 0.10f),            // Dark green
+            TileType.Cactus => (0.20f, 0.60f, 0.30f),          // Green cactus
+            TileType.TreeOak => (0.10f, 0.40f, 0.10f),         // Dark green tree
+            TileType.TreePine => (0.08f, 0.35f, 0.08f),        // Darker green pine
+            TileType.TreePalm => (0.15f, 0.50f, 0.15f),        // Palm green
+            _ => (0.20f, 0.60f, 0.20f)                         // Default green
         };
     }
     
