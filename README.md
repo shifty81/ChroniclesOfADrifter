@@ -2,6 +2,17 @@
 
 A 2D top-down action RPG built with a custom **C++/.NET 9/Lua voxel game engine**, inspired by The Legend of Zelda: A Link to the Past.
 
+## ⚠️ Platform Configuration
+
+**This project is configured for Windows-only with DirectX 11 as the default renderer.**
+
+- **Primary Platform:** Windows 10/11
+- **Default Renderer:** DirectX 11 (broad hardware compatibility)
+- **Build System:** Visual Studio 2022 / CMake on Windows
+- **Testing:** Windows-only environment
+
+The renderer can be changed in the game settings menu (game will restart with the new renderer).
+
 ## 🎮 Game Concept
 
 Chronicles of a Drifter features:
@@ -16,11 +27,11 @@ Chronicles of a Drifter features:
 
 ### C++ Core Engine
 - Performance-critical systems (rendering, physics, audio)
+- **DirectX 11 renderer** (Windows, broad compatibility, **DEFAULT**) ✅ **IMPLEMENTED**
 - **DirectX 12 renderer** (Windows, high-performance) ✅ **IMPLEMENTED**
-- **DirectX 11 renderer** (Windows, broad compatibility) ✅ **IMPLEMENTED**
-- **SDL2 renderer** (cross-platform, default) ✅ **IMPLEMENTED**
+- **SDL2 renderer** (cross-platform, optional) ✅ **IMPLEMENTED**
 - Abstracted rendering backend for flexibility
-- Cross-platform foundation
+- **Windows-focused development** with optional cross-platform support
 
 ### .NET 9 (C#) Game Logic
 - Entity Component System (ECS) architecture
@@ -78,14 +89,18 @@ ChroniclesOfADrifter/
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Visual Studio 2022 (v17.8+) or .NET 9 SDK
+**Windows Platform Required:**
+- Windows 10 or Windows 11
+- Visual Studio 2022 (v17.8+) with C++ Desktop Development workload
+- .NET 9 SDK
 - CMake 3.20+
-- C++ compiler (GCC/Clang on Linux, MSVC on Windows)
-- SDL2 development libraries (Linux: `libsdl2-dev`, Windows: included)
+- DirectX 11 (included with Windows)
+- DirectX 12 (optional, for high-performance rendering)
+- SDL2 development libraries (optional, for cross-platform testing)
 
 ### Building Locally
 
-**Note:** This project is currently in active development. Focus is on **local iteration and debugging** rather than production releases. There are no GitHub Actions or CI/CD pipelines configured yet.
+**Note:** This project is configured for **Windows-only** with **DirectX 11 as the default renderer**. The renderer can be changed in the game settings menu (the game will restart with the new renderer).
 
 #### Quick Build (Recommended for Local Development)
 
@@ -94,25 +109,23 @@ ChroniclesOfADrifter/
 git clone https://github.com/shifty81/ChroniclesOfADrifter.git
 cd ChroniclesOfADrifter
 
-# Run the automated build script
-./build.sh        # Linux/macOS
-# or
-build.bat         # Windows
+# Run the automated build script (Windows only)
+build.bat
 
-# Run the game (default: SDL2 renderer)
+# Run the game (default: DirectX 11 renderer on Windows)
 cd src/Game
 dotnet run -c Release
 
-# Or use DirectX 11 renderer on Windows (broad hardware support)
-set CHRONICLES_RENDERER=dx11  # Windows Command Prompt
-# or
-$env:CHRONICLES_RENDERER="dx11"  # Windows PowerShell
-dotnet run -c Release
-
-# Or use DirectX 12 renderer on Windows (high performance)
+# Use DirectX 12 renderer on Windows (high performance, requires compatible GPU)
 set CHRONICLES_RENDERER=dx12  # Windows Command Prompt
 # or
 $env:CHRONICLES_RENDERER="dx12"  # Windows PowerShell
+dotnet run -c Release
+
+# Use SDL2 renderer (optional, for cross-platform testing if SDL2 is installed)
+set CHRONICLES_RENDERER=sdl2  # Windows Command Prompt
+# or
+$env:CHRONICLES_RENDERER="sdl2"  # Windows PowerShell
 dotnet run -c Release
 ```
 

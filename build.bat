@@ -1,11 +1,13 @@
 @echo off
 REM Chronicles of a Drifter - Build Script for Windows
-REM This script builds the C++ engine and C# game
+REM This script builds the C++ engine with DirectX 11 as default and C# game
+REM Configured for Windows-only builds
 
 setlocal enabledelayedexpansion
 
 echo ==========================================
 echo   Chronicles of a Drifter - Build Script
+echo   Windows-only with DirectX 11 Default
 echo ==========================================
 echo.
 

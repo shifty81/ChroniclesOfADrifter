@@ -1,12 +1,17 @@
 #!/bin/bash
 # Chronicles of a Drifter - Build Script
-# This script builds the C++ engine and C# game
+# NOTE: This project is configured for Windows-only with DirectX 11 as default
+# This script will fail on non-Windows platforms unless SDL2 is available
 
 set -e  # Exit on error
 
 echo "=========================================="
 echo "  Chronicles of a Drifter - Build Script"
+echo "  WARNING: Configured for Windows-only"
 echo "=========================================="
+echo ""
+echo "This project is configured for Windows with DirectX 11 as default."
+echo "Build will fail on non-Windows platforms."
 echo ""
 
 # Check prerequisites

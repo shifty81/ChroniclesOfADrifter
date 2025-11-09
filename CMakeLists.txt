@@ -4,13 +4,19 @@ project(ChroniclesEngine VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Find SDL2
+# Enforce Windows-only builds with DirectX 11 as default
+if(NOT WIN32)
+    message(FATAL_ERROR "This project is configured for Windows only with DirectX 11 as the default renderer. "
+                        "Cross-platform support with SDL2 is available but not the default configuration.")
+endif()
+
+# Find SDL2 (optional on Windows, DirectX 11 is the default)
 find_package(SDL2)
 if(SDL2_FOUND)
     include_directories(${SDL2_INCLUDE_DIRS})
-    message(STATUS "SDL2 found: ${SDL2_INCLUDE_DIRS}")
+    message(STATUS "SDL2 found: ${SDL2_INCLUDE_DIRS} (optional, DirectX 11 is default on Windows)")
 else()
-    message(WARNING "SDL2 not found. SDL2Renderer will be disabled. Install SDL2 development libraries to enable it.")
+    message(STATUS "SDL2 not found. Using DirectX 11 as default renderer on Windows.")
 endif()
 
 # Output directories

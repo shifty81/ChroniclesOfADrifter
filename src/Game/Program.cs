@@ -188,10 +188,13 @@ class Program
         Console.WriteLine("===========================================");
         Console.WriteLine("  Chronicles of a Drifter - Playable Demo");
         Console.WriteLine("  C++/.NET 9/Lua Custom Voxel Game Engine");
+        Console.WriteLine("  Windows-only with DirectX 11 Default");
         Console.WriteLine("===========================================\n");
         Console.WriteLine("  Rendering Backend:");
-        Console.WriteLine("    Default: SDL2 (cross-platform)");
-        Console.WriteLine("    Windows: Set CHRONICLES_RENDERER=dx12 for DirectX 12");
+        Console.WriteLine("    Default: DirectX 11 (broad compatibility)");
+        Console.WriteLine("    Optional: Set CHRONICLES_RENDERER=dx12 for DirectX 12");
+        Console.WriteLine("    Optional: Set CHRONICLES_RENDERER=sdl2 for SDL2");
+        Console.WriteLine("    Note: Can be changed in settings menu (game restarts)");
         Console.WriteLine("\n  Available Commands:");
         Console.WriteLine("       Run with 'test' for terrain tests");
         Console.WriteLine("       Run with 'camera-test' for camera tests");
@@ -454,11 +457,11 @@ class Program
     {
         Console.WriteLine("===========================================");
         Console.WriteLine("  Chronicles of a Drifter - VISUAL Demo");
-        Console.WriteLine("  Graphical Rendering");
+        Console.WriteLine("  Graphical Rendering (DirectX 11 Default)");
         Console.WriteLine("===========================================\n");
         
         // Check which renderer backend will be used
-        string renderer = Environment.GetEnvironmentVariable("CHRONICLES_RENDERER") ?? "sdl2";
+        string renderer = Environment.GetEnvironmentVariable("CHRONICLES_RENDERER") ?? "dx11";
         Console.WriteLine($"[Game] Renderer Backend: {renderer.ToUpper()}");
         
         // Initialize engine with window
