@@ -78,9 +78,14 @@ public class UIDemoScene : Scene
         Console.WriteLine("Press 'I' to open inventory, 'C' to open crafting menu");
     }
     
-    public override void OnUpdate(float deltaTime)
+    public override void OnUnload()
     {
-        base.OnUpdate(deltaTime);
+        Console.WriteLine("UI Demo unloading...");
+    }
+    
+    public override void Update(float deltaTime)
+    {
+        base.Update(deltaTime);
         
         // Toggle inventory with 'I' key
         if (EngineInterop.Input_IsKeyPressed(73)) // 'I' key
