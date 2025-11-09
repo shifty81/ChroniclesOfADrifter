@@ -369,13 +369,13 @@ public class DungeonGenerator
             for (int x = room.X; x < room.X + room.Width; x++)
             {
                 // Create air space inside room
-                chunkManager.SetBlock(x, depth + (y - room.Y), TileType.Air);
+                chunkManager.SetTile(x, depth + (y - room.Y), TileType.Air);
                 
                 // Place walls on edges
                 if (x == room.X || x == room.X + room.Width - 1 ||
                     y == room.Y || y == room.Y + room.Height - 1)
                 {
-                    chunkManager.SetBlock(x, depth + (y - room.Y), TileType.Stone);
+                    chunkManager.SetTile(x, depth + (y - room.Y), TileType.Stone);
                 }
             }
         }
@@ -389,10 +389,10 @@ public class DungeonGenerator
         foreach (var (x, y) in corridor.Path)
         {
             // Create 2-wide corridor
-            chunkManager.SetBlock(x, depth + y, TileType.Air);
-            chunkManager.SetBlock(x + 1, depth + y, TileType.Air);
-            chunkManager.SetBlock(x, depth + y + 1, TileType.Air);
-            chunkManager.SetBlock(x + 1, depth + y + 1, TileType.Air);
+            chunkManager.SetTile(x, depth + y, TileType.Air);
+            chunkManager.SetTile(x + 1, depth + y, TileType.Air);
+            chunkManager.SetTile(x, depth + y + 1, TileType.Air);
+            chunkManager.SetTile(x + 1, depth + y + 1, TileType.Air);
         }
     }
 }

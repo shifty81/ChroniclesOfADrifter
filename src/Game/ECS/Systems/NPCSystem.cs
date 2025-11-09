@@ -25,7 +25,7 @@ public class NPCSystem : ISystem
             return;
         }
         
-        float currentHour = timeSystem.GetCurrentHour();
+        float currentHour = timeSystem.CurrentHour;
         
         // Update each NPC's position and activity based on schedule
         foreach (var entity in world.GetEntitiesWithComponent<NPCComponent>())
