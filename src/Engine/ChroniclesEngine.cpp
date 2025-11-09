@@ -55,9 +55,11 @@ namespace {
     }
     
     // Environment variable to select renderer backend
-    // Set CHRONICLES_RENDERER=dx11 for DirectX 11 (Windows only)
-    // Set CHRONICLES_RENDERER=dx12 for DirectX 12 (Windows only)
+    // Default on Windows: DirectX 11 (broad hardware compatibility)
+    // Set CHRONICLES_RENDERER=dx11 for DirectX 11 (Windows only, default)
+    // Set CHRONICLES_RENDERER=dx12 for DirectX 12 (Windows only, high-performance)
     // Set CHRONICLES_RENDERER=sdl2 for SDL2 (cross-platform, if available)
+    // Note: Renderer can be changed later in the settings menu (game will restart)
     Chronicles::RendererBackend GetRendererBackend() {
         const char* rendererEnv = std::getenv("CHRONICLES_RENDERER");
         if (rendererEnv) {
@@ -92,12 +94,13 @@ namespace {
             }
         }
         
-        // Default to SDL2 if available, otherwise DirectX 11 on Windows
-#ifdef HAS_SDL2
-        return Chronicles::RendererBackend::SDL2;
-#elif defined(_WIN32)
-        printf("[Engine] SDL2 not available, using DirectX 11 as default\n");
+        // Default to DirectX 11 on Windows (configurable via environment variable)
+#ifdef _WIN32
+        printf("[Engine] Using DirectX 11 as default renderer (Windows configuration)\n");
         return Chronicles::RendererBackend::DirectX11;
+#elif defined(HAS_SDL2)
+        printf("[Engine] Using SDL2 as default renderer (non-Windows platform)\n");
+        return Chronicles::RendererBackend::SDL2;
 #else
         printf("[Engine] ERROR: No renderer backend available\n");
         return Chronicles::RendererBackend::SDL2; // Will fail gracefully
