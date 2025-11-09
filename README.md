@@ -159,11 +159,23 @@ dotnet run -c Release
 
 ### Running the Demo
 
-The current implementation includes:
+The current implementation includes multiple demo modes:
+- **Complete Game Loop Demo**: All systems integrated (`dotnet run -c Release -- complete`)
+- **Playable Demo**: Player with terrain and combat
 - **ECS Demo**: Player entity with WASD/Arrow key movement
 - **Lua Scripting Demo**: Goblin AI controlled by Lua script
+- **Visual Demo**: Graphical rendering demo
+- **Mining Demo**: Interactive mining and building
+- **Collision Demo**: Collision detection showcase
+- **Creature Spawn Demo**: Enemy spawning system
+- **Crafting Demo**: Crafting system showcase
+- **Map Editor**: Real-time scene editing
 
-The demo will run for ~5 seconds showing the game loop in action with console output from the Lua-controlled goblin AI.
+**To run the complete game loop demo:**
+```bash
+cd src/Game
+dotnet run -c Release -- complete
+```
 
 See [BUILD_SETUP.md](docs/BUILD_SETUP.md) for detailed instructions.
 
@@ -294,15 +306,31 @@ This repository contains the **initial implementation** of Chronicles of a Drift
   - [x] Procedural terrain editing capabilities
   - [x] Zelda-style tileset included
   - [x] Map editor documentation
+- [x] **Complete Game Loop Demo**
+  - [x] Integrated all 24+ core systems in one playable scene
+  - [x] Procedural world with 8 biomes and 20-layer underground
+  - [x] Player with full capabilities (combat, mining, crafting, swimming)
+  - [x] Enemy spawning with AI (goblins with Lua scripts)
+  - [x] NPC system (merchant and quest giver)
+  - [x] Quest system with combat objectives
+  - [x] Day/night cycle and dynamic weather
+  - [x] Inventory (40 slots) and crafting (8+ recipes)
+  - [x] Camera system with parallax, look-ahead, and screen shake
+  - [x] Lighting system with fog of war
+  - [x] Full documentation of missing systems
+  - [x] Analysis document: [COMPLETE_GAME_LOOP_ANALYSIS.md](COMPLETE_GAME_LOOP_ANALYSIS.md)
 
 ### 🔄 Next Steps
 - [x] **Implement C++ rendering engine (DirectX 12)** (COMPLETED - see [DIRECTX12_RENDERER.md](docs/DIRECTX12_RENDERER.md))
-- [ ] Add actual sprite assets (high-resolution character sprites)
-- [x] Add weather and time systems (COMPLETED)
 - [x] **Create UI framework for crafting and inventory** (COMPLETED - see [UI_FRAMEWORK.md](docs/UI_FRAMEWORK.md))
-- [x] Implement multithreaded chunk generation (COMPLETED)
 - [x] **Add in-game map editor with tileset support** (COMPLETED - see [MAP_EDITOR.md](docs/MAP_EDITOR.md))
-- [ ] Enhance combat mechanics with weapon crafting
+- [x] **Complete game loop demo** (COMPLETED - see [COMPLETE_GAME_LOOP_ANALYSIS.md](COMPLETE_GAME_LOOP_ANALYSIS.md))
+- [ ] **Implement save/load system** (CRITICAL - Next priority)
+- [ ] **Add player death and respawn mechanics** (CRITICAL)
+- [ ] **Implement enemy loot drops** (HIGH)
+- [ ] **Add player XP and leveling system** (HIGH)
+- [ ] Add actual sprite assets (high-resolution character sprites)
+- [ ] Enhance combat mechanics with ranged weapons and abilities
 
 ## 🎨 Game Features
 
