@@ -1,4 +1,5 @@
 #include "ChroniclesEngine.h"
+#include "IRenderer.h"
 #ifdef HAS_SDL2
 #include "SDL2Renderer.h"
 #endif
@@ -359,6 +360,7 @@ extern "C" ENGINE_API int Audio_LoadSound(const char* filePath) {
 }
 
 extern "C" ENGINE_API void Audio_PlaySound(int soundId, float volume) {
+    (void)soundId; (void)volume;
     // TODO: Play sound effect
 }
 
@@ -374,6 +376,7 @@ extern "C" ENGINE_API void Audio_StopMusic() {
 // ===== Physics =====
 
 extern "C" ENGINE_API void Physics_SetGravity(float x, float y) {
+    (void)x; (void)y;
     // TODO: Set physics gravity
 }
 
