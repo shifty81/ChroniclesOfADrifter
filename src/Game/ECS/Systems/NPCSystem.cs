@@ -9,23 +9,24 @@ namespace ChroniclesOfADrifter.ECS.Systems;
 /// </summary>
 public class NPCSystem : ISystem
 {
-    private TimeSystem? timeSystem;
+    private TimeSystem? _timeSystem;
     
     public void Initialize(World world)
     {
+        _timeSystem = world.GetSharedResource<TimeSystem>("TimeSystem");
         Console.WriteLine("[NPC] NPC system initialized");
     }
     
     public void Update(World world, float deltaTime)
     {
         // Get current time from TimeSystem
-        if (timeSystem == null)
+        if (_timeSystem == null)
         {
             // Find TimeSystem (would be passed in or stored globally in real implementation)
             return;
         }
         
-        float currentHour = timeSystem.CurrentHour;
+        float currentHour = _timeSystem.CurrentHour;
         
         // Update each NPC's position and activity based on schedule
         foreach (var entity in world.GetEntitiesWithComponent<NPCComponent>())

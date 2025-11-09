@@ -574,12 +574,16 @@ void D3D12Renderer::DrawRect(float x, float y, float width, float height,
                              float r, float g, float b, float a) {
     // TODO: Implement rectangle drawing with vertex buffer
     // For now, this is a stub
+    (void)x; (void)y; (void)width; (void)height;
+    (void)r; (void)g; (void)b; (void)a;
 }
 
 void D3D12Renderer::DrawSprite(int textureId, float x, float y,
                                float width, float height, float rotation) {
     // TODO: Implement sprite drawing with texture
     // For now, this is a stub
+    (void)textureId; (void)x; (void)y;
+    (void)width; (void)height; (void)rotation;
 }
 
 int D3D12Renderer::LoadTexture(const char* filePath) {
