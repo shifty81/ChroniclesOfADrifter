@@ -24,6 +24,11 @@ public enum TileType
     Sandstone,      // Sandstone blocks
     Limestone,      // Limestone blocks
     
+    // Processed materials (smelted from ores)
+    Iron,           // Processed iron ingots
+    Gold,           // Processed gold ingots  
+    Coal,           // Processed coal
+    
     // Building materials
     Wood,           // Wood planks for building
     WoodPlank,      // Processed wood planks
@@ -109,6 +114,9 @@ public static class TileTypeExtensions
             TileType.DeepWater => '≋',
             TileType.Sandstone => '▒',
             TileType.Limestone => '░',
+            TileType.Iron => 'i',
+            TileType.Gold => 'g',
+            TileType.Coal => 'c',
             TileType.Wood => '╬',
             TileType.WoodPlank => '═',
             TileType.Cobblestone => '▒',
@@ -150,6 +158,9 @@ public static class TileTypeExtensions
             TileType.DeepWater => ConsoleColor.DarkBlue,
             TileType.Sandstone => ConsoleColor.Yellow,
             TileType.Limestone => ConsoleColor.White,
+            TileType.Iron => ConsoleColor.Gray,
+            TileType.Gold => ConsoleColor.Yellow,
+            TileType.Coal => ConsoleColor.DarkGray,
             TileType.Wood => ConsoleColor.DarkYellow,
             TileType.WoodPlank => ConsoleColor.Yellow,
             TileType.Cobblestone => ConsoleColor.Gray,
@@ -249,6 +260,9 @@ public static class TileTypeExtensions
             TileType.DiamondOre => 15.0f,
             TileType.Sandstone => 4.5f,
             TileType.Limestone => 4.0f,
+            TileType.Iron => 5.0f,
+            TileType.Gold => 3.0f,
+            TileType.Coal => 1.0f,
             TileType.Wood => 2.5f,
             TileType.WoodPlank => 2.0f,
             TileType.Cobblestone => 4.0f,
