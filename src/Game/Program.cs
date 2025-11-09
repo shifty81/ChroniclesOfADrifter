@@ -175,7 +175,11 @@ class Program
         Console.WriteLine("  Chronicles of a Drifter - Playable Demo");
         Console.WriteLine("  C++/.NET 9/Lua Custom Voxel Game Engine");
         Console.WriteLine("===========================================\n");
-        Console.WriteLine("  Tip: Run with 'test' for terrain tests");
+        Console.WriteLine("  Rendering Backend:");
+        Console.WriteLine("    Default: SDL2 (cross-platform)");
+        Console.WriteLine("    Windows: Set CHRONICLES_RENDERER=dx12 for DirectX 12");
+        Console.WriteLine("\n  Available Commands:");
+        Console.WriteLine("       Run with 'test' for terrain tests");
         Console.WriteLine("       Run with 'camera-test' for camera tests");
         Console.WriteLine("       Run with 'vegetation-test' for vegetation tests");
         Console.WriteLine("       Run with 'lighting-test' for lighting tests");
@@ -186,7 +190,7 @@ class Program
         Console.WriteLine("       Run with 'swimming-test' for swimming mechanics tests");
         Console.WriteLine("       Run with 'hybrid-test' for hybrid gameplay tests");
         Console.WriteLine("       Run with 'terrain' for terrain demo");
-        Console.WriteLine("       Run with 'visual' for GRAPHICAL visual demo (SDL2)");
+        Console.WriteLine("       Run with 'visual' for GRAPHICAL visual demo");
         Console.WriteLine("       Run with 'mining' for mining/digging demo");
         Console.WriteLine("       Run with 'collision' for collision detection demo");
         Console.WriteLine("       Run with 'creatures' for creature spawning demo");
@@ -434,11 +438,15 @@ class Program
     {
         Console.WriteLine("===========================================");
         Console.WriteLine("  Chronicles of a Drifter - VISUAL Demo");
-        Console.WriteLine("  SDL2 Graphical Rendering");
+        Console.WriteLine("  Graphical Rendering");
         Console.WriteLine("===========================================\n");
         
-        // Initialize engine with SDL2 window
-        Console.WriteLine("[Game] Initializing SDL2 engine...");
+        // Check which renderer backend will be used
+        string renderer = Environment.GetEnvironmentVariable("CHRONICLES_RENDERER") ?? "sdl2";
+        Console.WriteLine($"[Game] Renderer Backend: {renderer.ToUpper()}");
+        
+        // Initialize engine with window
+        Console.WriteLine("[Game] Initializing engine...");
         bool success = EngineInterop.Engine_Initialize(1280, 720, "Chronicles of a Drifter - Visual Demo");
         
         if (!success)
@@ -448,7 +456,7 @@ class Program
             return;
         }
         
-        Console.WriteLine("[Game] SDL2 engine initialized successfully\n");
+        Console.WriteLine("[Game] Engine initialized successfully\n");
         
         // Load visual demo scene
         var scene = new VisualDemoScene();
