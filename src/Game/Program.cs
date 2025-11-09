@@ -91,6 +91,13 @@ class Program
             return;
         }
         
+        // Check for weather system test mode
+        if (args.Length > 0 && args[0].ToLower() == "weather-test")
+        {
+            Tests.WeatherSystemTest.Run();
+            return;
+        }
+        
         // Check for async chunk generation test mode
         if (args.Length > 0 && args[0].ToLower() == "async-test")
         {
