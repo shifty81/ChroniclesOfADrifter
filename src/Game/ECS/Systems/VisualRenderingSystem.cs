@@ -44,6 +44,9 @@ public class VisualRenderingSystem : ISystem
         
         // Render all entities with sprites
         RenderEntities(world, camera);
+        
+        // Present the frame
+        EngineInterop.Renderer_Present();
     }
     
     private void RenderTiledBackground(CameraComponent camera)
