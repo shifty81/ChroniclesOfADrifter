@@ -63,6 +63,7 @@ ChroniclesOfADrifter/
 ### Getting Started
 - **[Build Setup](docs/BUILD_SETUP.md)** - Build instructions and local development workflow
 - **[Visual Studio 2022 Setup](docs/VS2022_SETUP.md)** - VS2022 debugging guide with mixed-mode C++/C# support
+- **[Settings System](docs/SETTINGS_SYSTEM.md)** - Game settings and renderer configuration (Windows/DirectX 11 default)
 - **[Scale Reference](docs/SCALE_REFERENCE.md)** - Game scale constants and design guidelines (Player is 2.5 blocks tall)
 - **[Roadmap](ROADMAP.md)** - Development roadmap with 2D world generation plans
 
