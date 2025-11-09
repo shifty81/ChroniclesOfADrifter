@@ -39,6 +39,9 @@ namespace {
     std::map<int, bool> g_keyReleased;
     float g_mouseX = 0.0f;
     float g_mouseY = 0.0f;
+    std::map<int, bool> g_mouseButtonStates;
+    std::map<int, bool> g_mouseButtonPressed;
+    std::map<int, bool> g_mouseButtonReleased;
     
     // Callbacks
     InputCallbackFn g_inputCallback = nullptr;
@@ -248,6 +251,8 @@ extern "C" ENGINE_API void Engine_BeginFrame() {
     // Clear previous frame input states
     g_keyPressed.clear();
     g_keyReleased.clear();
+    g_mouseButtonPressed.clear();
+    g_mouseButtonReleased.clear();
     
 #ifdef HAS_SDL2
     // Process SDL events (for input and window management)
@@ -363,13 +368,7 @@ extern "C" ENGINE_API void Input_GetMousePosition(float* outX, float* outY) {
 }
 
 extern "C" ENGINE_API bool Input_IsMouseButtonPressed(int button) {
-#ifdef HAS_SDL2
-    Uint32 mouseState = SDL_GetMouseState(nullptr, nullptr);
-    return (mouseState & SDL_BUTTON(button)) != 0;
-#else
-    (void)button;
-    return false; // Not supported without SDL2
-#endif
+    return g_mouseButtonPressed.find(button) != g_mouseButtonPressed.end();
 }
 
 // ===== Audio =====
@@ -420,6 +419,40 @@ extern "C" ENGINE_API void Engine_RegisterInputCallback(InputCallbackFn callback
 extern "C" ENGINE_API void Engine_RegisterCollisionCallback(CollisionCallbackFn callback) {
     g_collisionCallback = callback;
     printf("[Engine] Collision callback registered\n");
+}
+
+// ===== Internal Input Functions (called by renderers) =====
+
+extern "C" ENGINE_API void Engine_SetKeyState(int keyCode, bool isDown, bool isPressed) {
+    if (isDown) {
+        g_keyStates[keyCode] = true;
+        if (isPressed) {
+            g_keyPressed[keyCode] = true;
+        }
+    } else {
+        g_keyStates[keyCode] = false;
+        g_keyReleased[keyCode] = true;
+    }
+    
+    // Call registered callback
+    if (g_inputCallback) {
+        g_inputCallback(keyCode, isDown);
+    }
+}
+
+extern "C" ENGINE_API void Engine_SetMousePosition(float x, float y) {
+    g_mouseX = x;
+    g_mouseY = y;
+}
+
+extern "C" ENGINE_API void Engine_SetMouseButtonState(int button, bool isDown) {
+    if (isDown) {
+        g_mouseButtonStates[button] = true;
+        g_mouseButtonPressed[button] = true;
+    } else {
+        g_mouseButtonStates[button] = false;
+        g_mouseButtonReleased[button] = true;
+    }
 }
 
 // ===== Error Handling =====

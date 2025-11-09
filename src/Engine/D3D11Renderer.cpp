@@ -1,6 +1,7 @@
 #ifdef _WIN32
 
 #include "D3D11Renderer.h"
+#include "ChroniclesEngine.h"  // For input functions
 #include <d3dcompiler.h>
 #include <cstdio>
 #include <cstring>
@@ -8,6 +9,7 @@
 #include <DirectXMath.h>
 #include <wincodec.h>
 #include <wrl/client.h>
+#include <windowsx.h>  // For GET_X_LPARAM and GET_Y_LPARAM
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -1074,6 +1076,57 @@ LRESULT CALLBACK D3D11Renderer::WindowProc(HWND hwnd, UINT message, WPARAM wPara
             
         case WM_DESTROY:
             PostQuitMessage(0);
+            return 0;
+            
+        case WM_KEYDOWN:
+            // Send key down event to engine (only on first press, not repeats)
+            if ((lParam & 0x40000000) == 0) {  // Check if this is not a repeat
+                Engine_SetKeyState(static_cast<int>(wParam), true, true);
+            }
+            return 0;
+            
+        case WM_KEYUP:
+            // Send key up event to engine
+            Engine_SetKeyState(static_cast<int>(wParam), false, false);
+            return 0;
+            
+        case WM_MOUSEMOVE:
+            {
+                // Get mouse position in client coordinates
+                int xPos = GET_X_LPARAM(lParam);
+                int yPos = GET_Y_LPARAM(lParam);
+                Engine_SetMousePosition(static_cast<float>(xPos), static_cast<float>(yPos));
+            }
+            return 0;
+            
+        case WM_LBUTTONDOWN:
+            // Left mouse button (button 0)
+            Engine_SetMouseButtonState(0, true);
+            return 0;
+            
+        case WM_LBUTTONUP:
+            // Left mouse button (button 0)
+            Engine_SetMouseButtonState(0, false);
+            return 0;
+            
+        case WM_RBUTTONDOWN:
+            // Right mouse button (button 1)
+            Engine_SetMouseButtonState(1, true);
+            return 0;
+            
+        case WM_RBUTTONUP:
+            // Right mouse button (button 1)
+            Engine_SetMouseButtonState(1, false);
+            return 0;
+            
+        case WM_MBUTTONDOWN:
+            // Middle mouse button (button 2)
+            Engine_SetMouseButtonState(2, true);
+            return 0;
+            
+        case WM_MBUTTONUP:
+            // Middle mouse button (button 2)
+            Engine_SetMouseButtonState(2, false);
             return 0;
     }
     
