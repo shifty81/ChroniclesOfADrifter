@@ -1,17 +1,9 @@
 #include "ChroniclesEngine.h"
 #include "IRenderer.h"
-#ifdef HAS_SDL2
-#include "SDL2Renderer.h"
-#endif
-#ifdef _WIN32
 #include "D3D11Renderer.h"
 #include "D3D12Renderer.h"
-#endif
 #include <cstdio>
 #include <cstring>
-#ifdef HAS_SDL2
-#include <SDL2/SDL.h>
-#endif
 #include <map>
 #include <chrono>
 #include <memory>
@@ -60,71 +52,38 @@ namespace {
     }
     
     // Environment variable to select renderer backend
-    // Default on Windows: DirectX 11 (broad hardware compatibility)
-    // Set CHRONICLES_RENDERER=dx11 for DirectX 11 (Windows only, default)
-    // Set CHRONICLES_RENDERER=dx12 for DirectX 12 (Windows only, high-performance)
-    // Set CHRONICLES_RENDERER=sdl2 for SDL2 (cross-platform, if available)
+    // Default: DirectX 11 (broad hardware compatibility)
+    // Set CHRONICLES_RENDERER=dx11 for DirectX 11 (default)
+    // Set CHRONICLES_RENDERER=dx12 for DirectX 12 (high-performance)
     // Note: Renderer can be changed later in the settings menu (game will restart)
     Chronicles::RendererBackend GetRendererBackend() {
-#ifdef _WIN32
         char* rendererEnvBuf = nullptr;
         size_t bufSize = 0;
         _dupenv_s(&rendererEnvBuf, &bufSize, "CHRONICLES_RENDERER");
         const char* rendererEnv = rendererEnvBuf;
-#else
-        const char* rendererEnv = std::getenv("CHRONICLES_RENDERER");
-#endif
         
         Chronicles::RendererBackend result = Chronicles::RendererBackend::DirectX11;
         
         if (rendererEnv) {
             std::string backend(rendererEnv);
             if (backend == "dx11" || backend == "directx11" || backend == "d3d11") {
-#ifdef _WIN32
                 result = Chronicles::RendererBackend::DirectX11;
-#else
-                printf("[Engine] WARNING: DirectX 11 not available on this platform\n");
-#ifdef HAS_SDL2
-                printf("[Engine] Using SDL2 as fallback\n");
-                result = Chronicles::RendererBackend::SDL2;
-#else
-                printf("[Engine] ERROR: No renderer backend available\n");
-                result = Chronicles::RendererBackend::SDL2; // Will fail gracefully
-#endif
-#endif
             }
             else if (backend == "dx12" || backend == "directx12" || backend == "d3d12") {
-#ifdef _WIN32
                 result = Chronicles::RendererBackend::DirectX12;
-#else
-                printf("[Engine] WARNING: DirectX 12 not available on this platform\n");
-#ifdef HAS_SDL2
-                printf("[Engine] Using SDL2 as fallback\n");
-                result = Chronicles::RendererBackend::SDL2;
-#else
-                printf("[Engine] ERROR: No renderer backend available\n");
-                result = Chronicles::RendererBackend::SDL2; // Will fail gracefully
-#endif
-#endif
+            }
+            else {
+                printf("[Engine] WARNING: Unknown renderer '%s', using DirectX 11\n", backend.c_str());
+                result = Chronicles::RendererBackend::DirectX11;
             }
         }
         else {
-            // Default to DirectX 11 on Windows (configurable via environment variable)
-#ifdef _WIN32
-            printf("[Engine] Using DirectX 11 as default renderer (Windows configuration)\n");
+            // Default to DirectX 11 (configurable via environment variable)
+            printf("[Engine] Using DirectX 11 as default renderer\n");
             result = Chronicles::RendererBackend::DirectX11;
-#elif defined(HAS_SDL2)
-            printf("[Engine] Using SDL2 as default renderer (non-Windows platform)\n");
-            result = Chronicles::RendererBackend::SDL2;
-#else
-            printf("[Engine] ERROR: No renderer backend available\n");
-            result = Chronicles::RendererBackend::SDL2; // Will fail gracefully
-#endif
         }
         
-#ifdef _WIN32
         free(rendererEnvBuf);
-#endif
         return result;
     }
 }
@@ -146,35 +105,18 @@ extern "C" ENGINE_API bool Engine_Initialize(int width, int height, const char* 
     try {
         switch (backend) {
             case Chronicles::RendererBackend::DirectX11:
-#ifdef _WIN32
                 printf("[Engine] Using DirectX 11 renderer backend\n");
                 g_renderer = std::make_unique<Chronicles::D3D11Renderer>();
-#else
-                SetError("DirectX 11 not available on this platform");
-                return false;
-#endif
                 break;
             
             case Chronicles::RendererBackend::DirectX12:
-#ifdef _WIN32
                 printf("[Engine] Using DirectX 12 renderer backend\n");
                 g_renderer = std::make_unique<Chronicles::D3D12Renderer>();
-#else
-                SetError("DirectX 12 not available on this platform");
-                return false;
-#endif
                 break;
             
-            case Chronicles::RendererBackend::SDL2:
             default:
-#ifdef HAS_SDL2
-                printf("[Engine] Using SDL2 renderer backend\n");
-                g_renderer = std::make_unique<Chronicles::SDL2Renderer>();
-#else
-                SetError("SDL2 not available. Install SDL2 development libraries or use DirectX on Windows.");
+                SetError("Invalid renderer backend");
                 return false;
-#endif
-                break;
         }
     }
     catch (const std::exception& e) {
@@ -197,15 +139,6 @@ extern "C" ENGINE_API bool Engine_Initialize(int width, int height, const char* 
     // Initialize timing
     g_lastFrameTime = std::chrono::high_resolution_clock::now();
     
-    // Initialize SDL for input (even if using DirectX for rendering)
-#ifdef HAS_SDL2
-    if (backend == Chronicles::RendererBackend::DirectX11 || backend == Chronicles::RendererBackend::DirectX12) {
-        if (SDL_Init(SDL_INIT_EVENTS) < 0) {
-            printf("[Engine] WARNING: SDL input initialization failed: %s\n", SDL_GetError());
-        }
-    }
-#endif
-    
     printf("[Engine] Initialization complete\n");
     return true;
 }
@@ -222,11 +155,6 @@ extern "C" ENGINE_API void Engine_Shutdown() {
         g_renderer->Shutdown();
         g_renderer.reset();
     }
-    
-    // Quit SDL if it was initialized
-#ifdef HAS_SDL2
-    SDL_Quit();
-#endif
     
     g_isInitialized = false;
     g_isRunning = false;

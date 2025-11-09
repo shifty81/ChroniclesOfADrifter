@@ -3,15 +3,13 @@
 #include <string>
 
 // Abstract renderer interface for backend independence
-// Allows switching between SDL2, DirectX 12, Vulkan, etc.
+// Supports DirectX 11 and DirectX 12 renderers
 
 namespace Chronicles {
 
 enum class RendererBackend {
-    SDL2,
     DirectX11,
-    DirectX12,
-    Vulkan
+    DirectX12
 };
 
 class IRenderer {

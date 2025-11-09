@@ -99,18 +99,12 @@
     <ClCompile Include="ChroniclesEngine.cpp" />
     <ClCompile Include="D3D11Renderer.cpp" />
     <ClCompile Include="D3D12Renderer.cpp" />
-    <ClCompile Include="SDL2Renderer.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChroniclesEngine.h" />
     <ClInclude Include="D3D11Renderer.h" />
     <ClInclude Include="D3D12Renderer.h" />
     <ClInclude Include="IRenderer.h" />
-    <ClInclude Include="SDL2Renderer.h">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

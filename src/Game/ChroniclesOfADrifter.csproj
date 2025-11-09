@@ -17,11 +17,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     
-    <!-- Copy native engine SO to output (Linux) -->
-    <None Include="..\..\build\lib\libChroniclesEngine.so" Condition="Exists('..\..\build\lib\libChroniclesEngine.so')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    
     <!-- Copy Lua scripts to output -->
     <None Include="..\..\scripts\lua\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -39,6 +34,9 @@
     <!-- Lua integration -->
     <PackageReference Include="NLua" Version="1.7.3" />
     <PackageReference Include="SimplexNoise" Version="2.0.0" />
+    
+    <!-- Python integration -->
+    <PackageReference Include="Python.Runtime" Version="3.0.4" />
     
     <!-- JSON configuration -->
     <PackageReference Include="System.Text.Json" Version="9.0.0" />
