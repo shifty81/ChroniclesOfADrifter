@@ -159,6 +159,18 @@ bool D3D11Renderer::Initialize(int width, int height, const char* title) {
         return false;
     }
     
+    // Create sampler state
+    if (!CreateSamplerState()) {
+        printf("[D3D11Renderer] Failed to create sampler state\n");
+        return false;
+    }
+    
+    // Create white texture for solid color rendering
+    if (!CreateWhiteTexture()) {
+        printf("[D3D11Renderer] Failed to create white texture\n");
+        return false;
+    }
+    
     // Set viewport
     m_viewport.TopLeftX = 0.0f;
     m_viewport.TopLeftY = 0.0f;
@@ -235,13 +247,71 @@ void D3D11Renderer::Clear(float r, float g, float b, float a) {
 
 void D3D11Renderer::DrawRect(float x, float y, float width, float height,
                              float r, float g, float b, float a) {
-    // TODO: Implement rectangle drawing with vertex buffer
-    // For now, this is a stub
-    // This would involve creating a vertex buffer with 6 vertices (2 triangles)
-    // and rendering them with the appropriate color
-    (void)x; (void)y; (void)width; (void)height;
-    (void)r; (void)g; (void)b; (void)a;
-    printf("[D3D11Renderer] DrawRect not yet fully implemented\n");
+    // Create vertices for a rectangle (2 triangles = 6 vertices)
+    // Convert screen coordinates to normalized device coordinates (NDC)
+    // NDC: X ranges from -1 (left) to +1 (right), Y ranges from -1 (top) to +1 (bottom)
+    float left = (x / m_width) * 2.0f - 1.0f;
+    float right = ((x + width) / m_width) * 2.0f - 1.0f;
+    float top = 1.0f - (y / m_height) * 2.0f;
+    float bottom = 1.0f - ((y + height) / m_height) * 2.0f;
+    
+    Vertex vertices[] = {
+        // Triangle 1
+        { DirectX::XMFLOAT3(left, top, 0.0f), DirectX::XMFLOAT4(r, g, b, a), DirectX::XMFLOAT2(0.0f, 0.0f) },
+        { DirectX::XMFLOAT3(right, top, 0.0f), DirectX::XMFLOAT4(r, g, b, a), DirectX::XMFLOAT2(1.0f, 0.0f) },
+        { DirectX::XMFLOAT3(left, bottom, 0.0f), DirectX::XMFLOAT4(r, g, b, a), DirectX::XMFLOAT2(0.0f, 1.0f) },
+        // Triangle 2
+        { DirectX::XMFLOAT3(right, top, 0.0f), DirectX::XMFLOAT4(r, g, b, a), DirectX::XMFLOAT2(1.0f, 0.0f) },
+        { DirectX::XMFLOAT3(right, bottom, 0.0f), DirectX::XMFLOAT4(r, g, b, a), DirectX::XMFLOAT2(1.0f, 1.0f) },
+        { DirectX::XMFLOAT3(left, bottom, 0.0f), DirectX::XMFLOAT4(r, g, b, a), DirectX::XMFLOAT2(0.0f, 1.0f) }
+    };
+    
+    // Create or update vertex buffer
+    if (!m_vertexBuffer) {
+        D3D11_BUFFER_DESC bufferDesc = {};
+        bufferDesc.ByteWidth = sizeof(vertices);
+        bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+        bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        
+        D3D11_SUBRESOURCE_DATA initData = {};
+        initData.pSysMem = vertices;
+        
+        HRESULT hr = m_device->CreateBuffer(&bufferDesc, &initData, m_vertexBuffer.GetAddressOf());
+        if (FAILED(hr)) {
+            printf("[D3D11Renderer] Failed to create vertex buffer\n");
+            return;
+        }
+    } else {
+        // Update existing vertex buffer
+        D3D11_MAPPED_SUBRESOURCE mappedResource;
+        HRESULT hr = m_deviceContext->Map(m_vertexBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+        if (SUCCEEDED(hr)) {
+            memcpy(mappedResource.pData, vertices, sizeof(vertices));
+            m_deviceContext->Unmap(m_vertexBuffer.Get(), 0);
+        }
+    }
+    
+    // Update constant buffer with identity matrix (we're using NDC directly)
+    D3D11_MAPPED_SUBRESOURCE mappedResource;
+    HRESULT hr = m_deviceContext->Map(m_constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    if (SUCCEEDED(hr)) {
+        ConstantBufferData* cbData = static_cast<ConstantBufferData*>(mappedResource.pData);
+        cbData->worldViewProjection = DirectX::XMMatrixIdentity();
+        cbData->tintColor = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+        m_deviceContext->Unmap(m_constantBuffer.Get(), 0);
+    }
+    
+    // Bind white texture for solid color rendering
+    m_deviceContext->PSSetShaderResources(0, 1, m_whiteTextureSRV.GetAddressOf());
+    
+    // Set vertex buffer
+    UINT stride = sizeof(Vertex);
+    UINT offset = 0;
+    m_deviceContext->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
+    
+    // Draw the rectangle
+    m_deviceContext->Draw(6, 0);
 }
 
 void D3D11Renderer::DrawSprite(int textureId, float x, float y,
@@ -611,6 +681,78 @@ bool D3D11Renderer::CreateConstantBuffers() {
     
     // Set constant buffer
     m_deviceContext->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
+    
+    return true;
+}
+
+bool D3D11Renderer::CreateSamplerState() {
+    D3D11_SAMPLER_DESC samplerDesc = {};
+    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.MipLODBias = 0.0f;
+    samplerDesc.MaxAnisotropy = 1;
+    samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+    samplerDesc.BorderColor[0] = 0.0f;
+    samplerDesc.BorderColor[1] = 0.0f;
+    samplerDesc.BorderColor[2] = 0.0f;
+    samplerDesc.BorderColor[3] = 0.0f;
+    samplerDesc.MinLOD = 0.0f;
+    samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+    
+    HRESULT hr = m_device->CreateSamplerState(&samplerDesc, m_samplerState.GetAddressOf());
+    if (FAILED(hr)) {
+        printf("[D3D11Renderer] Failed to create sampler state\n");
+        return false;
+    }
+    
+    // Set sampler state
+    m_deviceContext->PSSetSamplers(0, 1, m_samplerState.GetAddressOf());
+    
+    return true;
+}
+
+bool D3D11Renderer::CreateWhiteTexture() {
+    // Create a 1x1 white texture for solid color rendering
+    D3D11_TEXTURE2D_DESC textureDesc = {};
+    textureDesc.Width = 1;
+    textureDesc.Height = 1;
+    textureDesc.MipLevels = 1;
+    textureDesc.ArraySize = 1;
+    textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    textureDesc.SampleDesc.Count = 1;
+    textureDesc.SampleDesc.Quality = 0;
+    textureDesc.Usage = D3D11_USAGE_DEFAULT;
+    textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    textureDesc.CPUAccessFlags = 0;
+    textureDesc.MiscFlags = 0;
+    
+    // White pixel data
+    UINT whitePixel = 0xFFFFFFFF;
+    D3D11_SUBRESOURCE_DATA initData = {};
+    initData.pSysMem = &whitePixel;
+    initData.SysMemPitch = 4;
+    initData.SysMemSlicePitch = 4;
+    
+    HRESULT hr = m_device->CreateTexture2D(&textureDesc, &initData, m_whiteTexture.GetAddressOf());
+    if (FAILED(hr)) {
+        printf("[D3D11Renderer] Failed to create white texture\n");
+        return false;
+    }
+    
+    // Create shader resource view
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+    srvDesc.Format = textureDesc.Format;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+    srvDesc.Texture2D.MipLevels = 1;
+    
+    hr = m_device->CreateShaderResourceView(m_whiteTexture.Get(), &srvDesc, m_whiteTextureSRV.GetAddressOf());
+    if (FAILED(hr)) {
+        printf("[D3D11Renderer] Failed to create white texture SRV\n");
+        return false;
+    }
     
     return true;
 }

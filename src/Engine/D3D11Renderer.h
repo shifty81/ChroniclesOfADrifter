@@ -59,6 +59,8 @@ private:
     bool CreateBlendState();
     bool CreateShadersAndInputLayout();
     bool CreateConstantBuffers();
+    bool CreateSamplerState();
+    bool CreateWhiteTexture();
     
     // Window management
     bool CreateAppWindow(const char* title);
@@ -89,6 +91,13 @@ private:
     // Vertex buffer for dynamic rendering
     ComPtr<ID3D11Buffer> m_vertexBuffer;
     ComPtr<ID3D11Buffer> m_indexBuffer;
+    
+    // Sampler state
+    ComPtr<ID3D11SamplerState> m_samplerState;
+    
+    // Default white texture for solid color rendering
+    ComPtr<ID3D11Texture2D> m_whiteTexture;
+    ComPtr<ID3D11ShaderResourceView> m_whiteTextureSRV;
     
     // Window
     HWND m_hwnd;
