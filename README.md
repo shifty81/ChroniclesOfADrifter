@@ -16,7 +16,9 @@ Chronicles of a Drifter features:
 
 ### C++ Core Engine
 - Performance-critical systems (rendering, physics, audio)
-- DirectX 12 / Vulkan backend
+- **DirectX 12 renderer** (Windows, high-performance) ✅ **IMPLEMENTED**
+- **SDL2 renderer** (cross-platform, default) ✅ **IMPLEMENTED**
+- Abstracted rendering backend for flexibility
 - Cross-platform foundation
 
 ### .NET 9 (C#) Game Logic
@@ -76,6 +78,7 @@ ChroniclesOfADrifter/
 - Visual Studio 2022 (v17.8+) or .NET 9 SDK
 - CMake 3.20+
 - C++ compiler (GCC/Clang on Linux, MSVC on Windows)
+- SDL2 development libraries (Linux: `libsdl2-dev`, Windows: included)
 
 ### Building Locally
 
@@ -93,8 +96,14 @@ cd ChroniclesOfADrifter
 # or
 build.bat         # Windows
 
-# Run the game
+# Run the game (default: SDL2 renderer)
 cd src/Game
+dotnet run -c Release
+
+# Or use DirectX 12 renderer on Windows
+set CHRONICLES_RENDERER=dx12  # Windows Command Prompt
+# or
+$env:CHRONICLES_RENDERER="dx12"  # Windows PowerShell
 dotnet run -c Release
 ```
 
@@ -232,7 +241,7 @@ This repository contains the **initial implementation** of Chronicles of a Drift
   - [x] Comprehensive time system tests
 
 ### 🔄 Next Steps
-- [ ] Implement C++ rendering engine (DirectX 12)
+- [x] **Implement C++ rendering engine (DirectX 12)** (COMPLETED - see [DIRECTX12_RENDERER.md](docs/DIRECTX12_RENDERER.md))
 - [ ] Add actual sprite assets (high-resolution character sprites)
 - [x] Add weather and time systems (COMPLETED)
 - [ ] Create UI framework for crafting and inventory
