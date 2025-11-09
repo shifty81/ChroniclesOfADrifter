@@ -66,6 +66,7 @@ ChroniclesOfADrifter/
 - **[Animation System](docs/ANIMATION_SYSTEM.md)** - Sprite animation and character customization
 - **[Camera System](docs/CAMERA_SYSTEM.md)** - 2D camera with following, zoom, and bounds
 - **[Camera Features](docs/CAMERA_FEATURES.md)** - Parallax scrolling and look-ahead systems
+- **[Cinematic Camera](docs/CINEMATIC_CAMERA.md)** - Cinematic camera movements for cutscenes with easing functions
 
 ### Development Resources
 - **[Sprite Assets](docs/SPRITE_ASSETS.md)** - Sprite creation guidelines and specifications
@@ -206,6 +207,7 @@ This repository contains the **initial implementation** of Chronicles of a Drift
   - [x] Camera zones with dynamic behavior per area
   - [x] Smooth zoom transitions
   - [x] Camera look-ahead based on velocity
+  - [x] Cinematic camera movements for cutscenes with easing functions
 - [x] **Underground Lighting and Fog of War**
   - [x] Depth-based ambient lighting (bright surface, dark underground)
   - [x] Player personal lantern (8-block radius)
