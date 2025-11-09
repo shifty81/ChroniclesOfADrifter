@@ -1,0 +1,175 @@
+{
+  "Name": "nature",
+  "Description": "Natural outdoor environment tileset",
+  "TileSize": 32,
+  "Tiles": {
+    "grass": {
+      "Name": "grass",
+      "DisplayName": "Grass",
+      "Color": [0.20, 0.70, 0.20],
+      "IsCollidable": false,
+      "Category": "terrain"
+    },
+    "tall_grass": {
+      "Name": "tall_grass",
+      "DisplayName": "Tall Grass",
+      "Color": [0.15, 0.60, 0.15],
+      "IsCollidable": false,
+      "Category": "vegetation"
+    },
+    "forest_floor": {
+      "Name": "forest_floor",
+      "DisplayName": "Forest Floor",
+      "Color": [0.25, 0.45, 0.20],
+      "IsCollidable": false,
+      "Category": "terrain"
+    },
+    "dirt_path": {
+      "Name": "dirt_path",
+      "DisplayName": "Dirt Path",
+      "Color": [0.55, 0.45, 0.30],
+      "IsCollidable": false,
+      "Category": "terrain"
+    },
+    "stone_path": {
+      "Name": "stone_path",
+      "DisplayName": "Stone Path",
+      "Color": [0.60, 0.60, 0.65],
+      "IsCollidable": false,
+      "Category": "terrain"
+    },
+    "oak_tree": {
+      "Name": "oak_tree",
+      "DisplayName": "Oak Tree",
+      "Color": [0.15, 0.50, 0.15],
+      "IsCollidable": true,
+      "Category": "vegetation"
+    },
+    "pine_tree": {
+      "Name": "pine_tree",
+      "DisplayName": "Pine Tree",
+      "Color": [0.10, 0.40, 0.10],
+      "IsCollidable": true,
+      "Category": "vegetation"
+    },
+    "bush": {
+      "Name": "bush",
+      "DisplayName": "Bush",
+      "Color": [0.18, 0.55, 0.18],
+      "IsCollidable": true,
+      "Category": "vegetation"
+    },
+    "flower_red": {
+      "Name": "flower_red",
+      "DisplayName": "Red Flower",
+      "Color": [0.95, 0.25, 0.25],
+      "IsCollidable": false,
+      "Category": "decoration"
+    },
+    "flower_blue": {
+      "Name": "flower_blue",
+      "DisplayName": "Blue Flower",
+      "Color": [0.25, 0.50, 0.95],
+      "IsCollidable": false,
+      "Category": "decoration"
+    },
+    "flower_yellow": {
+      "Name": "flower_yellow",
+      "DisplayName": "Yellow Flower",
+      "Color": [0.95, 0.90, 0.25],
+      "IsCollidable": false,
+      "Category": "decoration"
+    },
+    "mushroom": {
+      "Name": "mushroom",
+      "DisplayName": "Mushroom",
+      "Color": [0.80, 0.30, 0.30],
+      "IsCollidable": false,
+      "Category": "decoration"
+    },
+    "rock_small": {
+      "Name": "rock_small",
+      "DisplayName": "Small Rock",
+      "Color": [0.55, 0.55, 0.55],
+      "IsCollidable": true,
+      "Category": "obstacle"
+    },
+    "rock_large": {
+      "Name": "rock_large",
+      "DisplayName": "Large Rock",
+      "Color": [0.50, 0.50, 0.50],
+      "IsCollidable": true,
+      "Category": "obstacle"
+    },
+    "log": {
+      "Name": "log",
+      "DisplayName": "Fallen Log",
+      "Color": [0.45, 0.35, 0.25],
+      "IsCollidable": true,
+      "Category": "obstacle"
+    },
+    "stump": {
+      "Name": "stump",
+      "DisplayName": "Tree Stump",
+      "Color": [0.50, 0.40, 0.30],
+      "IsCollidable": true,
+      "Category": "obstacle"
+    },
+    "pond": {
+      "Name": "pond",
+      "DisplayName": "Pond",
+      "Color": [0.30, 0.65, 0.80],
+      "IsCollidable": false,
+      "Category": "water"
+    },
+    "river": {
+      "Name": "river",
+      "DisplayName": "River",
+      "Color": [0.25, 0.60, 0.85],
+      "IsCollidable": false,
+      "Category": "water"
+    },
+    "lily_pad": {
+      "Name": "lily_pad",
+      "DisplayName": "Lily Pad",
+      "Color": [0.40, 0.70, 0.40],
+      "IsCollidable": false,
+      "Category": "decoration"
+    },
+    "cattail": {
+      "Name": "cattail",
+      "DisplayName": "Cattail",
+      "Color": [0.45, 0.60, 0.35],
+      "IsCollidable": false,
+      "Category": "vegetation"
+    },
+    "fence": {
+      "Name": "fence",
+      "DisplayName": "Wooden Fence",
+      "Color": [0.55, 0.40, 0.25],
+      "IsCollidable": true,
+      "Category": "structure"
+    },
+    "sign": {
+      "Name": "sign",
+      "DisplayName": "Wooden Sign",
+      "Color": [0.60, 0.45, 0.30],
+      "IsCollidable": true,
+      "Category": "structure"
+    },
+    "bridge_wood": {
+      "Name": "bridge_wood",
+      "DisplayName": "Wooden Bridge",
+      "Color": [0.50, 0.40, 0.30],
+      "IsCollidable": false,
+      "Category": "structure"
+    },
+    "stepping_stone": {
+      "Name": "stepping_stone",
+      "DisplayName": "Stepping Stone",
+      "Color": [0.65, 0.65, 0.70],
+      "IsCollidable": false,
+      "Category": "structure"
+    }
+  }
+}
