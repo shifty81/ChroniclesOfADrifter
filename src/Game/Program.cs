@@ -196,6 +196,13 @@ class Program
             return;
         }
         
+        // Check if complete game loop demo was requested via command line argument
+        if (args.Length > 0 && args[0].ToLower() == "complete")
+        {
+            RunCompleteGameLoopDemo();
+            return;
+        }
+        
         // Initialize console
         ConsoleRenderer.InitializeConsole();
         
@@ -230,6 +237,7 @@ class Program
         Console.WriteLine("       Run with 'crafting' for crafting system demo");
         Console.WriteLine("       Run with 'cinematic' for cinematic camera demo");
         Console.WriteLine("       Run with 'hybrid' for hybrid gameplay demo");
+        Console.WriteLine("       Run with 'complete' for COMPLETE GAME LOOP demo");
         Console.WriteLine("       Run with 'editor' for MAP EDITOR with tileset support");
         Console.WriteLine("===========================================\n");
         
@@ -762,6 +770,96 @@ class Program
         scene.OnUnload();
         
         // Shutdown
+        Console.WriteLine("\n[Game] Shutting down...");
+        EngineInterop.Engine_Shutdown();
+        Console.WriteLine("[Game] Goodbye!");
+    }
+    
+    /// <summary>
+    /// Run the complete game loop demo scene showcasing all integrated systems
+    /// </summary>
+    static void RunCompleteGameLoopDemo()
+    {
+        // Initialize console
+        ConsoleRenderer.InitializeConsole();
+        
+        Console.WriteLine("===========================================");
+        Console.WriteLine("  Chronicles of a Drifter");
+        Console.WriteLine("  COMPLETE GAME LOOP DEMONSTRATION");
+        Console.WriteLine("  All Systems Integrated");
+        Console.WriteLine("===========================================\n");
+        
+        // Initialize engine
+        Console.WriteLine("[Game] Initializing engine...");
+        bool success = EngineInterop.Engine_Initialize(1920, 1080, "Chronicles of a Drifter - Complete Game Loop");
+        
+        if (!success)
+        {
+            Console.WriteLine("[Game] ERROR: Failed to initialize engine!");
+            Console.WriteLine($"[Game] Error: {EngineInterop.Engine_GetErrorMessage()}");
+            return;
+        }
+        
+        Console.WriteLine("[Game] Engine initialized successfully\n");
+        
+        // Load complete game loop scene
+        var scene = new CompleteGameLoopScene();
+        scene.OnLoad();
+        
+        Console.WriteLine("\n[Game] Starting complete game loop...");
+        Console.WriteLine("[Game] Press Q or ESC to exit\n");
+        
+        Thread.Sleep(2000); // Give user time to read messages
+        
+        // Create console renderer
+        var renderer = new ConsoleRenderer();
+        
+        // Main game loop
+        int frameCount = 0;
+        var lastTime = DateTime.Now;
+        float fps = 60.0f;
+        
+        while (EngineInterop.Engine_IsRunning())
+        {
+            // Check for quit key
+            if (EngineInterop.Input_IsKeyPressed(KEY_Q) || EngineInterop.Input_IsKeyPressed(KEY_ESC))
+            {
+                Console.WriteLine("\n[Game] Quit key pressed...");
+                break;
+            }
+            
+            EngineInterop.Engine_BeginFrame();
+            
+            float deltaTime = EngineInterop.Engine_GetDeltaTime();
+            
+            // Update the scene (which updates all systems)
+            scene.Update(deltaTime);
+            
+            // Render the game state to console
+            renderer.Render(scene.World, fps);
+            
+            EngineInterop.Engine_EndFrame();
+            
+            frameCount++;
+            
+            // Calculate FPS
+            var currentTime = DateTime.Now;
+            var elapsed = (currentTime - lastTime).TotalSeconds;
+            if (elapsed > 0)
+            {
+                fps = (float)(1.0 / elapsed);
+            }
+            lastTime = currentTime;
+            
+            Thread.Sleep(16); // Target ~60 FPS
+        }
+        
+        // Unload scene
+        scene.OnUnload();
+        
+        // Shutdown
+        Console.Clear();
+        Console.CursorVisible = true;
         Console.WriteLine("\n[Game] Shutting down...");
         EngineInterop.Engine_Shutdown();
         Console.WriteLine("[Game] Goodbye!");
