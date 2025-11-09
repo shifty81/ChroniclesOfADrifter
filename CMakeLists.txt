@@ -5,8 +5,13 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find SDL2
-find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS})
+find_package(SDL2)
+if(SDL2_FOUND)
+    include_directories(${SDL2_INCLUDE_DIRS})
+    message(STATUS "SDL2 found: ${SDL2_INCLUDE_DIRS}")
+else()
+    message(WARNING "SDL2 not found. SDL2Renderer will be disabled. Install SDL2 development libraries to enable it.")
+endif()
 
 # Output directories
 # Ensure consistent output paths across all configurations (no Release/Debug subfolder)
@@ -27,9 +32,15 @@ set(ENGINE_SOURCES
     src/Engine/ChroniclesEngine.cpp
     src/Engine/ChroniclesEngine.h
     src/Engine/IRenderer.h
-    src/Engine/SDL2Renderer.cpp
-    src/Engine/SDL2Renderer.h
 )
+
+# Add SDL2 renderer if SDL2 is found
+if(SDL2_FOUND)
+    list(APPEND ENGINE_SOURCES
+        src/Engine/SDL2Renderer.cpp
+        src/Engine/SDL2Renderer.h
+    )
+endif()
 
 # Add DirectX renderers on Windows
 if(WIN32)
@@ -46,12 +57,19 @@ add_library(ChroniclesEngine SHARED ${ENGINE_SOURCES})
 
 target_compile_definitions(ChroniclesEngine PRIVATE ENGINE_EXPORTS)
 
+# Add SDL2 compile definition if available
+if(SDL2_FOUND)
+    target_compile_definitions(ChroniclesEngine PRIVATE HAS_SDL2)
+endif()
+
 target_include_directories(ChroniclesEngine PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Engine
 )
 
 # Link SDL2
-target_link_libraries(ChroniclesEngine PRIVATE ${SDL2_LIBRARIES})
+if(SDL2_FOUND)
+    target_link_libraries(ChroniclesEngine PRIVATE ${SDL2_LIBRARIES})
+endif()
 
 # Platform-specific settings
 if(WIN32)

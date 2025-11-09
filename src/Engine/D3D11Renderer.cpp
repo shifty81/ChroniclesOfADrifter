@@ -239,6 +239,8 @@ void D3D11Renderer::DrawRect(float x, float y, float width, float height,
     // For now, this is a stub
     // This would involve creating a vertex buffer with 6 vertices (2 triangles)
     // and rendering them with the appropriate color
+    (void)x; (void)y; (void)width; (void)height;
+    (void)r; (void)g; (void)b; (void)a;
     printf("[D3D11Renderer] DrawRect not yet fully implemented\n");
 }
 
@@ -247,6 +249,8 @@ void D3D11Renderer::DrawSprite(int textureId, float x, float y,
     // TODO: Implement sprite drawing with texture
     // For now, this is a stub
     // This would involve binding the texture and rendering a textured quad
+    (void)textureId; (void)x; (void)y;
+    (void)width; (void)height; (void)rotation;
     printf("[D3D11Renderer] DrawSprite not yet fully implemented\n");
 }
 

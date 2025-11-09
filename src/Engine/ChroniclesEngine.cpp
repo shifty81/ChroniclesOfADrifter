@@ -1,12 +1,17 @@
 #include "ChroniclesEngine.h"
+#include "IRenderer.h"
+#ifdef HAS_SDL2
 #include "SDL2Renderer.h"
+#endif
 #ifdef _WIN32
 #include "D3D11Renderer.h"
 #include "D3D12Renderer.h"
 #endif
 #include <cstdio>
 #include <cstring>
+#ifdef HAS_SDL2
 #include <SDL2/SDL.h>
+#endif
 #include <map>
 #include <chrono>
 #include <memory>
@@ -52,7 +57,7 @@ namespace {
     // Environment variable to select renderer backend
     // Set CHRONICLES_RENDERER=dx11 for DirectX 11 (Windows only)
     // Set CHRONICLES_RENDERER=dx12 for DirectX 12 (Windows only)
-    // Set CHRONICLES_RENDERER=sdl2 for SDL2 (default, cross-platform)
+    // Set CHRONICLES_RENDERER=sdl2 for SDL2 (cross-platform, if available)
     Chronicles::RendererBackend GetRendererBackend() {
         const char* rendererEnv = std::getenv("CHRONICLES_RENDERER");
         if (rendererEnv) {
@@ -61,20 +66,42 @@ namespace {
 #ifdef _WIN32
                 return Chronicles::RendererBackend::DirectX11;
 #else
-                printf("[Engine] WARNING: DirectX 11 not available on this platform, using SDL2\n");
+                printf("[Engine] WARNING: DirectX 11 not available on this platform\n");
+#ifdef HAS_SDL2
+                printf("[Engine] Using SDL2 as fallback\n");
                 return Chronicles::RendererBackend::SDL2;
+#else
+                printf("[Engine] ERROR: No renderer backend available\n");
+                return Chronicles::RendererBackend::SDL2; // Will fail gracefully
+#endif
 #endif
             }
             if (backend == "dx12" || backend == "directx12" || backend == "d3d12") {
 #ifdef _WIN32
                 return Chronicles::RendererBackend::DirectX12;
 #else
-                printf("[Engine] WARNING: DirectX 12 not available on this platform, using SDL2\n");
+                printf("[Engine] WARNING: DirectX 12 not available on this platform\n");
+#ifdef HAS_SDL2
+                printf("[Engine] Using SDL2 as fallback\n");
                 return Chronicles::RendererBackend::SDL2;
+#else
+                printf("[Engine] ERROR: No renderer backend available\n");
+                return Chronicles::RendererBackend::SDL2; // Will fail gracefully
+#endif
 #endif
             }
         }
-        return Chronicles::RendererBackend::SDL2; // Default
+        
+        // Default to SDL2 if available, otherwise DirectX 11 on Windows
+#ifdef HAS_SDL2
+        return Chronicles::RendererBackend::SDL2;
+#elif defined(_WIN32)
+        printf("[Engine] SDL2 not available, using DirectX 11 as default\n");
+        return Chronicles::RendererBackend::DirectX11;
+#else
+        printf("[Engine] ERROR: No renderer backend available\n");
+        return Chronicles::RendererBackend::SDL2; // Will fail gracefully
+#endif
     }
 }
 
@@ -99,8 +126,8 @@ extern "C" ENGINE_API bool Engine_Initialize(int width, int height, const char* 
                 printf("[Engine] Using DirectX 11 renderer backend\n");
                 g_renderer = std::make_unique<Chronicles::D3D11Renderer>();
 #else
-                printf("[Engine] DirectX 11 not available, falling back to SDL2\n");
-                g_renderer = std::make_unique<Chronicles::SDL2Renderer>();
+                SetError("DirectX 11 not available on this platform");
+                return false;
 #endif
                 break;
             
@@ -109,15 +136,20 @@ extern "C" ENGINE_API bool Engine_Initialize(int width, int height, const char* 
                 printf("[Engine] Using DirectX 12 renderer backend\n");
                 g_renderer = std::make_unique<Chronicles::D3D12Renderer>();
 #else
-                printf("[Engine] DirectX 12 not available, falling back to SDL2\n");
-                g_renderer = std::make_unique<Chronicles::SDL2Renderer>();
+                SetError("DirectX 12 not available on this platform");
+                return false;
 #endif
                 break;
             
             case Chronicles::RendererBackend::SDL2:
             default:
+#ifdef HAS_SDL2
                 printf("[Engine] Using SDL2 renderer backend\n");
                 g_renderer = std::make_unique<Chronicles::SDL2Renderer>();
+#else
+                SetError("SDL2 not available. Install SDL2 development libraries or use DirectX on Windows.");
+                return false;
+#endif
                 break;
         }
     }
@@ -142,11 +174,13 @@ extern "C" ENGINE_API bool Engine_Initialize(int width, int height, const char* 
     g_lastFrameTime = std::chrono::high_resolution_clock::now();
     
     // Initialize SDL for input (even if using DirectX for rendering)
-    if (backend == Chronicles::RendererBackend::DirectX12) {
+#ifdef HAS_SDL2
+    if (backend == Chronicles::RendererBackend::DirectX11 || backend == Chronicles::RendererBackend::DirectX12) {
         if (SDL_Init(SDL_INIT_EVENTS) < 0) {
             printf("[Engine] WARNING: SDL input initialization failed: %s\n", SDL_GetError());
         }
     }
+#endif
     
     printf("[Engine] Initialization complete\n");
     return true;
@@ -166,7 +200,9 @@ extern "C" ENGINE_API void Engine_Shutdown() {
     }
     
     // Quit SDL if it was initialized
+#ifdef HAS_SDL2
     SDL_Quit();
+#endif
     
     g_isInitialized = false;
     g_isRunning = false;
@@ -192,6 +228,7 @@ extern "C" ENGINE_API void Engine_BeginFrame() {
     g_keyPressed.clear();
     g_keyReleased.clear();
     
+#ifdef HAS_SDL2
     // Process SDL events (for input and window management)
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
@@ -227,6 +264,7 @@ extern "C" ENGINE_API void Engine_BeginFrame() {
                 break;
         }
     }
+#endif
     
     // Begin renderer frame
     if (g_renderer) {
@@ -304,8 +342,13 @@ extern "C" ENGINE_API void Input_GetMousePosition(float* outX, float* outY) {
 }
 
 extern "C" ENGINE_API bool Input_IsMouseButtonPressed(int button) {
+#ifdef HAS_SDL2
     Uint32 mouseState = SDL_GetMouseState(nullptr, nullptr);
     return (mouseState & SDL_BUTTON(button)) != 0;
+#else
+    (void)button;
+    return false; // Not supported without SDL2
+#endif
 }
 
 // ===== Audio =====
@@ -317,6 +360,7 @@ extern "C" ENGINE_API int Audio_LoadSound(const char* filePath) {
 }
 
 extern "C" ENGINE_API void Audio_PlaySound(int soundId, float volume) {
+    (void)soundId; (void)volume;
     // TODO: Play sound effect
 }
 
@@ -332,6 +376,7 @@ extern "C" ENGINE_API void Audio_StopMusic() {
 // ===== Physics =====
 
 extern "C" ENGINE_API void Physics_SetGravity(float x, float y) {
+    (void)x; (void)y;
     // TODO: Set physics gravity
 }
 
