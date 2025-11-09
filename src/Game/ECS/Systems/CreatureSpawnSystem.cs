@@ -109,12 +109,14 @@ public class CreatureSpawnSystem : ISystem
     
     /// <summary>
     /// Spawns creatures appropriate for the given biome and depth
+    /// Returns list of spawned creature entities
     /// </summary>
-    public void SpawnByBiomeAndDepth(World world, BiomeType biome, int depth, float x, float y, int count = 1)
+    public List<Entity> SpawnByBiomeAndDepth(World world, BiomeType biome, int depth, float x, float y, int count = 1)
     {
+        var spawnedCreatures = new List<Entity>();
         var possibleCreatures = GetCreaturesForBiomeAndDepth(biome, depth);
         
-        if (possibleCreatures.Count == 0) return;
+        if (possibleCreatures.Count == 0) return spawnedCreatures;
         
         for (int i = 0; i < count; i++)
         {
@@ -125,8 +127,11 @@ public class CreatureSpawnSystem : ISystem
             float offsetX = (float)(random.NextDouble() * 200 - 100);
             float offsetY = (float)(random.NextDouble() * 200 - 100);
             
-            SpawnCreature(world, type, x + offsetX, y + offsetY);
+            var creature = SpawnCreature(world, type, x + offsetX, y + offsetY);
+            spawnedCreatures.Add(creature);
         }
+        
+        return spawnedCreatures;
     }
     
     /// <summary>

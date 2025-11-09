@@ -1,17 +1,23 @@
 namespace ChroniclesOfADrifter.Terrain;
 
 /// <summary>
-/// Manages chunks, handles loading/unloading based on player position
+/// Manages chunks, handles loading/unloading based on player position.
+/// Supports both synchronous and asynchronous chunk generation.
 /// </summary>
-public class ChunkManager
+public class ChunkManager : IDisposable
 {
     private Dictionary<int, Chunk> loadedChunks;
     private int renderDistance = 2; // Load chunks within 2 chunks of player
+    private int unloadDistance = 4; // Unload chunks beyond this distance
     private TerrainGenerator? terrainGenerator;
+    private AsyncChunkGenerator? asyncGenerator;
+    private bool useAsyncGeneration;
+    private bool isDisposed;
     
-    public ChunkManager()
+    public ChunkManager(bool useAsyncGeneration = false)
     {
         loadedChunks = new Dictionary<int, Chunk>();
+        this.useAsyncGeneration = useAsyncGeneration;
     }
     
     /// <summary>
@@ -20,19 +26,63 @@ public class ChunkManager
     public void SetTerrainGenerator(TerrainGenerator generator)
     {
         terrainGenerator = generator;
+        
+        // Initialize async generator if needed
+        if (useAsyncGeneration && asyncGenerator == null && terrainGenerator != null)
+        {
+            asyncGenerator = new AsyncChunkGenerator(terrainGenerator);
+        }
     }
     
     /// <summary>
-    /// Gets a chunk at the given chunk coordinate, loading it if necessary
+    /// Enables or disables async chunk generation
     /// </summary>
-    public Chunk GetChunk(int chunkX)
+    public void SetAsyncGeneration(bool enabled)
+    {
+        if (useAsyncGeneration == enabled)
+        {
+            return;
+        }
+        
+        useAsyncGeneration = enabled;
+        
+        if (enabled && asyncGenerator == null && terrainGenerator != null)
+        {
+            asyncGenerator = new AsyncChunkGenerator(terrainGenerator);
+        }
+        else if (!enabled && asyncGenerator != null)
+        {
+            asyncGenerator.Dispose();
+            asyncGenerator = null;
+        }
+    }
+    
+    /// <summary>
+    /// Gets a chunk at the given chunk coordinate, loading it if necessary.
+    /// Returns null if using async generation and chunk is not ready yet.
+    /// </summary>
+    public Chunk? GetChunk(int chunkX)
     {
         if (loadedChunks.TryGetValue(chunkX, out var chunk))
         {
             return chunk;
         }
         
-        // Load/generate new chunk
+        // Check if async generator has completed this chunk
+        if (useAsyncGeneration && asyncGenerator != null)
+        {
+            var generatedChunk = asyncGenerator.TryGetGeneratedChunk(chunkX);
+            if (generatedChunk != null)
+            {
+                loadedChunks[chunkX] = generatedChunk;
+                return generatedChunk;
+            }
+            
+            // Chunk not ready yet
+            return null;
+        }
+        
+        // Synchronous generation
         chunk = new Chunk(chunkX);
         
         if (terrainGenerator != null)
@@ -42,6 +92,33 @@ public class ChunkManager
         else
         {
             // Fallback: fill with air
+            chunk.Fill(ECS.Components.TileType.Air);
+        }
+        
+        loadedChunks[chunkX] = chunk;
+        return chunk;
+    }
+    
+    /// <summary>
+    /// Gets a chunk synchronously, waiting if necessary (always returns a chunk).
+    /// Use this when you need to guarantee a chunk is available.
+    /// </summary>
+    public Chunk GetChunkSync(int chunkX)
+    {
+        if (loadedChunks.TryGetValue(chunkX, out var chunk))
+        {
+            return chunk;
+        }
+        
+        // Generate synchronously regardless of async setting
+        chunk = new Chunk(chunkX);
+        
+        if (terrainGenerator != null)
+        {
+            terrainGenerator.GenerateChunk(chunk);
+        }
+        else
+        {
             chunk.Fill(ECS.Components.TileType.Air);
         }
         
@@ -63,6 +140,11 @@ public class ChunkManager
         int localX = Chunk.WorldToLocalCoord(worldX);
         
         var chunk = GetChunk(chunkX);
+        if (chunk == null)
+        {
+            return ECS.Components.TileType.Air;  // Chunk not loaded yet
+        }
+        
         return chunk.GetTile(localX, worldY);
     }
     
@@ -79,7 +161,8 @@ public class ChunkManager
         int chunkX = Chunk.WorldToChunkCoord(worldX);
         int localX = Chunk.WorldToLocalCoord(worldX);
         
-        var chunk = GetChunk(chunkX);
+        // Always use sync get for modifications
+        var chunk = GetChunkSync(chunkX);
         chunk.SetTile(localX, worldY, type);
     }
     
@@ -90,15 +173,52 @@ public class ChunkManager
     {
         int playerChunkX = Chunk.WorldToChunkCoord((int)playerWorldX);
         
-        // Load chunks around player
-        for (int offsetX = -renderDistance; offsetX <= renderDistance; offsetX++)
+        if (useAsyncGeneration && asyncGenerator != null)
         {
-            int chunkX = playerChunkX + offsetX;
-            GetChunk(chunkX); // This will load the chunk if not already loaded
+            // Async mode: request chunks in order of priority
+            for (int offsetX = -renderDistance; offsetX <= renderDistance; offsetX++)
+            {
+                int chunkX = playerChunkX + offsetX;
+                asyncGenerator.RequestChunkGeneration(chunkX, playerWorldX);
+                
+                // Check if chunk is ready and load it
+                GetChunk(chunkX);
+            }
+            
+            // Pre-request chunks slightly beyond render distance for smoother experience
+            for (int offsetX = -(renderDistance + 1); offsetX <= (renderDistance + 1); offsetX++)
+            {
+                if (Math.Abs(offsetX) > renderDistance)
+                {
+                    int chunkX = playerChunkX + offsetX;
+                    asyncGenerator.RequestChunkGeneration(chunkX, playerWorldX);
+                }
+            }
+        }
+        else
+        {
+            // Sync mode: load chunks immediately
+            for (int offsetX = -renderDistance; offsetX <= renderDistance; offsetX++)
+            {
+                int chunkX = playerChunkX + offsetX;
+                GetChunk(chunkX); // This will load the chunk if not already loaded
+            }
         }
         
-        // Unload far chunks (simple approach: keep all for now, can optimize later)
-        // In a real implementation, you'd unload chunks beyond renderDistance + buffer
+        // Unload far chunks
+        var chunksToUnload = new List<int>();
+        foreach (var chunkX in loadedChunks.Keys)
+        {
+            if (Math.Abs(chunkX - playerChunkX) > unloadDistance)
+            {
+                chunksToUnload.Add(chunkX);
+            }
+        }
+        
+        foreach (var chunkX in chunksToUnload)
+        {
+            loadedChunks.Remove(chunkX);
+        }
     }
     
     /// <summary>
@@ -118,6 +238,23 @@ public class ChunkManager
     }
     
     /// <summary>
+    /// Gets async generation statistics (for debugging/UI)
+    /// </summary>
+    public (int queued, int inProgress, int completed) GetAsyncStats()
+    {
+        if (asyncGenerator == null)
+        {
+            return (0, 0, 0);
+        }
+        
+        return (
+            asyncGenerator.GetQueuedChunkCount(),
+            asyncGenerator.GetInProgressChunkCount(),
+            asyncGenerator.GetCompletedChunkCount()
+        );
+    }
+    
+    /// <summary>
     /// Gets the vegetation at a world X coordinate (surface only)
     /// </summary>
     public ECS.Components.TileType? GetVegetation(int worldX)
@@ -126,6 +263,11 @@ public class ChunkManager
         int localX = Chunk.WorldToLocalCoord(worldX);
         
         var chunk = GetChunk(chunkX);
+        if (chunk == null)
+        {
+            return null;  // Chunk not loaded yet
+        }
+        
         return chunk.GetVegetation(localX);
     }
     
@@ -137,7 +279,27 @@ public class ChunkManager
         int chunkX = Chunk.WorldToChunkCoord(worldX);
         int localX = Chunk.WorldToLocalCoord(worldX);
         
-        var chunk = GetChunk(chunkX);
+        // Always use sync get for modifications
+        var chunk = GetChunkSync(chunkX);
         chunk.SetVegetation(localX, type);
+    }
+    
+    /// <summary>
+    /// Disposes the chunk manager and any async resources
+    /// </summary>
+    public void Dispose()
+    {
+        if (isDisposed)
+        {
+            return;
+        }
+        
+        isDisposed = true;
+        
+        if (asyncGenerator != null)
+        {
+            asyncGenerator.Dispose();
+            asyncGenerator = null;
+        }
     }
 }

@@ -63,6 +63,13 @@ class Program
             return;
         }
         
+        // Check for world creature manager test mode
+        if (args.Length > 0 && args[0].ToLower() == "world-creature-test")
+        {
+            Tests.WorldCreatureManagerTest.Run();
+            return;
+        }
+        
         // Check for structure generation test mode
         if (args.Length > 0 && args[0].ToLower() == "structure-test")
         {
@@ -81,6 +88,20 @@ class Program
         if (args.Length > 0 && args[0].ToLower() == "swimming-test")
         {
             Tests.SwimmingSystemTest.Run();
+            return;
+        }
+        
+        // Check for weather system test mode
+        if (args.Length > 0 && args[0].ToLower() == "weather-test")
+        {
+            Tests.WeatherSystemTest.Run();
+            return;
+        }
+        
+        // Check for async chunk generation test mode
+        if (args.Length > 0 && args[0].ToLower() == "async-test")
+        {
+            Tests.AsyncChunkGenerationTest.Run();
             return;
         }
         
