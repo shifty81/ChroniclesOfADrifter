@@ -87,7 +87,7 @@ public class HybridGameplayTest
         Assert(relationship.Level == RelationshipLevel.Acquaintance, "Should be Acquaintance");
         
         // Test gift giving
-        bool giftGiven = relationships.GiveGift("TestNPC", TileType.Gold, 50);
+        bool giftGiven = relationships.GiveGift("TestNPC", TileType.GoldOre, 50);
         Assert(giftGiven, "Should accept gift");
         Assert(relationship.Points == 160, "Should have 160 points");
         Assert(relationship.GiftsGivenToday == 1, "Should have given 1 gift today");

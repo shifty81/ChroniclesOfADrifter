@@ -64,8 +64,8 @@ public class HybridGameplayDemoScene : Scene
         // Basic components
         World.AddComponent(playerEntity, new PlayerComponent());
         World.AddComponent(playerEntity, new PositionComponent(100, 100));
-        World.AddComponent(playerEntity, new HealthComponent(100, 100));
-        World.AddComponent(playerEntity, new CollisionComponent(32, 64, CollisionLayer.Player));
+        World.AddComponent(playerEntity, new HealthComponent(100));
+        World.AddComponent(playerEntity, new CollisionComponent(32, 64, layer: CollisionLayer.Player));
         
         // Combat capabilities
         World.AddComponent(playerEntity, new CombatComponent
@@ -193,7 +193,7 @@ public class HybridGameplayDemoScene : Scene
             RequiredProgress = 3,
             GoldReward = 50
         };
-        farmQuest.ItemRewards[TileType.Gold] = 1;
+        farmQuest.ItemRewards[TileType.GoldOre] = 1;
         questComponent.AcceptQuest(farmQuest);
         
         // Social quest

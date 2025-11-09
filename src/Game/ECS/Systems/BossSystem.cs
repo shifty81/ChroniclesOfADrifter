@@ -231,7 +231,7 @@ public class BossSystem : ISystem
         world.AddComponent(bossEntity, new PositionComponent(x, y));
         
         // Add high health
-        world.AddComponent(bossEntity, new HealthComponent(500, 500));
+        world.AddComponent(bossEntity, new HealthComponent(500));
         
         // Add combat with strong attack
         world.AddComponent(bossEntity, new CombatComponent
@@ -242,7 +242,7 @@ public class BossSystem : ISystem
         });
         
         // Add collision
-        world.AddComponent(bossEntity, new CollisionComponent(64, 64, CollisionLayer.Enemy));
+        world.AddComponent(bossEntity, new CollisionComponent(64, 64, layer: CollisionLayer.Enemy));
         
         Console.WriteLine($"[Boss] Created boss '{name}' at ({x}, {y})");
         
