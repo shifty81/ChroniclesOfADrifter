@@ -1,11 +1,16 @@
 #include "ChroniclesEngine.h"
+#include "SDL2Renderer.h"
+#ifdef _WIN32
+#include "D3D12Renderer.h"
+#endif
 #include <cstdio>
 #include <cstring>
 #include <SDL2/SDL.h>
 #include <map>
 #include <chrono>
+#include <memory>
 
-// Chronicles of a Drifter - Native Engine Implementation with SDL2
+// Chronicles of a Drifter - Native Engine Implementation with Multiple Renderer Backends
 
 namespace {
     // Engine state
@@ -14,9 +19,8 @@ namespace {
     float g_deltaTime = 0.016f; // ~60 FPS
     float g_totalTime = 0.0f;
     
-    // SDL state
-    SDL_Window* g_window = nullptr;
-    SDL_Renderer* g_renderer = nullptr;
+    // Renderer backend
+    std::unique_ptr<Chronicles::IRenderer> g_renderer;
     int g_windowWidth = 0;
     int g_windowHeight = 0;
     
@@ -29,10 +33,6 @@ namespace {
     std::map<int, bool> g_keyReleased;
     float g_mouseX = 0.0f;
     float g_mouseY = 0.0f;
-    
-    // Textures
-    std::map<int, SDL_Texture*> g_textures;
-    int g_nextTextureId = 1;
     
     // Callbacks
     InputCallbackFn g_inputCallback = nullptr;
@@ -47,6 +47,25 @@ namespace {
         g_errorMessage[sizeof(g_errorMessage) - 1] = '\0';
         printf("[Engine] ERROR: %s\n", message);
     }
+    
+    // Environment variable to select renderer backend
+    // Set CHRONICLES_RENDERER=dx12 for DirectX 12 (Windows only)
+    // Set CHRONICLES_RENDERER=sdl2 for SDL2 (default, cross-platform)
+    Chronicles::RendererBackend GetRendererBackend() {
+        const char* rendererEnv = std::getenv("CHRONICLES_RENDERER");
+        if (rendererEnv) {
+            std::string backend(rendererEnv);
+            if (backend == "dx12" || backend == "directx12" || backend == "d3d12") {
+#ifdef _WIN32
+                return Chronicles::RendererBackend::DirectX12;
+#else
+                printf("[Engine] WARNING: DirectX 12 not available on this platform, using SDL2\n");
+                return Chronicles::RendererBackend::SDL2;
+#endif
+            }
+        }
+        return Chronicles::RendererBackend::SDL2; // Default
+    }
 }
 
 // ===== Engine Initialization =====
@@ -56,47 +75,43 @@ extern "C" ENGINE_API bool Engine_Initialize(int width, int height, const char* 
         return true;
     }
     
-    printf("[Engine] Initializing Chronicles Engine with SDL2\n");
+    printf("[Engine] Initializing Chronicles Engine\n");
     printf("[Engine] Window: %dx%d - %s\n", width, height, title);
     
-    // Initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) {
-        SetError(SDL_GetError());
+    // Determine renderer backend
+    Chronicles::RendererBackend backend = GetRendererBackend();
+    
+    // Create renderer based on backend
+    try {
+        switch (backend) {
+            case Chronicles::RendererBackend::DirectX12:
+#ifdef _WIN32
+                printf("[Engine] Using DirectX 12 renderer backend\n");
+                g_renderer = std::make_unique<Chronicles::D3D12Renderer>();
+#else
+                printf("[Engine] DirectX 12 not available, falling back to SDL2\n");
+                g_renderer = std::make_unique<Chronicles::SDL2Renderer>();
+#endif
+                break;
+            
+            case Chronicles::RendererBackend::SDL2:
+            default:
+                printf("[Engine] Using SDL2 renderer backend\n");
+                g_renderer = std::make_unique<Chronicles::SDL2Renderer>();
+                break;
+        }
+    }
+    catch (const std::exception& e) {
+        SetError(e.what());
         return false;
     }
     
-    // Create window
-    g_window = SDL_CreateWindow(
-        title,
-        SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED,
-        width,
-        height,
-        SDL_WINDOW_SHOWN
-    );
-    
-    if (!g_window) {
-        SetError(SDL_GetError());
-        SDL_Quit();
+    // Initialize the renderer
+    if (!g_renderer->Initialize(width, height, title)) {
+        SetError("Renderer initialization failed");
+        g_renderer.reset();
         return false;
     }
-    
-    // Create renderer
-    g_renderer = SDL_CreateRenderer(
-        g_window,
-        -1,
-        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
-    );
-    
-    if (!g_renderer) {
-        SetError(SDL_GetError());
-        SDL_DestroyWindow(g_window);
-        SDL_Quit();
-        return false;
-    }
-    
-    // Enable alpha blending
-    SDL_SetRenderDrawBlendMode(g_renderer, SDL_BLENDMODE_BLEND);
     
     g_windowWidth = width;
     g_windowHeight = height;
@@ -106,7 +121,14 @@ extern "C" ENGINE_API bool Engine_Initialize(int width, int height, const char* 
     // Initialize timing
     g_lastFrameTime = std::chrono::high_resolution_clock::now();
     
-    printf("[Engine] SDL2 initialization complete\n");
+    // Initialize SDL for input (even if using DirectX for rendering)
+    if (backend == Chronicles::RendererBackend::DirectX12) {
+        if (SDL_Init(SDL_INIT_EVENTS) < 0) {
+            printf("[Engine] WARNING: SDL input initialization failed: %s\n", SDL_GetError());
+        }
+    }
+    
+    printf("[Engine] Initialization complete\n");
     return true;
 }
 
@@ -117,25 +139,13 @@ extern "C" ENGINE_API void Engine_Shutdown() {
     
     printf("[Engine] Shutting down\n");
     
-    // Clean up textures
-    for (auto& pair : g_textures) {
-        if (pair.second) {
-            SDL_DestroyTexture(pair.second);
-        }
-    }
-    g_textures.clear();
-    
-    // Clean up SDL
+    // Shutdown renderer
     if (g_renderer) {
-        SDL_DestroyRenderer(g_renderer);
-        g_renderer = nullptr;
+        g_renderer->Shutdown();
+        g_renderer.reset();
     }
     
-    if (g_window) {
-        SDL_DestroyWindow(g_window);
-        g_window = nullptr;
-    }
-    
+    // Quit SDL if it was initialized
     SDL_Quit();
     
     g_isInitialized = false;
@@ -145,7 +155,7 @@ extern "C" ENGINE_API void Engine_Shutdown() {
 }
 
 extern "C" ENGINE_API bool Engine_IsRunning() {
-    return g_isRunning;
+    return g_isRunning && g_renderer && g_renderer->IsRunning();
 }
 
 // ===== Game Loop =====
@@ -162,12 +172,15 @@ extern "C" ENGINE_API void Engine_BeginFrame() {
     g_keyPressed.clear();
     g_keyReleased.clear();
     
-    // Process SDL events
+    // Process SDL events (for input and window management)
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
             case SDL_QUIT:
                 g_isRunning = false;
+                if (g_renderer) {
+                    g_renderer->SetRunning(false);
+                }
                 break;
                 
             case SDL_KEYDOWN:
@@ -194,11 +207,18 @@ extern "C" ENGINE_API void Engine_BeginFrame() {
                 break;
         }
     }
+    
+    // Begin renderer frame
+    if (g_renderer) {
+        g_renderer->BeginFrame();
+    }
 }
 
 extern "C" ENGINE_API void Engine_EndFrame() {
-    // Present the rendered frame
-    SDL_RenderPresent(g_renderer);
+    // End renderer frame
+    if (g_renderer) {
+        g_renderer->EndFrame();
+    }
 }
 
 extern "C" ENGINE_API float Engine_GetDeltaTime() {
@@ -212,90 +232,35 @@ extern "C" ENGINE_API float Engine_GetTotalTime() {
 // ===== Rendering =====
 
 extern "C" ENGINE_API int Renderer_LoadTexture(const char* filePath) {
-    printf("[Renderer] Loading texture: %s\n", filePath);
-    
-    SDL_Surface* surface = SDL_LoadBMP(filePath);
-    if (!surface) {
-        SetError(SDL_GetError());
-        return -1;
-    }
-    
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(g_renderer, surface);
-    SDL_FreeSurface(surface);
-    
-    if (!texture) {
-        SetError(SDL_GetError());
-        return -1;
-    }
-    
-    int textureId = g_nextTextureId++;
-    g_textures[textureId] = texture;
-    
-    return textureId;
+    if (!g_renderer) return -1;
+    return g_renderer->LoadTexture(filePath);
 }
 
 extern "C" ENGINE_API void Renderer_UnloadTexture(int textureId) {
-    auto it = g_textures.find(textureId);
-    if (it != g_textures.end()) {
-        SDL_DestroyTexture(it->second);
-        g_textures.erase(it);
-        printf("[Renderer] Unloaded texture: %d\n", textureId);
-    }
+    if (!g_renderer) return;
+    g_renderer->UnloadTexture(textureId);
 }
 
 extern "C" ENGINE_API void Renderer_DrawSprite(int textureId, float x, float y,
                                                float width, float height, float rotation) {
-    auto it = g_textures.find(textureId);
-    if (it == g_textures.end()) {
-        return;
-    }
-    
-    SDL_Rect destRect = {
-        static_cast<int>(x),
-        static_cast<int>(y),
-        static_cast<int>(width),
-        static_cast<int>(height)
-    };
-    
-    SDL_Point center = {
-        static_cast<int>(width / 2),
-        static_cast<int>(height / 2)
-    };
-    
-    double angle = rotation * (180.0 / 3.14159265359); // Convert radians to degrees
-    
-    SDL_RenderCopyEx(g_renderer, it->second, nullptr, &destRect, angle, &center, SDL_FLIP_NONE);
+    if (!g_renderer) return;
+    g_renderer->DrawSprite(textureId, x, y, width, height, rotation);
 }
 
 extern "C" ENGINE_API void Renderer_Clear(float r, float g, float b, float a) {
-    SDL_SetRenderDrawColor(g_renderer,
-                          static_cast<Uint8>(r * 255),
-                          static_cast<Uint8>(g * 255),
-                          static_cast<Uint8>(b * 255),
-                          static_cast<Uint8>(a * 255));
-    SDL_RenderClear(g_renderer);
+    if (!g_renderer) return;
+    g_renderer->Clear(r, g, b, a);
 }
 
 extern "C" ENGINE_API void Renderer_DrawRect(float x, float y, float width, float height,
                                              float r, float g, float b, float a) {
-    SDL_SetRenderDrawColor(g_renderer,
-                          static_cast<Uint8>(r * 255),
-                          static_cast<Uint8>(g * 255),
-                          static_cast<Uint8>(b * 255),
-                          static_cast<Uint8>(a * 255));
-    
-    SDL_Rect rect = {
-        static_cast<int>(x),
-        static_cast<int>(y),
-        static_cast<int>(width),
-        static_cast<int>(height)
-    };
-    
-    SDL_RenderFillRect(g_renderer, &rect);
+    if (!g_renderer) return;
+    g_renderer->DrawRect(x, y, width, height, r, g, b, a);
 }
 
 extern "C" ENGINE_API void Renderer_Present() {
-    SDL_RenderPresent(g_renderer);
+    if (!g_renderer) return;
+    g_renderer->Present();
 }
 
 // ===== Input =====
