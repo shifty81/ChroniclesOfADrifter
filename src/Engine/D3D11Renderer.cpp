@@ -4,11 +4,15 @@
 #include <d3dcompiler.h>
 #include <cstdio>
 #include <cstring>
+#include <vector>
 #include <DirectXMath.h>
+#include <wincodec.h>
+#include <wrl/client.h>
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dcompiler.lib")
+#pragma comment(lib, "windowscodecs.lib")
 
 namespace Chronicles {
 
@@ -316,20 +320,266 @@ void D3D11Renderer::DrawRect(float x, float y, float width, float height,
 
 void D3D11Renderer::DrawSprite(int textureId, float x, float y,
                                float width, float height, float rotation) {
-    // TODO: Implement sprite drawing with texture
-    // For now, this is a stub
-    // This would involve binding the texture and rendering a textured quad
-    (void)textureId; (void)x; (void)y;
-    (void)width; (void)height; (void)rotation;
-    printf("[D3D11Renderer] DrawSprite not yet fully implemented\n");
+    // Find the texture
+    auto it = m_textures.find(textureId);
+    if (it == m_textures.end()) {
+        // Texture not found, use white texture as fallback
+        m_deviceContext->PSSetShaderResources(0, 1, m_whiteTextureSRV.GetAddressOf());
+    } else {
+        // Bind the texture
+        m_deviceContext->PSSetShaderResources(0, 1, it->second.shaderResourceView.GetAddressOf());
+    }
+    
+    // Convert screen coordinates to normalized device coordinates (NDC)
+    // Calculate center position for rotation
+    float centerX = x + width / 2.0f;
+    float centerY = y + height / 2.0f;
+    
+    // Convert to NDC
+    float ndcCenterX = (centerX / m_width) * 2.0f - 1.0f;
+    float ndcCenterY = 1.0f - (centerY / m_height) * 2.0f;
+    float ndcWidth = (width / m_width) * 2.0f;
+    float ndcHeight = (height / m_height) * 2.0f;
+    
+    // Calculate half extents
+    float halfWidth = ndcWidth / 2.0f;
+    float halfHeight = ndcHeight / 2.0f;
+    
+    // Create rotation matrix if needed
+    DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixIdentity();
+    if (rotation != 0.0f) {
+        // Create rotation around Z axis (rotation is in radians)
+        rotationMatrix = DirectX::XMMatrixRotationZ(rotation);
+    }
+    
+    // Define sprite corners (centered at origin for rotation)
+    DirectX::XMVECTOR corners[4] = {
+        DirectX::XMVectorSet(-halfWidth, halfHeight, 0.0f, 1.0f),   // Top-left
+        DirectX::XMVectorSet(halfWidth, halfHeight, 0.0f, 1.0f),    // Top-right
+        DirectX::XMVectorSet(-halfWidth, -halfHeight, 0.0f, 1.0f),  // Bottom-left
+        DirectX::XMVectorSet(halfWidth, -halfHeight, 0.0f, 1.0f)    // Bottom-right
+    };
+    
+    // Apply rotation and translation
+    for (int i = 0; i < 4; i++) {
+        corners[i] = DirectX::XMVector3Transform(corners[i], rotationMatrix);
+        float x = DirectX::XMVectorGetX(corners[i]) + ndcCenterX;
+        float y = DirectX::XMVectorGetY(corners[i]) + ndcCenterY;
+        corners[i] = DirectX::XMVectorSet(x, y, 0.0f, 1.0f);
+    }
+    
+    // Create vertices for a rectangle (2 triangles = 6 vertices)
+    Vertex vertices[] = {
+        // Triangle 1
+        { DirectX::XMFLOAT3(DirectX::XMVectorGetX(corners[0]), DirectX::XMVectorGetY(corners[0]), 0.0f), 
+          DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), DirectX::XMFLOAT2(0.0f, 0.0f) },
+        { DirectX::XMFLOAT3(DirectX::XMVectorGetX(corners[1]), DirectX::XMVectorGetY(corners[1]), 0.0f), 
+          DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), DirectX::XMFLOAT2(1.0f, 0.0f) },
+        { DirectX::XMFLOAT3(DirectX::XMVectorGetX(corners[2]), DirectX::XMVectorGetY(corners[2]), 0.0f), 
+          DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), DirectX::XMFLOAT2(0.0f, 1.0f) },
+        // Triangle 2
+        { DirectX::XMFLOAT3(DirectX::XMVectorGetX(corners[1]), DirectX::XMVectorGetY(corners[1]), 0.0f), 
+          DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), DirectX::XMFLOAT2(1.0f, 0.0f) },
+        { DirectX::XMFLOAT3(DirectX::XMVectorGetX(corners[3]), DirectX::XMVectorGetY(corners[3]), 0.0f), 
+          DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), DirectX::XMFLOAT2(1.0f, 1.0f) },
+        { DirectX::XMFLOAT3(DirectX::XMVectorGetX(corners[2]), DirectX::XMVectorGetY(corners[2]), 0.0f), 
+          DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), DirectX::XMFLOAT2(0.0f, 1.0f) }
+    };
+    
+    // Create or update vertex buffer
+    if (!m_vertexBuffer) {
+        D3D11_BUFFER_DESC bufferDesc = {};
+        bufferDesc.ByteWidth = sizeof(vertices);
+        bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+        bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        
+        D3D11_SUBRESOURCE_DATA initData = {};
+        initData.pSysMem = vertices;
+        
+        HRESULT hr = m_device->CreateBuffer(&bufferDesc, &initData, m_vertexBuffer.GetAddressOf());
+        if (FAILED(hr)) {
+            printf("[D3D11Renderer] Failed to create vertex buffer for sprite\n");
+            return;
+        }
+    } else {
+        // Update existing vertex buffer
+        D3D11_MAPPED_SUBRESOURCE mappedResource;
+        HRESULT hr = m_deviceContext->Map(m_vertexBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+        if (SUCCEEDED(hr)) {
+            memcpy(mappedResource.pData, vertices, sizeof(vertices));
+            m_deviceContext->Unmap(m_vertexBuffer.Get(), 0);
+        }
+    }
+    
+    // Update constant buffer with identity matrix (we're using NDC directly)
+    D3D11_MAPPED_SUBRESOURCE mappedResource;
+    HRESULT hr = m_deviceContext->Map(m_constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    if (SUCCEEDED(hr)) {
+        ConstantBufferData* cbData = static_cast<ConstantBufferData*>(mappedResource.pData);
+        cbData->worldViewProjection = DirectX::XMMatrixIdentity();
+        cbData->tintColor = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+        m_deviceContext->Unmap(m_constantBuffer.Get(), 0);
+    }
+    
+    // Set vertex buffer
+    UINT stride = sizeof(Vertex);
+    UINT offset = 0;
+    m_deviceContext->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
+    
+    // Draw the sprite
+    m_deviceContext->Draw(6, 0);
 }
 
 int D3D11Renderer::LoadTexture(const char* filePath) {
-    // TODO: Implement texture loading using WIC (Windows Imaging Component)
-    // For now, return a dummy texture ID
-    printf("[D3D11Renderer] LoadTexture not yet fully implemented for: %s\n", filePath);
+    printf("[D3D11Renderer] Loading texture: %s\n", filePath);
     
+    // Initialize WIC factory
+    ComPtr<IWICImagingFactory> wicFactory;
+    HRESULT hr = CoCreateInstance(
+        CLSID_WICImagingFactory,
+        nullptr,
+        CLSCTX_INPROC_SERVER,
+        IID_PPV_ARGS(&wicFactory)
+    );
+    
+    if (FAILED(hr)) {
+        printf("[D3D11Renderer] Failed to create WIC factory (HRESULT: 0x%08X)\n", hr);
+        return -1;
+    }
+    
+    // Convert file path to wide string
+    int widePathLen = MultiByteToWideChar(CP_UTF8, 0, filePath, -1, nullptr, 0);
+    wchar_t* widePath = new wchar_t[widePathLen];
+    MultiByteToWideChar(CP_UTF8, 0, filePath, -1, widePath, widePathLen);
+    
+    // Create a decoder for the image
+    ComPtr<IWICBitmapDecoder> decoder;
+    hr = wicFactory->CreateDecoderFromFilename(
+        widePath,
+        nullptr,
+        GENERIC_READ,
+        WICDecodeMetadataCacheOnDemand,
+        &decoder
+    );
+    
+    delete[] widePath;
+    
+    if (FAILED(hr)) {
+        printf("[D3D11Renderer] Failed to create decoder for texture: %s (HRESULT: 0x%08X)\n", filePath, hr);
+        return -1;
+    }
+    
+    // Get the first frame
+    ComPtr<IWICBitmapFrameDecode> frame;
+    hr = decoder->GetFrame(0, &frame);
+    if (FAILED(hr)) {
+        printf("[D3D11Renderer] Failed to get frame from texture\n");
+        return -1;
+    }
+    
+    // Get image dimensions
+    UINT width, height;
+    frame->GetSize(&width, &height);
+    
+    // Create format converter
+    ComPtr<IWICFormatConverter> converter;
+    hr = wicFactory->CreateFormatConverter(&converter);
+    if (FAILED(hr)) {
+        printf("[D3D11Renderer] Failed to create format converter\n");
+        return -1;
+    }
+    
+    // Convert to RGBA format
+    hr = converter->Initialize(
+        frame.Get(),
+        GUID_WICPixelFormat32bppRGBA,
+        WICBitmapDitherTypeNone,
+        nullptr,
+        0.0,
+        WICBitmapPaletteTypeCustom
+    );
+    
+    if (FAILED(hr)) {
+        printf("[D3D11Renderer] Failed to initialize format converter\n");
+        return -1;
+    }
+    
+    // Calculate stride and image size
+    UINT stride = width * 4; // 4 bytes per pixel (RGBA)
+    UINT imageSize = stride * height;
+    
+    // Allocate memory for pixel data
+    std::vector<BYTE> pixelData(imageSize);
+    
+    // Copy pixel data
+    hr = converter->CopyPixels(
+        nullptr,
+        stride,
+        imageSize,
+        pixelData.data()
+    );
+    
+    if (FAILED(hr)) {
+        printf("[D3D11Renderer] Failed to copy pixel data\n");
+        return -1;
+    }
+    
+    // Create texture description
+    D3D11_TEXTURE2D_DESC textureDesc = {};
+    textureDesc.Width = width;
+    textureDesc.Height = height;
+    textureDesc.MipLevels = 1;
+    textureDesc.ArraySize = 1;
+    textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    textureDesc.SampleDesc.Count = 1;
+    textureDesc.SampleDesc.Quality = 0;
+    textureDesc.Usage = D3D11_USAGE_DEFAULT;
+    textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    textureDesc.CPUAccessFlags = 0;
+    textureDesc.MiscFlags = 0;
+    
+    // Create subresource data
+    D3D11_SUBRESOURCE_DATA initData = {};
+    initData.pSysMem = pixelData.data();
+    initData.SysMemPitch = stride;
+    initData.SysMemSlicePitch = imageSize;
+    
+    // Create the texture
+    ComPtr<ID3D11Texture2D> texture;
+    hr = m_device->CreateTexture2D(&textureDesc, &initData, &texture);
+    if (FAILED(hr)) {
+        printf("[D3D11Renderer] Failed to create texture 2D (HRESULT: 0x%08X)\n", hr);
+        return -1;
+    }
+    
+    // Create shader resource view
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+    srvDesc.Format = textureDesc.Format;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+    srvDesc.Texture2D.MipLevels = 1;
+    
+    ComPtr<ID3D11ShaderResourceView> shaderResourceView;
+    hr = m_device->CreateShaderResourceView(texture.Get(), &srvDesc, &shaderResourceView);
+    if (FAILED(hr)) {
+        printf("[D3D11Renderer] Failed to create shader resource view (HRESULT: 0x%08X)\n", hr);
+        return -1;
+    }
+    
+    // Store texture in map
     int textureId = m_nextTextureId++;
+    D3D11Texture d3dTexture;
+    d3dTexture.texture = texture;
+    d3dTexture.shaderResourceView = shaderResourceView;
+    d3dTexture.width = width;
+    d3dTexture.height = height;
+    
+    m_textures[textureId] = d3dTexture;
+    
+    printf("[D3D11Renderer] Successfully loaded texture: %s (ID: %d, Size: %dx%d)\n", 
+           filePath, textureId, width, height);
+    
     return textureId;
 }
 
