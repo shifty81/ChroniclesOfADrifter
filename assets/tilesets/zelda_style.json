@@ -1,0 +1,133 @@
+{
+  "Name": "zelda_style",
+  "Description": "Zelda: A Link to the Past inspired tileset",
+  "TileSize": 32,
+  "Tiles": {
+    "grass": {
+      "Name": "grass",
+      "DisplayName": "Grass",
+      "Color": [0.13, 0.65, 0.13],
+      "IsCollidable": false,
+      "Category": "terrain"
+    },
+    "dark_grass": {
+      "Name": "dark_grass",
+      "DisplayName": "Dark Grass",
+      "Color": [0.08, 0.45, 0.08],
+      "IsCollidable": false,
+      "Category": "terrain"
+    },
+    "light_grass": {
+      "Name": "light_grass",
+      "DisplayName": "Light Grass",
+      "Color": [0.20, 0.75, 0.20],
+      "IsCollidable": false,
+      "Category": "terrain"
+    },
+    "dirt": {
+      "Name": "dirt",
+      "DisplayName": "Dirt Path",
+      "Color": [0.55, 0.47, 0.25],
+      "IsCollidable": false,
+      "Category": "terrain"
+    },
+    "stone_wall": {
+      "Name": "stone_wall",
+      "DisplayName": "Stone Wall",
+      "Color": [0.45, 0.45, 0.45],
+      "IsCollidable": true,
+      "Category": "wall"
+    },
+    "dungeon_wall": {
+      "Name": "dungeon_wall",
+      "DisplayName": "Dungeon Wall",
+      "Color": [0.30, 0.30, 0.35],
+      "IsCollidable": true,
+      "Category": "dungeon"
+    },
+    "dungeon_floor": {
+      "Name": "dungeon_floor",
+      "DisplayName": "Dungeon Floor",
+      "Color": [0.50, 0.45, 0.40],
+      "IsCollidable": false,
+      "Category": "dungeon"
+    },
+    "water_shallow": {
+      "Name": "water_shallow",
+      "DisplayName": "Shallow Water",
+      "Color": [0.30, 0.70, 0.90],
+      "IsCollidable": false,
+      "Category": "water"
+    },
+    "water_deep": {
+      "Name": "water_deep",
+      "DisplayName": "Deep Water",
+      "Color": [0.10, 0.40, 0.70],
+      "IsCollidable": false,
+      "Category": "water"
+    },
+    "sand": {
+      "Name": "sand",
+      "DisplayName": "Sand",
+      "Color": [0.93, 0.87, 0.51],
+      "IsCollidable": false,
+      "Category": "terrain"
+    },
+    "rock": {
+      "Name": "rock",
+      "DisplayName": "Rock",
+      "Color": [0.60, 0.55, 0.50],
+      "IsCollidable": true,
+      "Category": "obstacle"
+    },
+    "tree": {
+      "Name": "tree",
+      "DisplayName": "Tree",
+      "Color": [0.10, 0.40, 0.10],
+      "IsCollidable": true,
+      "Category": "vegetation"
+    },
+    "bush": {
+      "Name": "bush",
+      "DisplayName": "Bush",
+      "Color": [0.15, 0.50, 0.15],
+      "IsCollidable": true,
+      "Category": "vegetation"
+    },
+    "flower_red": {
+      "Name": "flower_red",
+      "DisplayName": "Red Flower",
+      "Color": [0.95, 0.20, 0.20],
+      "IsCollidable": false,
+      "Category": "decoration"
+    },
+    "flower_yellow": {
+      "Name": "flower_yellow",
+      "DisplayName": "Yellow Flower",
+      "Color": [0.95, 0.90, 0.20],
+      "IsCollidable": false,
+      "Category": "decoration"
+    },
+    "bridge": {
+      "Name": "bridge",
+      "DisplayName": "Bridge",
+      "Color": [0.65, 0.45, 0.26],
+      "IsCollidable": false,
+      "Category": "structure"
+    },
+    "door": {
+      "Name": "door",
+      "DisplayName": "Door",
+      "Color": [0.40, 0.25, 0.15],
+      "IsCollidable": true,
+      "Category": "structure"
+    },
+    "chest": {
+      "Name": "chest",
+      "DisplayName": "Treasure Chest",
+      "Color": [0.70, 0.50, 0.20],
+      "IsCollidable": true,
+      "Category": "object"
+    }
+  }
+}

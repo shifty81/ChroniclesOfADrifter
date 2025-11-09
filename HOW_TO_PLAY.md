@@ -34,9 +34,10 @@ This is the primary game mode featuring:
 - **WASD** or **Arrow Keys** - Move your character
 - **SPACE** - Attack nearby enemies
 - **+/-** - Zoom camera in/out
+- **F1** or **~** - Toggle in-game editor (place/remove tiles)
 - **Q** or **ESC** - Quit game
 
-### 2. Visual/Graphical Demo
+### 2. Visual/Graphical Demo (with In-Game Editor)
 **Command:** `dotnet run -c Release -- visual`
 
 Experience the game with high-performance graphical rendering:
@@ -45,12 +46,40 @@ Experience the game with high-performance graphical rendering:
 - Runs at 5000-6000 FPS
 - Vibrant colored terrain (grass, water, rocks, paths)
 - Smooth player movement
+- **NEW: In-game editor** - Press F1 to enable
 - Perfect for testing rendering performance
 
 **Controls:**
 - **WASD** or **Arrow Keys** - Move
 - **+/-** - Zoom
+- **F1** or **~** - Toggle in-game editor
+- **[ / ]** - Previous/Next tile (in editor mode)
+- **Space** - Place tile at camera (in editor mode)
+- **Delete** - Remove tile at camera (in editor mode)
 - **Q** or **ESC** - Quit
+
+### 2b. Map Editor (Full-Featured)
+**Command:** `dotnet run -c Release -- editor`
+
+Dedicated map editor for creating and editing custom maps:
+- Real-time scene editing
+- Save/load map files (JSON format)
+- Tileset support with drag-and-drop style
+- Generate new procedural terrain
+- Create custom dungeons and areas
+- See [MAP_EDITOR.md](docs/MAP_EDITOR.md) for full documentation
+
+**Controls:**
+- **WASD** or **Arrow Keys** - Move camera
+- **Space** - Place selected tile
+- **[ / ]** - Previous/Next tile
+- **0-9** - Quick select tile
+- **S** - Save map
+- **L** - Load map
+- **N** - New map (clear all)
+- **G** - Generate new terrain
+- **F1** or **~** - Toggle editor UI
+- **Q** or **ESC** - Exit
 
 ### 3. Terrain Generation Demo
 **Command:** `dotnet run -c Release -- terrain`

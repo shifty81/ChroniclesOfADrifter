@@ -9,6 +9,7 @@ namespace ChroniclesOfADrifter.Scenes;
 /// <summary>
 /// Visual demo scene showing graphical rendering with terrain generation
 /// Demonstrates Zelda: A Link to the Past style tile-based rendering with procedural world
+/// Press F1 or ~ to enable in-game editor
 /// </summary>
 public class VisualDemoScene : Scene
 {
@@ -16,6 +17,7 @@ public class VisualDemoScene : Scene
     private Entity _cameraEntity;
     private ChunkManager? chunkManager;
     private TerrainGenerator? terrainGenerator;
+    private InGameEditor? inGameEditor;
     
     public override void OnLoad()
     {
@@ -80,16 +82,23 @@ public class VisualDemoScene : Scene
             Console.WriteLine($"[VisualDemo] Generated {chunkManager.GetLoadedChunkCount()} initial chunks");
         }
         
+        // Initialize in-game editor
+        inGameEditor = new InGameEditor(World, chunkManager);
+        
         Console.WriteLine("[VisualDemo] Visual demo scene loaded!");
         Console.WriteLine("[VisualDemo] A graphical window should appear with procedurally generated terrain!");
         Console.WriteLine("[VisualDemo] Explore the world with varied biomes, caves, and vegetation!");
         Console.WriteLine("[VisualDemo] Use WASD or Arrow keys to move");
         Console.WriteLine("[VisualDemo] Use +/- keys to zoom in/out");
+        Console.WriteLine("[VisualDemo] Press F1 or ~ to toggle in-game editor");
         Console.WriteLine("[VisualDemo] Press Q or ESC to quit");
     }
     
     public override void Update(float deltaTime)
     {
+        // Update in-game editor first
+        inGameEditor?.Update(deltaTime);
+        
         World.Update(deltaTime);
     }
     
