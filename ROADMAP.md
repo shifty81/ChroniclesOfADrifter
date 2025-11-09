@@ -664,7 +664,7 @@ All Areas:           Hard stone + rare ores
 
 ### Lower Priority (Phase 3)
 1. ✅ Advanced parallax effects (animated clouds, weather) (COMPLETED - Clouds and mist with auto-scroll)
-2. ⬜ Cinematic camera movements for cutscenes
+2. ✅ Cinematic camera movements for cutscenes (COMPLETED)
 3. ✅ Creature spawning system by biome and depth (COMPLETED)
 4. ✅ Structure generation (ruins, villages, treasure rooms) (COMPLETED)
 5. ✅ Advanced lighting effects (torches, dynamic shadows) (COMPLETED - Light sources with distance falloff)
