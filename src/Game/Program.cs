@@ -63,6 +63,13 @@ class Program
             return;
         }
         
+        // Check for world creature manager test mode
+        if (args.Length > 0 && args[0].ToLower() == "world-creature-test")
+        {
+            Tests.WorldCreatureManagerTest.Run();
+            return;
+        }
+        
         // Check for structure generation test mode
         if (args.Length > 0 && args[0].ToLower() == "structure-test")
         {
