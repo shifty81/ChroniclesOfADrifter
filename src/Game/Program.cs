@@ -126,6 +126,13 @@ class Program
             return;
         }
         
+        // Check for settings system test mode
+        if (args.Length > 0 && args[0].ToLower() == "settings-test")
+        {
+            Tests.SettingsSystemTest.Run();
+            return;
+        }
+        
         // Check if terrain demo was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "terrain")
         {
@@ -207,6 +214,7 @@ class Program
         Console.WriteLine("       Run with 'swimming-test' for swimming mechanics tests");
         Console.WriteLine("       Run with 'hybrid-test' for hybrid gameplay tests");
         Console.WriteLine("       Run with 'cinematic-test' for cinematic camera tests");
+        Console.WriteLine("       Run with 'settings-test' for settings system tests");
         Console.WriteLine("       Run with 'terrain' for terrain demo");
         Console.WriteLine("       Run with 'visual' for GRAPHICAL visual demo");
         Console.WriteLine("       Run with 'mining' for mining/digging demo");
