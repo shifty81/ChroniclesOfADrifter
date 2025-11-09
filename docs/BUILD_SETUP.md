@@ -4,6 +4,8 @@
 
 This guide covers building and running Chronicles of a Drifter on your local development machine. The project is currently in active development with a focus on **local iteration and debugging** rather than production releases.
 
+**For Visual Studio 2022 debugging setup**, see the **[Visual Studio 2022 Setup Guide](VS2022_SETUP.md)** which includes mixed-mode C++/C# debugging instructions.
+
 ### Quick Start for Local Development
 
 The easiest way to build and run the game locally:

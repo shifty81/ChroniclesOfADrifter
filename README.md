@@ -51,6 +51,7 @@ ChroniclesOfADrifter/
 
 ### Getting Started
 - **[Build Setup](docs/BUILD_SETUP.md)** - Build instructions and local development workflow
+- **[Visual Studio 2022 Setup](docs/VS2022_SETUP.md)** - VS2022 debugging guide with mixed-mode C++/C# support
 - **[Scale Reference](docs/SCALE_REFERENCE.md)** - Game scale constants and design guidelines (Player is 2.5 blocks tall)
 - **[Roadmap](ROADMAP.md)** - Development roadmap with 2D world generation plans
 
@@ -114,6 +115,16 @@ set CHRONICLES_RENDERER=dx12  # Windows Command Prompt
 $env:CHRONICLES_RENDERER="dx12"  # Windows PowerShell
 dotnet run -c Release
 ```
+
+#### Using Visual Studio 2022 (Recommended for Debugging)
+
+**For the best debugging experience with mixed-mode C++/C# debugging:**
+
+1. Open `ChroniclesOfADrifter.sln` in Visual Studio 2022
+2. Select **Build → Build Solution** (Ctrl+Shift+B)
+3. Press **F5** to start debugging with breakpoints in both C++ and C# code
+
+See the **[Visual Studio 2022 Setup Guide](docs/VS2022_SETUP.md)** for detailed instructions.
 
 #### Manual Build
 

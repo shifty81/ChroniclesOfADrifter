@@ -1,0 +1,35 @@
+{
+  "profiles": {
+    "ChroniclesOfADrifter": {
+      "commandName": "Project",
+      "nativeDebugging": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    },
+    "ChroniclesOfADrifter (SDL2 Renderer)": {
+      "commandName": "Project",
+      "nativeDebugging": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "CHRONICLES_RENDERER": "sdl2"
+      }
+    },
+    "ChroniclesOfADrifter (DirectX 11)": {
+      "commandName": "Project",
+      "nativeDebugging": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "CHRONICLES_RENDERER": "dx11"
+      }
+    },
+    "ChroniclesOfADrifter (DirectX 12)": {
+      "commandName": "Project",
+      "nativeDebugging": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "CHRONICLES_RENDERER": "dx12"
+      }
+    }
+  }
+}
