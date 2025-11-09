@@ -1,7 +1,7 @@
 using ChroniclesOfADrifter.ECS;
 using ChroniclesOfADrifter.ECS.Components;
 using ChroniclesOfADrifter.ECS.Systems;
-using ChroniclesOfADrifter.World;
+using ChroniclesOfADrifter.Terrain;
 
 namespace ChroniclesOfADrifter.Scenes;
 
