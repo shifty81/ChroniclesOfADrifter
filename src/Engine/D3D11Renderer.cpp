@@ -363,9 +363,9 @@ void D3D11Renderer::DrawSprite(int textureId, float x, float y,
     // Apply rotation and translation
     for (int i = 0; i < 4; i++) {
         corners[i] = DirectX::XMVector3Transform(corners[i], rotationMatrix);
-        float x = DirectX::XMVectorGetX(corners[i]) + ndcCenterX;
-        float y = DirectX::XMVectorGetY(corners[i]) + ndcCenterY;
-        corners[i] = DirectX::XMVectorSet(x, y, 0.0f, 1.0f);
+        float cornerX = DirectX::XMVectorGetX(corners[i]) + ndcCenterX;
+        float cornerY = DirectX::XMVectorGetY(corners[i]) + ndcCenterY;
+        corners[i] = DirectX::XMVectorSet(cornerX, cornerY, 0.0f, 1.0f);
     }
     
     // Create vertices for a rectangle (2 triangles = 6 vertices)
