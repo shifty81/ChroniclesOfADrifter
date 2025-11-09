@@ -242,4 +242,16 @@ public class LightingSystem : ISystem
             }
         }
     }
+    
+    /// <summary>
+    /// Get the light level at a specific world coordinate
+    /// </summary>
+    /// <param name="worldX">World X coordinate</param>
+    /// <param name="worldY">World Y coordinate</param>
+    /// <returns>Light level from 0.0 (dark) to 1.0 (bright)</returns>
+    public float GetLightLevel(int worldX, int worldY)
+    {
+        // Default to ambient light based on depth if no lighting component exists
+        return GetAmbientLightForDepth(worldY);
+    }
 }

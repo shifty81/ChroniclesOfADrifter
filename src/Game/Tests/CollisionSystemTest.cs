@@ -144,7 +144,7 @@ public static class CollisionSystemTest
         {
             for (int y = 0; y < Chunk.CHUNK_HEIGHT; y++)
             {
-                var tile = chunk.GetTile(x, y);
+                var tile = chunk!.GetTile(x, y);
                 if (tile.IsSolid())
                 {
                     solidBlockX = x;
@@ -267,7 +267,7 @@ public static class CollisionSystemTest
         // Create a vertical wall at x=5
         for (int y = 0; y < Chunk.CHUNK_HEIGHT; y++)
         {
-            chunk.SetTile(5, y, TileType.Stone);
+            chunk!.SetTile(5, y, TileType.Stone);
         }
         
         collisionSystem.SetChunkManager(chunkManager);

@@ -75,7 +75,7 @@ public class HybridGameplayTest
         // Test relationship creation
         var relationship = relationships.GetRelationship("TestNPC");
         Assert(relationship != null, "Should create relationship");
-        Assert(relationship.Level == RelationshipLevel.Stranger, "Should start as Stranger");
+        Assert(relationship!.Level == RelationshipLevel.Stranger, "Should start as Stranger");
         
         // Test relationship progression
         relationships.Interact("TestNPC", 50);
@@ -113,11 +113,11 @@ public class HybridGameplayTest
         bool planted = plot.PlantCrop(cropType);
         Assert(planted, "Should plant crop");
         Assert(plot.CurrentCrop != null, "Should have a crop");
-        Assert(plot.CurrentCrop.Stage == CropStage.Seed, "Should start as seed");
+        Assert(plot.CurrentCrop!.Stage == CropStage.Seed, "Should start as seed");
         
         // Test watering
         plot.Water();
-        Assert(plot.CurrentCrop.IsWatered, "Crop should be watered");
+        Assert(plot.CurrentCrop!.IsWatered, "Crop should be watered");
         
         // Test growth
         plot.AdvanceDay();

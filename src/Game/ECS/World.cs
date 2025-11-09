@@ -139,6 +139,21 @@ public class World
     }
     
     /// <summary>
+    /// Get a system by type
+    /// </summary>
+    public T? GetSystem<T>() where T : class, ISystem
+    {
+        foreach (var system in _systems)
+        {
+            if (system is T typedSystem)
+            {
+                return typedSystem;
+            }
+        }
+        return null;
+    }
+    
+    /// <summary>
     /// Set a shared resource that can be accessed by systems
     /// </summary>
     public void SetSharedResource<T>(string key, T resource) where T : class
