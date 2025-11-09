@@ -119,6 +119,13 @@ class Program
             return;
         }
         
+        // Check for cinematic camera test mode
+        if (args.Length > 0 && args[0].ToLower() == "cinematic-test")
+        {
+            Tests.CinematicCameraTest.RunTests();
+            return;
+        }
+        
         // Check if terrain demo was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "terrain")
         {
@@ -168,6 +175,13 @@ class Program
             return;
         }
         
+        // Check if cinematic camera demo was requested via command line argument
+        if (args.Length > 0 && args[0].ToLower() == "cinematic")
+        {
+            RunCinematicDemo();
+            return;
+        }
+        
         // Initialize console
         ConsoleRenderer.InitializeConsole();
         
@@ -189,12 +203,14 @@ class Program
         Console.WriteLine("       Run with 'crafting-test' for crafting system tests");
         Console.WriteLine("       Run with 'swimming-test' for swimming mechanics tests");
         Console.WriteLine("       Run with 'hybrid-test' for hybrid gameplay tests");
+        Console.WriteLine("       Run with 'cinematic-test' for cinematic camera tests");
         Console.WriteLine("       Run with 'terrain' for terrain demo");
         Console.WriteLine("       Run with 'visual' for GRAPHICAL visual demo");
         Console.WriteLine("       Run with 'mining' for mining/digging demo");
         Console.WriteLine("       Run with 'collision' for collision detection demo");
         Console.WriteLine("       Run with 'creatures' for creature spawning demo");
         Console.WriteLine("       Run with 'crafting' for crafting system demo");
+        Console.WriteLine("       Run with 'cinematic' for cinematic camera demo");
         Console.WriteLine("       Run with 'hybrid' for hybrid gameplay demo");
         Console.WriteLine("===========================================\n");
         
@@ -610,6 +626,31 @@ class Program
         // Cleanup
         scene.OnUnload();
         Console.WriteLine("[Game] Crafting demo complete!");
+    }
+    
+    /// <summary>
+    /// Run the cinematic camera demo scene
+    /// </summary>
+    static void RunCinematicDemo()
+    {
+        Console.WriteLine("\n[Game] Starting cinematic camera demo...\n");
+        
+        var scene = new CinematicCameraDemoScene();
+        scene.OnLoad();
+        
+        // Run demo for about 35 seconds (enough for all demos)
+        float totalTime = 0f;
+        float deltaTime = 0.016f; // ~60 FPS
+        
+        while (totalTime < 35f)
+        {
+            scene.Update(deltaTime);
+            totalTime += deltaTime;
+            System.Threading.Thread.Sleep(16); // ~60 FPS
+        }
+        
+        scene.OnUnload();
+        Console.WriteLine("\n[Game] Cinematic camera demo complete!");
     }
     
     /// <summary>
