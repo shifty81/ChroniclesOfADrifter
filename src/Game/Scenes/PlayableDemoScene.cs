@@ -1,17 +1,31 @@
 using ChroniclesOfADrifter.ECS;
 using ChroniclesOfADrifter.ECS.Components;
 using ChroniclesOfADrifter.ECS.Systems;
+using ChroniclesOfADrifter.Terrain;
 
 namespace ChroniclesOfADrifter.Scenes;
 
 /// <summary>
-/// Playable demo scene with combat and multiple enemies
+/// Playable demo scene with combat and multiple enemies integrated with procedural terrain
 /// </summary>
 public class PlayableDemoScene : Scene
 {
+    private ChunkManager? chunkManager;
+    private TerrainGenerator? terrainGenerator;
+    
     public override void OnLoad()
     {
         Console.WriteLine("[PlayableDemo] Loading playable demo scene...");
+        
+        // Initialize terrain generation
+        terrainGenerator = new TerrainGenerator(seed: 12345);
+        chunkManager = new ChunkManager();
+        chunkManager.SetTerrainGenerator(terrainGenerator);
+        
+        // Store chunk manager as shared resource
+        World.SetSharedResource("ChunkManager", chunkManager);
+        
+        Console.WriteLine("[PlayableDemo] Terrain generator initialized with seed: 12345");
         
         // Add systems
         World.AddSystem(new ScriptSystem());
@@ -24,16 +38,24 @@ public class PlayableDemoScene : Scene
         World.AddSystem(new CameraZoneSystem()); // New: Camera zones with different behaviors
         World.AddSystem(new ParallaxSystem()); // New: Parallax scrolling for depth
         World.AddSystem(new CombatSystem());
-        World.AddSystem(new RenderingSystem());
+        World.AddSystem(new LightingSystem()); // Add lighting system for underground
+        World.AddSystem(new TerrainRenderingSystem()); // NEW: Render terrain from ChunkManager
         
-        // Create player entity in the center
+        // Create player entity at spawn point (on surface)
         var player = World.CreateEntity();
         World.AddComponent(player, new PlayerComponent { Speed = 150.0f });
-        World.AddComponent(player, new PositionComponent(960, 540)); // Center of 1920x1080
+        World.AddComponent(player, new PositionComponent(500, 150)); // Spawn on surface (Y=150 is surface level)
         World.AddComponent(player, new VelocityComponent());
         World.AddComponent(player, new SpriteComponent(0, 32, 32));
         World.AddComponent(player, new HealthComponent(100));
         World.AddComponent(player, new CombatComponent(damage: 15f, range: 100f, cooldown: 0.3f));
+        
+        // Add player light source (personal lantern)
+        World.AddComponent(player, new LightSourceComponent(
+            radius: 8.0f,
+            intensity: 1.0f,
+            type: LightSourceType.Player
+        ));
         
         // Create camera entity that follows player
         var camera = World.CreateEntity();
@@ -43,9 +65,17 @@ public class PlayableDemoScene : Scene
             FollowSpeed = 8.0f
         };
         World.AddComponent(camera, cameraComponent);
-        World.AddComponent(camera, new PositionComponent(960, 540));
+        World.AddComponent(camera, new PositionComponent(500, 150)); // Start at player position
         World.AddComponent(camera, new ScreenShakeComponent()); // Enable screen shake
         CameraSystem.SetFollowTarget(World, camera, player, followSpeed: 8.0f);
+        
+        // Pre-generate initial chunks around player spawn
+        var playerPos = World.GetComponent<PositionComponent>(player);
+        if (playerPos != null && chunkManager != null)
+        {
+            chunkManager.UpdateChunks(playerPos.X);
+            Console.WriteLine($"[PlayableDemo] Generated {chunkManager.GetLoadedChunkCount()} initial chunks");
+        }
         
         // Enable camera look-ahead for smooth camera movement
         CameraLookAheadSystem.EnableLookAhead(World, camera, 
@@ -59,15 +89,17 @@ public class PlayableDemoScene : Scene
         // Create camera zones for different areas
         CreateCameraZones();
         
-        // Create multiple goblin enemies in different positions
-        CreateGoblin(World, 600, 300);
-        CreateGoblin(World, 1200, 300);
-        CreateGoblin(World, 600, 700);
-        CreateGoblin(World, 1200, 700);
-        CreateGoblin(World, 960, 200);
+        // Create multiple goblin enemies in different positions (on surface)
+        CreateGoblin(World, 600, 150);
+        CreateGoblin(World, 800, 150);
+        CreateGoblin(World, 400, 150);
+        CreateGoblin(World, 700, 150);
+        CreateGoblin(World, 500, 200);
         
         Console.WriteLine("[PlayableDemo] Demo scene loaded!");
+        Console.WriteLine("[PlayableDemo] You're in a procedurally generated world!");
         Console.WriteLine("[PlayableDemo] Fight the goblins! Use SPACE to attack when near enemies.");
+        Console.WriteLine("[PlayableDemo] Use WASD or Arrow keys to move around the terrain");
         Console.WriteLine("[PlayableDemo] Use +/- keys to zoom in/out");
         Console.WriteLine("[PlayableDemo] Move between areas to see camera zones change behavior!");
         Console.WriteLine("[PlayableDemo] Camera features: look-ahead, parallax depth, screen shake, and dynamic zones!");
