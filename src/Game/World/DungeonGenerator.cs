@@ -1,6 +1,6 @@
 using ChroniclesOfADrifter.ECS.Components;
 
-namespace ChroniclesOfADrifter.World;
+namespace ChroniclesOfADrifter.Terrain;
 
 /// <summary>
 /// Room type in a dungeon
