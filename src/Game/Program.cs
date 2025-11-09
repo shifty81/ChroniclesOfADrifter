@@ -105,6 +105,13 @@ class Program
             return;
         }
         
+        // Check for time system test mode
+        if (args.Length > 0 && args[0].ToLower() == "time-test")
+        {
+            Tests.TimeSystemTest.Run();
+            return;
+        }
+        
         // Check if terrain demo was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "terrain")
         {

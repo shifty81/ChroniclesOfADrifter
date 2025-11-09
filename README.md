@@ -221,13 +221,22 @@ This repository contains the **initial implementation** of Chronicles of a Drift
   - [x] Swim speed reduction in water
   - [x] Water flow affects entity movement
   - [x] Comprehensive swimming system tests
+- [x] **Day/Night Cycle and Time System**
+  - [x] 24-hour in-game day with configurable time scale (60x default)
+  - [x] Four day phases (Dawn, Day, Dusk, Night) with smooth transitions
+  - [x] Dynamic ambient lighting based on time of day
+  - [x] Atmospheric color tinting (warm dawn/dusk, cool night)
+  - [x] Creature spawn rate multipliers by time of day
+  - [x] Integration with lighting system for surface/underground
+  - [x] Time manipulation and query API
+  - [x] Comprehensive time system tests
 
 ### 🔄 Next Steps
 - [ ] Implement C++ rendering engine (DirectX 12)
 - [ ] Add actual sprite assets (high-resolution character sprites)
-- [ ] Add weather and time systems
+- [x] Add weather and time systems (COMPLETED)
 - [ ] Create UI framework for crafting and inventory
-- [ ] Implement multithreaded chunk generation
+- [x] Implement multithreaded chunk generation (COMPLETED)
 - [ ] Enhance combat mechanics with weapon crafting
 
 ## 🎨 Game Features

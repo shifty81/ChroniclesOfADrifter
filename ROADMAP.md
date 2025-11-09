@@ -660,18 +660,19 @@ All Areas:           Hard stone + rare ores
 7. ✅ Block digging/mining system (COMPLETED)
 8. ✅ Underground lighting and fog of war (COMPLETED)
 9. ✅ Resource drops and inventory (COMPLETED)
-10. ⬜ Multithreaded chunk generation
+10. ✅ Multithreaded chunk generation (COMPLETED)
 
 ### Lower Priority (Phase 3)
 1. ✅ Advanced parallax effects (animated clouds, weather) (COMPLETED - Clouds and mist with auto-scroll)
 2. ⬜ Cinematic camera movements for cutscenes
-3. ⬜ Creature spawning system by biome and depth
-4. ⬜ Structure generation (ruins, villages, treasure rooms)
+3. ✅ Creature spawning system by biome and depth (COMPLETED)
+4. ✅ Structure generation (ruins, villages, treasure rooms) (COMPLETED)
 5. ✅ Advanced lighting effects (torches, dynamic shadows) (COMPLETED - Light sources with distance falloff)
-6. ⬜ Weather and atmospheric effects (rain, snow)
-7. ⬜ Seasonal changes affecting surface appearance
-8. ✅ Tool progression system (better tools = dig faster/deeper) (COMPLETED)
-9. ⬜ Structural integrity for large underground chambers
+6. ✅ Weather and atmospheric effects (rain, snow) (COMPLETED)
+7. ✅ Day/night cycle and time system (COMPLETED)
+8. ⬜ Seasonal changes affecting surface appearance
+9. ✅ Tool progression system (better tools = dig faster/deeper) (COMPLETED)
+10. ⬜ Structural integrity for large underground chambers
 
 ## Phase 4: Camera System for Semi-Angled Top-Down View
 

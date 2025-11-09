@@ -1,6 +1,7 @@
 using ChroniclesOfADrifter.ECS;
 using ChroniclesOfADrifter.ECS.Components;
 using ChroniclesOfADrifter.Terrain;
+using ChroniclesOfADrifter.WorldManagement;
 
 namespace ChroniclesOfADrifter.ECS.Systems;
 
@@ -25,11 +26,13 @@ public class LightingSystem : ISystem
     private const float MIN_VISIBLE_LIGHT = 0.1f;
     
     private ChunkManager? _chunkManager;
+    private TimeSystem? _timeSystem;
     
     public void Initialize(World world)
     {
         // Get chunk manager from shared resources
         _chunkManager = world.GetSharedResource<ChunkManager>("ChunkManager");
+        _timeSystem = world.GetSharedResource<TimeSystem>("TimeSystem");
     }
     
     public void Update(World world, float deltaTime)
@@ -42,6 +45,12 @@ public class LightingSystem : ISystem
             {
                 return; // No terrain to light
             }
+        }
+        
+        // Get time system if available
+        if (_timeSystem == null)
+        {
+            _timeSystem = world.GetSharedResource<TimeSystem>("TimeSystem");
         }
         
         // Reset light levels for all tiles
@@ -107,24 +116,31 @@ public class LightingSystem : ISystem
     
     /// <summary>
     /// Get the ambient light level for a given Y coordinate (depth)
+    /// Now integrates with TimeSystem for dynamic day/night cycle
     /// </summary>
     private float GetAmbientLightForDepth(float y)
     {
+        // Get time-of-day multiplier (1.0 at noon, 0.2 at night)
+        float timeMultiplier = _timeSystem?.GetAmbientLightLevel() ?? 1.0f;
+        
         if (y < SURFACE_Y_THRESHOLD)
         {
-            // Surface: Full daylight
-            return 1.0f;
+            // Surface: Affected by time of day
+            return timeMultiplier;
         }
         else if (y < SHALLOW_UNDERGROUND_Y)
         {
-            // Shallow underground: Dim light (0.3 to 0.0)
+            // Shallow underground: Dim light (0.3 to 0.0), slightly affected by time
             float depth = y - SURFACE_Y_THRESHOLD;
             float maxDepth = SHALLOW_UNDERGROUND_Y - SURFACE_Y_THRESHOLD;
-            return Math.Max(0.3f - (depth / maxDepth) * 0.3f, 0f);
+            float undergroundLight = Math.Max(0.3f - (depth / maxDepth) * 0.3f, 0f);
+            
+            // Time of day has minimal effect underground (20% influence)
+            return undergroundLight * (0.8f + 0.2f * timeMultiplier);
         }
         else
         {
-            // Deep underground: Pitch black
+            // Deep underground: Pitch black, unaffected by time of day
             return 0f;
         }
     }
