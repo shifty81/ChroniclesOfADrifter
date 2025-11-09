@@ -1,0 +1,147 @@
+{
+  "Name": "dungeon",
+  "Description": "Dark dungeon tileset for underground areas",
+  "TileSize": 32,
+  "Tiles": {
+    "dungeon_floor": {
+      "Name": "dungeon_floor",
+      "DisplayName": "Dungeon Floor",
+      "Color": [0.40, 0.35, 0.30],
+      "IsCollidable": false,
+      "Category": "terrain"
+    },
+    "dungeon_wall": {
+      "Name": "dungeon_wall",
+      "DisplayName": "Dungeon Wall",
+      "Color": [0.25, 0.25, 0.30],
+      "IsCollidable": true,
+      "Category": "wall"
+    },
+    "dungeon_wall_cracked": {
+      "Name": "dungeon_wall_cracked",
+      "DisplayName": "Cracked Wall",
+      "Color": [0.22, 0.22, 0.27],
+      "IsCollidable": true,
+      "Category": "wall"
+    },
+    "mossy_floor": {
+      "Name": "mossy_floor",
+      "DisplayName": "Mossy Floor",
+      "Color": [0.35, 0.40, 0.30],
+      "IsCollidable": false,
+      "Category": "terrain"
+    },
+    "trap_floor": {
+      "Name": "trap_floor",
+      "DisplayName": "Trap Floor",
+      "Color": [0.45, 0.30, 0.25],
+      "IsCollidable": false,
+      "Category": "terrain"
+    },
+    "iron_door": {
+      "Name": "iron_door",
+      "DisplayName": "Iron Door",
+      "Color": [0.35, 0.35, 0.40],
+      "IsCollidable": true,
+      "Category": "structure"
+    },
+    "locked_door": {
+      "Name": "locked_door",
+      "DisplayName": "Locked Door",
+      "Color": [0.50, 0.40, 0.20],
+      "IsCollidable": true,
+      "Category": "structure"
+    },
+    "spike_trap": {
+      "Name": "spike_trap",
+      "DisplayName": "Spike Trap",
+      "Color": [0.60, 0.60, 0.65],
+      "IsCollidable": false,
+      "Category": "object"
+    },
+    "treasure_chest": {
+      "Name": "treasure_chest",
+      "DisplayName": "Treasure Chest",
+      "Color": [0.65, 0.50, 0.25],
+      "IsCollidable": true,
+      "Category": "object"
+    },
+    "torch_wall": {
+      "Name": "torch_wall",
+      "DisplayName": "Wall Torch",
+      "Color": [0.90, 0.70, 0.30],
+      "IsCollidable": false,
+      "Category": "decoration"
+    },
+    "pillar": {
+      "Name": "pillar",
+      "DisplayName": "Stone Pillar",
+      "Color": [0.45, 0.45, 0.50],
+      "IsCollidable": true,
+      "Category": "structure"
+    },
+    "chains": {
+      "Name": "chains",
+      "DisplayName": "Hanging Chains",
+      "Color": [0.40, 0.40, 0.45],
+      "IsCollidable": false,
+      "Category": "decoration"
+    },
+    "pressure_plate": {
+      "Name": "pressure_plate",
+      "DisplayName": "Pressure Plate",
+      "Color": [0.50, 0.45, 0.40],
+      "IsCollidable": false,
+      "Category": "object"
+    },
+    "water_dark": {
+      "Name": "water_dark",
+      "DisplayName": "Dark Water",
+      "Color": [0.10, 0.20, 0.30],
+      "IsCollidable": false,
+      "Category": "water"
+    },
+    "lava": {
+      "Name": "lava",
+      "DisplayName": "Lava",
+      "Color": [0.90, 0.30, 0.10],
+      "IsCollidable": false,
+      "Category": "water"
+    },
+    "bone_pile": {
+      "Name": "bone_pile",
+      "DisplayName": "Pile of Bones",
+      "Color": [0.80, 0.75, 0.70],
+      "IsCollidable": false,
+      "Category": "decoration"
+    },
+    "crystal_blue": {
+      "Name": "crystal_blue",
+      "DisplayName": "Blue Crystal",
+      "Color": [0.20, 0.60, 0.90],
+      "IsCollidable": true,
+      "Category": "decoration"
+    },
+    "crystal_red": {
+      "Name": "crystal_red",
+      "DisplayName": "Red Crystal",
+      "Color": [0.90, 0.20, 0.30],
+      "IsCollidable": true,
+      "Category": "decoration"
+    },
+    "secret_door": {
+      "Name": "secret_door",
+      "DisplayName": "Secret Door",
+      "Color": [0.27, 0.27, 0.32],
+      "IsCollidable": true,
+      "Category": "structure"
+    },
+    "boss_door": {
+      "Name": "boss_door",
+      "DisplayName": "Boss Door",
+      "Color": [0.60, 0.20, 0.20],
+      "IsCollidable": true,
+      "Category": "structure"
+    }
+  }
+}

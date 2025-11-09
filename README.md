@@ -284,6 +284,16 @@ This repository contains the **initial implementation** of Chronicles of a Drift
   - [x] Input handling fixed for DirectX 11/12 renderers
   - [x] UI rendering layer (always on top)
   - [x] UI demo scene
+- [x] **Map Editor and Tileset System**
+  - [x] In-game map editor for real-time scene editing
+  - [x] Tileset system with JSON-based tile definitions
+  - [x] Drag-and-drop style tileset support
+  - [x] Map save/load functionality (JSON format)
+  - [x] Tile placement and removal tools
+  - [x] Editor toggle (F1/Tilde) in any scene
+  - [x] Procedural terrain editing capabilities
+  - [x] Zelda-style tileset included
+  - [x] Map editor documentation
 
 ### 🔄 Next Steps
 - [x] **Implement C++ rendering engine (DirectX 12)** (COMPLETED - see [DIRECTX12_RENDERER.md](docs/DIRECTX12_RENDERER.md))
@@ -291,9 +301,20 @@ This repository contains the **initial implementation** of Chronicles of a Drift
 - [x] Add weather and time systems (COMPLETED)
 - [x] **Create UI framework for crafting and inventory** (COMPLETED - see [UI_FRAMEWORK.md](docs/UI_FRAMEWORK.md))
 - [x] Implement multithreaded chunk generation (COMPLETED)
+- [x] **Add in-game map editor with tileset support** (COMPLETED - see [MAP_EDITOR.md](docs/MAP_EDITOR.md))
 - [ ] Enhance combat mechanics with weapon crafting
 
 ## 🎨 Game Features
+
+### Map Editor
+- **Real-time Scene Editing** - Edit maps while playing
+- **Tileset System** - JSON-based tileset definitions with drag-and-drop support
+- **Map Management** - Save and load custom maps
+- **Editor Integration** - Toggle editor mode in any scene with F1 or ~
+- **Tile Tools** - Place, remove, and modify tiles
+- **Procedural Integration** - Edit procedurally generated terrain
+- Run with: `dotnet run -c Release -- editor`
+- See [MAP_EDITOR.md](docs/MAP_EDITOR.md) for full documentation
 
 ### Character Customization
 - **Sprite Animation System** with frame-by-frame animations

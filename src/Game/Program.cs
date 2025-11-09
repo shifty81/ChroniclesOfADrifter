@@ -147,6 +147,13 @@ class Program
             return;
         }
         
+        // Check if map editor was requested via command line argument
+        if (args.Length > 0 && args[0].ToLower() == "editor")
+        {
+            RunMapEditor();
+            return;
+        }
+        
         // Check if visual demo was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "visual")
         {
@@ -223,6 +230,7 @@ class Program
         Console.WriteLine("       Run with 'crafting' for crafting system demo");
         Console.WriteLine("       Run with 'cinematic' for cinematic camera demo");
         Console.WriteLine("       Run with 'hybrid' for hybrid gameplay demo");
+        Console.WriteLine("       Run with 'editor' for MAP EDITOR with tileset support");
         Console.WriteLine("===========================================\n");
         
         // Initialize engine
@@ -682,5 +690,80 @@ class Program
         // Cleanup
         scene.OnUnload();
         Console.WriteLine("[Game] Hybrid gameplay demo complete!");
+    }
+    
+    /// <summary>
+    /// Run the map editor scene
+    /// </summary>
+    static void RunMapEditor()
+    {
+        Console.WriteLine("===========================================");
+        Console.WriteLine("  Chronicles of a Drifter - MAP EDITOR");
+        Console.WriteLine("  Real-Time Scene Editing");
+        Console.WriteLine("===========================================\n");
+        
+        // Check which renderer backend will be used
+        string renderer = Environment.GetEnvironmentVariable("CHRONICLES_RENDERER") ?? "dx11";
+        Console.WriteLine($"[Game] Renderer Backend: {renderer.ToUpper()}");
+        
+        // Initialize engine with window
+        Console.WriteLine("[Game] Initializing engine...");
+        bool success = EngineInterop.Engine_Initialize(1280, 720, "Chronicles of a Drifter - Map Editor");
+        
+        if (!success)
+        {
+            Console.WriteLine("[Game] ERROR: Failed to initialize engine!");
+            Console.WriteLine($"[Game] Error: {EngineInterop.Engine_GetErrorMessage()}");
+            return;
+        }
+        
+        Console.WriteLine("[Game] Engine initialized successfully\n");
+        
+        // Load map editor scene
+        var scene = new MapEditorScene();
+        scene.OnLoad();
+        
+        Console.WriteLine("\n[Game] Starting map editor...");
+        Console.WriteLine("[Game] A graphical window should appear!");
+        Console.WriteLine("[Game] Press Q or ESC to exit\n");
+        
+        // Main game loop
+        int frameCount = 0;
+        var lastTime = DateTime.Now;
+        
+        while (EngineInterop.Engine_IsRunning())
+        {
+            EngineInterop.Engine_BeginFrame();
+            
+            float deltaTime = EngineInterop.Engine_GetDeltaTime();
+            
+            // Update the scene
+            scene.Update(deltaTime);
+            
+            EngineInterop.Engine_EndFrame();
+            
+            frameCount++;
+            
+            // Print FPS every 60 frames
+            if (frameCount % 60 == 0)
+            {
+                var currentTime = DateTime.Now;
+                var elapsed = (currentTime - lastTime).TotalSeconds;
+                if (elapsed > 0)
+                {
+                    float fps = 60.0f / (float)elapsed;
+                    Console.WriteLine($"[Game] FPS: {fps:F1}");
+                }
+                lastTime = currentTime;
+            }
+        }
+        
+        // Unload scene
+        scene.OnUnload();
+        
+        // Shutdown
+        Console.WriteLine("\n[Game] Shutting down...");
+        EngineInterop.Engine_Shutdown();
+        Console.WriteLine("[Game] Goodbye!");
     }
 }
