@@ -58,7 +58,7 @@ public static class SettingsSystemTest
         // Test 5: Test environment variable override
         Console.WriteLine("\n[Test 5] Testing environment variable override...");
         Environment.SetEnvironmentVariable("CHRONICLES_RENDERER", "sdl2");
-        string envRenderer = Environment.GetEnvironmentVariable("CHRONICLES_RENDERER");
+        string? envRenderer = Environment.GetEnvironmentVariable("CHRONICLES_RENDERER");
         Console.WriteLine($"  ✓ Environment variable set to: {envRenderer}");
         Console.WriteLine("  Note: Environment variable takes precedence over settings.json");
         

@@ -55,7 +55,7 @@ public class CinematicCameraTest
         var cinematic = world.GetComponent<CinematicCameraComponent>(camera);
         
         Assert(cinematic != null, "Cinematic component should exist");
-        Assert(cinematic.IsPlaying, "Sequence should be playing");
+        Assert(cinematic!.IsPlaying, "Sequence should be playing");
         Assert(cinematic.CurrentSequence == sequence, "Sequence should be set");
         Assert(cinematic.CurrentStepIndex == 0, "Should start at step 0");
         
@@ -139,7 +139,7 @@ public class CinematicCameraTest
         
         // Update past first step
         cinematicSystem.Update(world, 0.6f);
-        Assert(cinematic.CurrentStepIndex == 1, 
+        Assert(cinematic!.CurrentStepIndex == 1, 
                $"Should be on step 1, got {cinematic.CurrentStepIndex}");
         
         // Update past second step

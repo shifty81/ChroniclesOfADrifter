@@ -17,6 +17,12 @@ public enum TileType
     IronOre,        // Iron ore deposits
     CopperOre,      // Copper ore deposits
     GoldOre,        // Gold ore deposits
+    SilverOre,      // Silver ore deposits
+    CoalOre,        // Coal ore deposits
+    DiamondOre,     // Diamond ore deposits
+    DeepWater,      // Deep water blocks
+    Sandstone,      // Sandstone blocks
+    Limestone,      // Limestone blocks
     
     // Building materials
     Wood,           // Wood planks for building
@@ -70,6 +76,7 @@ public static class TileTypeExtensions
         {
             TileType.Air => false,
             TileType.Water => false,
+            TileType.DeepWater => false,
             TileType.TallGrass => false,
             TileType.Flower => false,
             TileType.Torch => false,
@@ -96,6 +103,12 @@ public static class TileTypeExtensions
             TileType.IronOre => 'I',
             TileType.CopperOre => 'C',
             TileType.GoldOre => 'G',
+            TileType.SilverOre => 'S',
+            TileType.CoalOre => 'O',
+            TileType.DiamondOre => 'D',
+            TileType.DeepWater => '≋',
+            TileType.Sandstone => '▒',
+            TileType.Limestone => '░',
             TileType.Wood => '╬',
             TileType.WoodPlank => '═',
             TileType.Cobblestone => '▒',
@@ -131,6 +144,12 @@ public static class TileTypeExtensions
             TileType.IronOre => ConsoleColor.DarkRed,
             TileType.CopperOre => ConsoleColor.DarkCyan,
             TileType.GoldOre => ConsoleColor.DarkYellow,
+            TileType.SilverOre => ConsoleColor.Gray,
+            TileType.CoalOre => ConsoleColor.Black,
+            TileType.DiamondOre => ConsoleColor.Cyan,
+            TileType.DeepWater => ConsoleColor.DarkBlue,
+            TileType.Sandstone => ConsoleColor.Yellow,
+            TileType.Limestone => ConsoleColor.White,
             TileType.Wood => ConsoleColor.DarkYellow,
             TileType.WoodPlank => ConsoleColor.Yellow,
             TileType.Cobblestone => ConsoleColor.Gray,
@@ -225,6 +244,11 @@ public static class TileTypeExtensions
             TileType.IronOre => 8.0f,
             TileType.DeepStone => 10.0f,
             TileType.GoldOre => 12.0f,
+            TileType.SilverOre => 10.0f,
+            TileType.CoalOre => 4.0f,
+            TileType.DiamondOre => 15.0f,
+            TileType.Sandstone => 4.5f,
+            TileType.Limestone => 4.0f,
             TileType.Wood => 2.5f,
             TileType.WoodPlank => 2.0f,
             TileType.Cobblestone => 4.0f,
@@ -248,6 +272,11 @@ public static class TileTypeExtensions
             TileType.CopperOre => ToolType.Pickaxe,
             TileType.IronOre => ToolType.Pickaxe,
             TileType.GoldOre => ToolType.Pickaxe,
+            TileType.SilverOre => ToolType.Pickaxe,
+            TileType.CoalOre => ToolType.Pickaxe,
+            TileType.DiamondOre => ToolType.Pickaxe,
+            TileType.Sandstone => ToolType.Pickaxe,
+            TileType.Limestone => ToolType.Pickaxe,
             TileType.Cobblestone => ToolType.Pickaxe,
             TileType.Brick => ToolType.Pickaxe,
             TileType.TreeOak => ToolType.Axe,
@@ -272,9 +301,14 @@ public static class TileTypeExtensions
         {
             TileType.Stone => ToolMaterial.Wood,
             TileType.CopperOre => ToolMaterial.Wood,
+            TileType.CoalOre => ToolMaterial.Wood,
+            TileType.Sandstone => ToolMaterial.Wood,
+            TileType.Limestone => ToolMaterial.Wood,
             TileType.IronOre => ToolMaterial.Stone,
             TileType.DeepStone => ToolMaterial.Stone,
+            TileType.SilverOre => ToolMaterial.Iron,
             TileType.GoldOre => ToolMaterial.Iron,
+            TileType.DiamondOre => ToolMaterial.Iron,
             TileType.Bedrock => ToolMaterial.None, // Unbreakable
             _ => ToolMaterial.None
         };

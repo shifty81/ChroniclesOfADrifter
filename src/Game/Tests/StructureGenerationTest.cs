@@ -94,13 +94,13 @@ public static class StructureGenerationTest
         // Try to generate structures for multiple chunks in different biomes
         for (int chunkX = 0; chunkX < 10; chunkX++)
         {
-            Chunk chunk = chunkManager.GetChunk(chunkX);
+            Chunk? chunk = chunkManager.GetChunk(chunkX);
             
             // Try each biome type
             BiomeType[] biomes = { BiomeType.Plains, BiomeType.Forest, BiomeType.Desert };
             foreach (var biome in biomes)
             {
-                int beforeCount = CountStructureBlocks(chunkManager, chunk.GetWorldStartX());
+                int beforeCount = CountStructureBlocks(chunkManager, chunk!.GetWorldStartX());
                 structureGen.GenerateStructuresForChunk(chunkManager, chunk, biome, chunkX);
                 int afterCount = CountStructureBlocks(chunkManager, chunk.GetWorldStartX());
                 

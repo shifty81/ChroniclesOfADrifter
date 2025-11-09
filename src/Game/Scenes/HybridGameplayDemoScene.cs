@@ -14,7 +14,7 @@ public class HybridGameplayDemoScene : Scene
     private Entity merchantNPC;
     private Entity questgiverNPC;
     private Entity boss;
-    private List<Entity> farmPlots;
+    private List<Entity> farmPlots = new List<Entity>();
     
     public override void OnLoad()
     {
