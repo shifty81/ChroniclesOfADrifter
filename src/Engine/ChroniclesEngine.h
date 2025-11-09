@@ -178,6 +178,23 @@ extern "C" {
     /// </summary>
     ENGINE_API void Engine_RegisterCollisionCallback(CollisionCallbackFn callback);
     
+    // ===== Internal Input Functions (called by renderers) =====
+    
+    /// <summary>
+    /// Internal: Set key state (called by renderer backends)
+    /// </summary>
+    ENGINE_API void Engine_SetKeyState(int keyCode, bool isDown, bool isPressed);
+    
+    /// <summary>
+    /// Internal: Set mouse position (called by renderer backends)
+    /// </summary>
+    ENGINE_API void Engine_SetMousePosition(float x, float y);
+    
+    /// <summary>
+    /// Internal: Set mouse button state (called by renderer backends)
+    /// </summary>
+    ENGINE_API void Engine_SetMouseButtonState(int button, bool isDown);
+    
     // ===== Error Handling =====
     
     /// <summary>

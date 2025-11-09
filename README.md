@@ -69,6 +69,7 @@ ChroniclesOfADrifter/
 
 ### Systems Documentation
 - **[Architecture](docs/ARCHITECTURE.md)** - System design and technical overview
+- **[UI Framework](docs/UI_FRAMEWORK.md)** - User interface system for inventory, crafting, and menus
 - **[Terrain Generation](docs/TERRAIN_GENERATION.md)** - 2D procedural terrain with biomes and caves
 - **[Vegetation System](docs/VEGETATION_SYSTEM.md)** - Tree and flora generation with biome-specific placement
 - **[Water System](docs/WATER_SYSTEM.md)** - River, lake, and ocean generation
@@ -273,12 +274,22 @@ This repository contains the **initial implementation** of Chronicles of a Drift
   - [x] Integration with lighting system for surface/underground
   - [x] Time manipulation and query API
   - [x] Comprehensive time system tests
+- [x] **UI Framework**
+  - [x] Component-based UI system integrated with ECS
+  - [x] UI element types (Panel, Button, custom elements)
+  - [x] Inventory UI with 40-slot grid display
+  - [x] Crafting UI with recipe browsing and crafting
+  - [x] Mouse input handling (clicks, hover states)
+  - [x] Keyboard shortcuts (I for inventory, C for crafting, ESC to close)
+  - [x] Input handling fixed for DirectX 11/12 renderers
+  - [x] UI rendering layer (always on top)
+  - [x] UI demo scene
 
 ### 🔄 Next Steps
 - [x] **Implement C++ rendering engine (DirectX 12)** (COMPLETED - see [DIRECTX12_RENDERER.md](docs/DIRECTX12_RENDERER.md))
 - [ ] Add actual sprite assets (high-resolution character sprites)
 - [x] Add weather and time systems (COMPLETED)
-- [ ] Create UI framework for crafting and inventory
+- [x] **Create UI framework for crafting and inventory** (COMPLETED - see [UI_FRAMEWORK.md](docs/UI_FRAMEWORK.md))
 - [x] Implement multithreaded chunk generation (COMPLETED)
 - [ ] Enhance combat mechanics with weapon crafting
 
