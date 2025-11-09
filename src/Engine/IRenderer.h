@@ -9,6 +9,7 @@ namespace Chronicles {
 
 enum class RendererBackend {
     SDL2,
+    DirectX11,
     DirectX12,
     Vulkan
 };

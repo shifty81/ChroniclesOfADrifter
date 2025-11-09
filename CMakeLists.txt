@@ -31,9 +31,11 @@ set(ENGINE_SOURCES
     src/Engine/SDL2Renderer.h
 )
 
-# Add DirectX 12 renderer on Windows
+# Add DirectX renderers on Windows
 if(WIN32)
     list(APPEND ENGINE_SOURCES
+        src/Engine/D3D11Renderer.cpp
+        src/Engine/D3D11Renderer.h
         src/Engine/D3D12Renderer.cpp
         src/Engine/D3D12Renderer.h
     )
@@ -59,8 +61,9 @@ if(WIN32)
         _UNICODE
     )
     
-    # Link DirectX 12 libraries on Windows
+    # Link DirectX libraries on Windows
     target_link_libraries(ChroniclesEngine PRIVATE
+        d3d11.lib
         d3d12.lib
         dxgi.lib
         d3dcompiler.lib
