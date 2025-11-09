@@ -9,7 +9,7 @@ namespace ChroniclesOfADrifter.Scenes;
 /// </summary>
 public class CraftingDemoScene : Scene
 {
-    private CraftingSystem craftingSystem;
+    private CraftingSystem craftingSystem = null!;
     private Entity player;
     
     public override void OnLoad()

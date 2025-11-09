@@ -84,6 +84,13 @@ class Program
             return;
         }
         
+        // Check for async chunk generation test mode
+        if (args.Length > 0 && args[0].ToLower() == "async-test")
+        {
+            Tests.AsyncChunkGenerationTest.Run();
+            return;
+        }
+        
         // Check if terrain demo was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "terrain")
         {
