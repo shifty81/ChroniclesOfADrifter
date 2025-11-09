@@ -49,8 +49,10 @@ namespace {
     char g_errorMessage[256] = "No error";
     
     void SetError(const char* message) {
-        strncpy(g_errorMessage, message, sizeof(g_errorMessage) - 1);
-        g_errorMessage[sizeof(g_errorMessage) - 1] = '\0';
+        size_t len = strlen(message);
+        size_t copyLen = (len < sizeof(g_errorMessage) - 1) ? len : sizeof(g_errorMessage) - 1;
+        memcpy(g_errorMessage, message, copyLen);
+        g_errorMessage[copyLen] = '\0';
         printf("[Engine] ERROR: %s\n", message);
     }
     
@@ -61,50 +63,66 @@ namespace {
     // Set CHRONICLES_RENDERER=sdl2 for SDL2 (cross-platform, if available)
     // Note: Renderer can be changed later in the settings menu (game will restart)
     Chronicles::RendererBackend GetRendererBackend() {
+#ifdef _WIN32
+        char* rendererEnvBuf = nullptr;
+        size_t bufSize = 0;
+        _dupenv_s(&rendererEnvBuf, &bufSize, "CHRONICLES_RENDERER");
+        const char* rendererEnv = rendererEnvBuf;
+#else
         const char* rendererEnv = std::getenv("CHRONICLES_RENDERER");
+#endif
+        
+        Chronicles::RendererBackend result = Chronicles::RendererBackend::DirectX11;
+        
         if (rendererEnv) {
             std::string backend(rendererEnv);
             if (backend == "dx11" || backend == "directx11" || backend == "d3d11") {
 #ifdef _WIN32
-                return Chronicles::RendererBackend::DirectX11;
+                result = Chronicles::RendererBackend::DirectX11;
 #else
                 printf("[Engine] WARNING: DirectX 11 not available on this platform\n");
 #ifdef HAS_SDL2
                 printf("[Engine] Using SDL2 as fallback\n");
-                return Chronicles::RendererBackend::SDL2;
+                result = Chronicles::RendererBackend::SDL2;
 #else
                 printf("[Engine] ERROR: No renderer backend available\n");
-                return Chronicles::RendererBackend::SDL2; // Will fail gracefully
+                result = Chronicles::RendererBackend::SDL2; // Will fail gracefully
 #endif
 #endif
             }
-            if (backend == "dx12" || backend == "directx12" || backend == "d3d12") {
+            else if (backend == "dx12" || backend == "directx12" || backend == "d3d12") {
 #ifdef _WIN32
-                return Chronicles::RendererBackend::DirectX12;
+                result = Chronicles::RendererBackend::DirectX12;
 #else
                 printf("[Engine] WARNING: DirectX 12 not available on this platform\n");
 #ifdef HAS_SDL2
                 printf("[Engine] Using SDL2 as fallback\n");
-                return Chronicles::RendererBackend::SDL2;
+                result = Chronicles::RendererBackend::SDL2;
 #else
                 printf("[Engine] ERROR: No renderer backend available\n");
-                return Chronicles::RendererBackend::SDL2; // Will fail gracefully
+                result = Chronicles::RendererBackend::SDL2; // Will fail gracefully
 #endif
 #endif
             }
         }
-        
-        // Default to DirectX 11 on Windows (configurable via environment variable)
+        else {
+            // Default to DirectX 11 on Windows (configurable via environment variable)
 #ifdef _WIN32
-        printf("[Engine] Using DirectX 11 as default renderer (Windows configuration)\n");
-        return Chronicles::RendererBackend::DirectX11;
+            printf("[Engine] Using DirectX 11 as default renderer (Windows configuration)\n");
+            result = Chronicles::RendererBackend::DirectX11;
 #elif defined(HAS_SDL2)
-        printf("[Engine] Using SDL2 as default renderer (non-Windows platform)\n");
-        return Chronicles::RendererBackend::SDL2;
+            printf("[Engine] Using SDL2 as default renderer (non-Windows platform)\n");
+            result = Chronicles::RendererBackend::SDL2;
 #else
-        printf("[Engine] ERROR: No renderer backend available\n");
-        return Chronicles::RendererBackend::SDL2; // Will fail gracefully
+            printf("[Engine] ERROR: No renderer backend available\n");
+            result = Chronicles::RendererBackend::SDL2; // Will fail gracefully
 #endif
+        }
+        
+#ifdef _WIN32
+        free(rendererEnvBuf);
+#endif
+        return result;
     }
 }
 
