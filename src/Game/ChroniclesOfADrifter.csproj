@@ -23,6 +23,12 @@
       <Link>scripts\lua\%(RecursiveDir)%(Filename)%(Extension)</Link>
     </None>
     
+    <!-- Copy Python scripts to output -->
+    <None Include="..\..\scripts\python\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>scripts\python\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </None>
+    
     <!-- Copy assets to output -->
     <None Include="..\..\assets\**\*" Condition="Exists('..\..\assets')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -1,53 +1,21 @@
 #!/bin/bash
 # Chronicles of a Drifter - Build Script
-# NOTE: This project is configured for Windows-only with DirectX 11 as default
-# This script will fail on non-Windows platforms unless SDL2 is available
+# NOTE: This project is Windows-only with DirectX 11/12 support
+# This script is NOT SUPPORTED and will fail on non-Windows platforms
 
 set -e  # Exit on error
 
 echo "=========================================="
 echo "  Chronicles of a Drifter - Build Script"
-echo "  WARNING: Configured for Windows-only"
+echo "  ERROR: Windows-Only Project"
 echo "=========================================="
 echo ""
-echo "This project is configured for Windows with DirectX 11 as default."
-echo "Build will fail on non-Windows platforms."
+echo "This project is configured for Windows ONLY with DirectX 11/12."
+echo "Cross-platform support (SDL2) has been removed."
 echo ""
-
-# Check prerequisites
-echo "[1/4] Checking prerequisites..."
-
-if ! command -v cmake &> /dev/null; then
-    echo "ERROR: CMake is not installed. Please install CMake 3.20 or later."
-    exit 1
-fi
-
-if ! command -v dotnet &> /dev/null; then
-    echo "ERROR: .NET SDK is not installed. Please install .NET 9 SDK."
-    exit 1
-fi
-
-echo "✓ CMake found: $(cmake --version | head -n1)"
-echo "✓ .NET found: $(dotnet --version)"
+echo "Please use build.bat on Windows or Visual Studio 2022."
 echo ""
-
-# Build C++ Engine
-echo "[2/4] Building C++ engine..."
-mkdir -p build
-cd build
-
-# Configure
-echo "  Configuring CMake..."
-cmake .. > /dev/null 2>&1 || {
-    echo "ERROR: CMake configuration failed"
-    exit 1
-}
-
-# Build
-echo "  Compiling C++ code..."
-cmake --build . --config Release > /dev/null 2>&1 || {
-    echo "ERROR: C++ build failed"
-    exit 1
+exit 1
 }
 
 echo "✓ C++ engine built successfully"

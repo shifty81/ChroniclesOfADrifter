@@ -1,15 +1,15 @@
 # Chronicles of a Drifter
 
-A 2D top-down action RPG built with a custom **C++/.NET 9/Lua voxel game engine**, inspired by The Legend of Zelda: A Link to the Past.
+A 2D top-down action RPG built with a custom **C++20/.NET 9/Lua/Python game engine**, inspired by The Legend of Zelda: A Link to the Past.
 
 ## ⚠️ Platform Configuration
 
-**This project is configured for Windows-only with DirectX 11 as the default renderer.**
+**This project is Windows-only with DirectX 11/12 renderers.**
 
-- **Primary Platform:** Windows 10/11
-- **Default Renderer:** DirectX 11 (broad hardware compatibility)
-- **Build System:** Visual Studio 2022 / CMake on Windows
-- **Testing:** Windows-only environment
+- **Platform:** Windows 10/11 (64-bit)
+- **Renderers:** DirectX 11 (default, broad compatibility) and DirectX 12 (high performance)
+- **Build System:** Visual Studio 2022 (recommended) / CMake
+- **Languages:** C++20, .NET 9 (C#), Lua, Python
 
 The renderer can be changed in the game settings menu (game will restart with the new renderer).
 
@@ -25,13 +25,12 @@ Chronicles of a Drifter features:
 
 ## 🛠️ Technology Stack
 
-### C++ Core Engine
+### C++20 Core Engine
 - Performance-critical systems (rendering, physics, audio)
 - **DirectX 11 renderer** (Windows, broad compatibility, **DEFAULT**) ✅ **IMPLEMENTED**
 - **DirectX 12 renderer** (Windows, high-performance) ✅ **IMPLEMENTED**
-- **SDL2 renderer** (cross-platform, optional) ✅ **IMPLEMENTED**
 - Abstracted rendering backend for flexibility
-- **Windows-focused development** with optional cross-platform support
+- **Windows-native development** with Visual Studio 2022
 
 ### .NET 9 (C#) Game Logic
 - Entity Component System (ECS) architecture
@@ -44,6 +43,12 @@ Chronicles of a Drifter features:
 - Weapon effects
 - Quest logic
 - Runtime-editable content
+
+### Python Scripting
+- Alternative scripting language for AI and gameplay
+- Python.NET integration for seamless C# interop
+- Example Python AI scripts included
+- Support for Python 3.8+
 
 ## 📁 Project Structure
 
@@ -85,24 +90,25 @@ ChroniclesOfADrifter/
 ### Development Resources
 - **[Sprite Assets](docs/SPRITE_ASSETS.md)** - Sprite creation guidelines and specifications
 - **[Procedural Generation](docs/PROCEDURAL_GENERATION.md)** - Dungeon generation algorithms
-- **[Lua Scripting](docs/LUA_SCRIPTING.md)** - Scripting API and examples
+- **[Lua Scripting](docs/LUA_SCRIPTING.md)** - Lua scripting API and examples
+- **[Python Scripting](docs/PYTHON_SCRIPTING.md)** - Python scripting API and examples
 - **[C++/C# Integration](docs/CPP_CSHARP_INTEGRATION.md)** - Interop patterns and best practices
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-**Windows Platform Required:**
-- Windows 10 or Windows 11
+**Windows 10/11 (64-bit) Required:**
+- Windows 10 version 1909 or newer, or Windows 11
 - Visual Studio 2022 (v17.8+) with C++ Desktop Development workload
 - .NET 9 SDK
-- CMake 3.20+
+- CMake 3.20+ (if building with CMake)
 - DirectX 11 (included with Windows)
-- DirectX 12 (optional, for high-performance rendering)
-- SDL2 development libraries (optional, for cross-platform testing)
+- DirectX 12 (optional, for high-performance rendering, requires compatible GPU)
+- Python 3.8+ (optional, for Python scripting support)
 
 ### Building Locally
 
-**Note:** This project is configured for **Windows-only** with **DirectX 11 as the default renderer**. The renderer can be changed in the game settings menu (the game will restart with the new renderer).
+**Note:** This project is **Windows-only** with **DirectX 11/12 renderers**. The renderer can be changed in the game settings menu (the game will restart with the new renderer).
 
 #### Quick Build (Recommended for Local Development)
 
@@ -114,20 +120,14 @@ cd ChroniclesOfADrifter
 # Run the automated build script (Windows only)
 build.bat
 
-# Run the game (default: DirectX 11 renderer on Windows)
+# Run the game (default: DirectX 11 renderer)
 cd src/Game
 dotnet run -c Release
 
-# Use DirectX 12 renderer on Windows (high performance, requires compatible GPU)
+# Use DirectX 12 renderer (high performance, requires compatible GPU)
 set CHRONICLES_RENDERER=dx12  # Windows Command Prompt
 # or
 $env:CHRONICLES_RENDERER="dx12"  # Windows PowerShell
-dotnet run -c Release
-
-# Use SDL2 renderer (optional, for cross-platform testing if SDL2 is installed)
-set CHRONICLES_RENDERER=sdl2  # Windows Command Prompt
-# or
-$env:CHRONICLES_RENDERER="sdl2"  # Windows PowerShell
 dotnet run -c Release
 ```
 
@@ -399,8 +399,9 @@ MIT License - See [LICENSE](LICENSE) for details
 ## 🙏 Acknowledgments
 
 - Inspired by The Legend of Zelda: A Link to the Past
-- Built with modern C++20, .NET 9, and Lua
+- Built with modern C++20, .NET 9, Lua, and Python
 - Procedural generation techniques from roguelike development
+- DirectX 11/12 for high-performance Windows-native rendering
 
 ## 📬 Contact
 
