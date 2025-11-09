@@ -17,6 +17,7 @@ Chronicles of a Drifter features:
 ### C++ Core Engine
 - Performance-critical systems (rendering, physics, audio)
 - **DirectX 12 renderer** (Windows, high-performance) ✅ **IMPLEMENTED**
+- **DirectX 11 renderer** (Windows, broad compatibility) ✅ **IMPLEMENTED**
 - **SDL2 renderer** (cross-platform, default) ✅ **IMPLEMENTED**
 - Abstracted rendering backend for flexibility
 - Cross-platform foundation
@@ -100,7 +101,13 @@ build.bat         # Windows
 cd src/Game
 dotnet run -c Release
 
-# Or use DirectX 12 renderer on Windows
+# Or use DirectX 11 renderer on Windows (broad hardware support)
+set CHRONICLES_RENDERER=dx11  # Windows Command Prompt
+# or
+$env:CHRONICLES_RENDERER="dx11"  # Windows PowerShell
+dotnet run -c Release
+
+# Or use DirectX 12 renderer on Windows (high performance)
 set CHRONICLES_RENDERER=dx12  # Windows Command Prompt
 # or
 $env:CHRONICLES_RENDERER="dx12"  # Windows PowerShell

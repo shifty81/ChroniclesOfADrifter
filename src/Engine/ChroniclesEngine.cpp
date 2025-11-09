@@ -1,6 +1,7 @@
 #include "ChroniclesEngine.h"
 #include "SDL2Renderer.h"
 #ifdef _WIN32
+#include "D3D11Renderer.h"
 #include "D3D12Renderer.h"
 #endif
 #include <cstdio>
@@ -49,12 +50,21 @@ namespace {
     }
     
     // Environment variable to select renderer backend
+    // Set CHRONICLES_RENDERER=dx11 for DirectX 11 (Windows only)
     // Set CHRONICLES_RENDERER=dx12 for DirectX 12 (Windows only)
     // Set CHRONICLES_RENDERER=sdl2 for SDL2 (default, cross-platform)
     Chronicles::RendererBackend GetRendererBackend() {
         const char* rendererEnv = std::getenv("CHRONICLES_RENDERER");
         if (rendererEnv) {
             std::string backend(rendererEnv);
+            if (backend == "dx11" || backend == "directx11" || backend == "d3d11") {
+#ifdef _WIN32
+                return Chronicles::RendererBackend::DirectX11;
+#else
+                printf("[Engine] WARNING: DirectX 11 not available on this platform, using SDL2\n");
+                return Chronicles::RendererBackend::SDL2;
+#endif
+            }
             if (backend == "dx12" || backend == "directx12" || backend == "d3d12") {
 #ifdef _WIN32
                 return Chronicles::RendererBackend::DirectX12;
@@ -84,6 +94,16 @@ extern "C" ENGINE_API bool Engine_Initialize(int width, int height, const char* 
     // Create renderer based on backend
     try {
         switch (backend) {
+            case Chronicles::RendererBackend::DirectX11:
+#ifdef _WIN32
+                printf("[Engine] Using DirectX 11 renderer backend\n");
+                g_renderer = std::make_unique<Chronicles::D3D11Renderer>();
+#else
+                printf("[Engine] DirectX 11 not available, falling back to SDL2\n");
+                g_renderer = std::make_unique<Chronicles::SDL2Renderer>();
+#endif
+                break;
+            
             case Chronicles::RendererBackend::DirectX12:
 #ifdef _WIN32
                 printf("[Engine] Using DirectX 12 renderer backend\n");
