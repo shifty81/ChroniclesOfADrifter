@@ -22,7 +22,7 @@ public class UISystem : ISystem
     {
         // Get mouse position
         float mouseX = 0, mouseY = 0;
-        EngineInterop.Input_GetMousePosition(ref mouseX, ref mouseY);
+        EngineInterop.Input_GetMousePosition(out mouseX, out mouseY);
         
         // Check for mouse button press
         bool mousePressed = EngineInterop.Input_IsMouseButtonPressed(0); // Left mouse button

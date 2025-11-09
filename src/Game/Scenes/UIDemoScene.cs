@@ -31,7 +31,7 @@ public class UIDemoScene : Scene
         Console.WriteLine("===========================================\n");
         
         // Register UI system
-        World.RegisterSystem(new UISystem());
+        World.AddSystem(new UISystem());
         
         // Create crafting system
         _craftingSystem = new CraftingSystem();

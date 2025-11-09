@@ -3,7 +3,7 @@ namespace ChroniclesOfADrifter.ECS.Components;
 /// <summary>
 /// Component that holds UI elements for an entity
 /// </summary>
-public class UIComponent
+public class UIComponent : IComponent
 {
     public List<ChroniclesOfADrifter.UI.UIElement> Elements { get; } = new();
     public bool IsVisible { get; set; } = true;
