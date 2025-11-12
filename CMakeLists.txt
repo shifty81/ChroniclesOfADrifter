@@ -42,6 +42,11 @@ set(ENGINE_SOURCES
     src/Engine/ReflectionAPI.h
     src/Engine/ReflectionAPI.cpp
     src/Engine/ReflectionExample.cpp
+    src/Engine/Serialization.h
+    src/Engine/SerializationAPI.h
+    src/Engine/SerializationAPI.cpp
+    src/Engine/PythonAPI.h
+    src/Engine/PythonAPI.cpp
 )
 
 # Add SDL2 renderer if SDL2 is found
