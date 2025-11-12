@@ -47,6 +47,10 @@ set(ENGINE_SOURCES
     src/Engine/SerializationAPI.cpp
     src/Engine/PythonAPI.h
     src/Engine/PythonAPI.cpp
+    src/Engine/LuaEnhancedAPI.h
+    src/Engine/LuaEnhancedAPI.cpp
+    src/Engine/IPC.h
+    src/Engine/IPC.cpp
 )
 
 # Add SDL2 renderer if SDL2 is found
