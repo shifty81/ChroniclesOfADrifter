@@ -21,12 +21,19 @@ public class SettingsManager
     
     public class RendererSettings
     {
-        public string Backend { get; set; } = "dx11"; // Default to DirectX 11 on Windows
-        public string Description { get; set; } = "Renderer backend: dx11 (default), dx12 (high-performance), or sdl2 (cross-platform)";
+        // Platform-aware default: DirectX 11 on Windows, SDL2 on other platforms
+        public string Backend { get; set; } = GetDefaultRenderer();
+        public string Description { get; set; } = "Renderer backend: dx11 (Windows default), dx12 (high-performance), or sdl2 (cross-platform/Linux default)";
         public int WindowWidth { get; set; } = 1920;
         public int WindowHeight { get; set; } = 1080;
         public bool Vsync { get; set; } = true;
         public bool Fullscreen { get; set; } = false;
+        
+        private static string GetDefaultRenderer()
+        {
+            // Default to DirectX 11 on Windows, SDL2 on other platforms
+            return OperatingSystem.IsWindows() ? "dx11" : "sdl2";
+        }
     }
     
     public class GraphicsSettings
