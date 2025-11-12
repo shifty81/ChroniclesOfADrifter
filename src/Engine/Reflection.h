@@ -126,6 +126,14 @@ public:
         m_typeInfo = std::make_unique<TypeInfo>(name, sizeof(T));
     }
     
+    // Delete copy constructor and copy assignment
+    TypeRegistrar(const TypeRegistrar&) = delete;
+    TypeRegistrar& operator=(const TypeRegistrar&) = delete;
+    
+    // Enable move constructor and move assignment
+    TypeRegistrar(TypeRegistrar&& other) noexcept = default;
+    TypeRegistrar& operator=(TypeRegistrar&& other) noexcept = default;
+    
     template<typename FieldType>
     TypeRegistrar& Field(const std::string& name, FieldType T::*field, PropertyType type) {
         size_t offset = reinterpret_cast<size_t>(&(static_cast<T*>(nullptr)->*field));
@@ -134,8 +142,10 @@ public:
     }
     
     ~TypeRegistrar() {
-        auto name = m_typeInfo->GetName();
-        ReflectionRegistry::Instance().RegisterType(name, std::move(m_typeInfo));
+        if (m_typeInfo) {
+            auto name = m_typeInfo->GetName();
+            ReflectionRegistry::Instance().RegisterType(name, std::move(m_typeInfo));
+        }
     }
     
 private:
