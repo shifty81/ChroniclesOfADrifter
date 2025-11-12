@@ -38,6 +38,10 @@ set(ENGINE_SOURCES
     src/Engine/ChroniclesEngine.cpp
     src/Engine/ChroniclesEngine.h
     src/Engine/IRenderer.h
+    src/Engine/Reflection.h
+    src/Engine/ReflectionAPI.h
+    src/Engine/ReflectionAPI.cpp
+    src/Engine/ReflectionExample.cpp
 )
 
 # Add SDL2 renderer if SDL2 is found
