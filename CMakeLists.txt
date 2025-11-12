@@ -38,6 +38,19 @@ set(ENGINE_SOURCES
     src/Engine/ChroniclesEngine.cpp
     src/Engine/ChroniclesEngine.h
     src/Engine/IRenderer.h
+    src/Engine/Reflection.h
+    src/Engine/ReflectionAPI.h
+    src/Engine/ReflectionAPI.cpp
+    src/Engine/ReflectionExample.cpp
+    src/Engine/Serialization.h
+    src/Engine/SerializationAPI.h
+    src/Engine/SerializationAPI.cpp
+    src/Engine/PythonAPI.h
+    src/Engine/PythonAPI.cpp
+    src/Engine/LuaEnhancedAPI.h
+    src/Engine/LuaEnhancedAPI.cpp
+    src/Engine/IPC.h
+    src/Engine/IPC.cpp
 )
 
 # Add SDL2 renderer if SDL2 is found
