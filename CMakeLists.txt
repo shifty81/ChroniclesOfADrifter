@@ -4,19 +4,25 @@ project(ChroniclesEngine VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Enforce Windows-only builds with DirectX 11 as default
-if(NOT WIN32)
-    message(FATAL_ERROR "This project is configured for Windows only with DirectX 11 as the default renderer. "
-                        "Cross-platform support with SDL2 is available but not the default configuration.")
-endif()
-
-# Find SDL2 (optional on Windows, DirectX 11 is the default)
-find_package(SDL2)
-if(SDL2_FOUND)
-    include_directories(${SDL2_INCLUDE_DIRS})
-    message(STATUS "SDL2 found: ${SDL2_INCLUDE_DIRS} (optional, DirectX 11 is default on Windows)")
+# Platform-specific renderer configuration
+if(WIN32)
+    # Windows: DirectX 11 is default, SDL2 is optional
+    find_package(SDL2)
+    if(SDL2_FOUND)
+        include_directories(${SDL2_INCLUDE_DIRS})
+        message(STATUS "SDL2 found: ${SDL2_INCLUDE_DIRS} (optional, DirectX 11 is default on Windows)")
+    else()
+        message(STATUS "SDL2 not found. Using DirectX 11 as default renderer on Windows.")
+    endif()
 else()
-    message(STATUS "SDL2 not found. Using DirectX 11 as default renderer on Windows.")
+    # Linux/Unix: SDL2 is required
+    find_package(SDL2 REQUIRED)
+    if(SDL2_FOUND)
+        include_directories(${SDL2_INCLUDE_DIRS})
+        message(STATUS "SDL2 found: ${SDL2_INCLUDE_DIRS} (required on Linux/Unix)")
+    else()
+        message(FATAL_ERROR "SDL2 is required for non-Windows platforms. Please install SDL2 development libraries.")
+    endif()
 endif()
 
 # Output directories
@@ -41,7 +47,6 @@ set(ENGINE_SOURCES
     src/Engine/Reflection.h
     src/Engine/ReflectionAPI.h
     src/Engine/ReflectionAPI.cpp
-    src/Engine/ReflectionExample.cpp
     src/Engine/Serialization.h
     src/Engine/SerializationAPI.h
     src/Engine/SerializationAPI.cpp
@@ -53,8 +58,8 @@ set(ENGINE_SOURCES
     src/Engine/IPC.cpp
 )
 
-# Add SDL2 renderer if SDL2 is found
-if(SDL2_FOUND)
+# Add SDL2 renderer if SDL2 is found (always on non-Windows platforms)
+if(SDL2_FOUND OR NOT WIN32)
     list(APPEND ENGINE_SOURCES
         src/Engine/SDL2Renderer.cpp
         src/Engine/SDL2Renderer.h
@@ -79,6 +84,11 @@ target_compile_definitions(ChroniclesEngine PRIVATE ENGINE_EXPORTS)
 # Add SDL2 compile definition if available
 if(SDL2_FOUND)
     target_compile_definitions(ChroniclesEngine PRIVATE HAS_SDL2)
+endif()
+
+# On Linux/Unix, SDL2 is the default renderer
+if(NOT WIN32)
+    target_compile_definitions(ChroniclesEngine PRIVATE SDL2_DEFAULT_RENDERER)
 endif()
 
 target_include_directories(ChroniclesEngine PUBLIC

@@ -12,6 +12,15 @@ class Program
     private const int KEY_Q = 113;  // 'q' in SDL2
     private const int KEY_ESC = 27;
     
+    /// <summary>
+    /// Initialize settings and apply renderer configuration before engine starts
+    /// </summary>
+    private static void InitializeSettings()
+    {
+        var settings = SettingsManager.LoadSettings();
+        SettingsManager.ApplyRendererSettings(settings);
+    }
+    
     static void Main(string[] args)
     {
         // Check for test mode
@@ -206,15 +215,18 @@ class Program
         // Initialize console
         ConsoleRenderer.InitializeConsole();
         
+        // Load and apply settings (especially renderer backend)
+        InitializeSettings();
+        var settings = SettingsManager.LoadSettings();
+        
         Console.WriteLine("===========================================");
         Console.WriteLine("  Chronicles of a Drifter - Playable Demo");
         Console.WriteLine("  C++/.NET 9/Lua Custom Voxel Game Engine");
-        Console.WriteLine("  Windows-only with DirectX 11 Default");
+        Console.WriteLine($"  Platform: {(OperatingSystem.IsWindows() ? "Windows (DirectX 11 default)" : "Linux/Unix (SDL2 default)")}");
         Console.WriteLine("===========================================\n");
         Console.WriteLine("  Rendering Backend:");
-        Console.WriteLine("    Default: DirectX 11 (broad compatibility)");
-        Console.WriteLine("    Optional: Set CHRONICLES_RENDERER=dx12 for DirectX 12");
-        Console.WriteLine("    Optional: Set CHRONICLES_RENDERER=sdl2 for SDL2");
+        Console.WriteLine($"    Active: {settings.Renderer.Backend}");
+        Console.WriteLine("    Available: dx11 (Windows), dx12 (Windows), sdl2 (cross-platform)");
         Console.WriteLine("    Note: Can be changed in settings menu (game restarts)");
         Console.WriteLine("\n  Available Commands:");
         Console.WriteLine("       Run with 'test' for terrain tests");
@@ -322,6 +334,9 @@ class Program
         // Initialize console
         ConsoleRenderer.InitializeConsole();
         
+        // Load and apply settings
+        InitializeSettings();
+        
         Console.WriteLine("===========================================");
         Console.WriteLine("  Chronicles of a Drifter - Mining Demo");
         Console.WriteLine("  C++/.NET 9/Lua Custom Voxel Game Engine");
@@ -402,6 +417,9 @@ class Program
         // Initialize console
         ConsoleRenderer.InitializeConsole();
         
+        // Load and apply settings
+        InitializeSettings();
+        
         Console.WriteLine("===========================================");
         Console.WriteLine("  Chronicles of a Drifter - Collision Demo");
         Console.WriteLine("  C++/.NET 9/Lua Custom Voxel Game Engine");
@@ -479,6 +497,9 @@ class Program
     
     static void RunVisualDemo()
     {
+        // Load and apply settings
+        InitializeSettings();
+        
         Console.WriteLine("===========================================");
         Console.WriteLine("  Chronicles of a Drifter - VISUAL Demo");
         Console.WriteLine("  Graphical Rendering (DirectX 11 Default)");
@@ -553,6 +574,9 @@ class Program
     {
         // Initialize console
         ConsoleRenderer.InitializeConsole();
+        
+        // Load and apply settings
+        InitializeSettings();
         
         Console.WriteLine("===========================================");
         Console.WriteLine("  Chronicles of a Drifter - Creature Spawn Demo");
@@ -705,6 +729,9 @@ class Program
     /// </summary>
     static void RunMapEditor()
     {
+        // Load and apply settings
+        InitializeSettings();
+        
         Console.WriteLine("===========================================");
         Console.WriteLine("  Chronicles of a Drifter - MAP EDITOR");
         Console.WriteLine("  Real-Time Scene Editing");
@@ -782,6 +809,9 @@ class Program
     {
         // Initialize console
         ConsoleRenderer.InitializeConsole();
+        
+        // Load and apply settings
+        InitializeSettings();
         
         Console.WriteLine("===========================================");
         Console.WriteLine("  Chronicles of a Drifter");

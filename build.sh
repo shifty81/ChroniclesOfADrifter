@@ -1,17 +1,31 @@
 #!/bin/bash
 # Chronicles of a Drifter - Build Script
-# NOTE: This project is configured for Windows-only with DirectX 11 as default
-# This script will fail on non-Windows platforms unless SDL2 is available
+# Supports Windows (DirectX 11 default) and Linux/Unix (SDL2)
 
 set -e  # Exit on error
 
 echo "=========================================="
 echo "  Chronicles of a Drifter - Build Script"
-echo "  WARNING: Configured for Windows-only"
 echo "=========================================="
 echo ""
-echo "This project is configured for Windows with DirectX 11 as default."
-echo "Build will fail on non-Windows platforms."
+
+# Detect platform
+if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
+    PLATFORM="Windows"
+    RENDERER_DEFAULT="DirectX 11"
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    PLATFORM="Linux"
+    RENDERER_DEFAULT="SDL2"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    PLATFORM="macOS"
+    RENDERER_DEFAULT="SDL2"
+else
+    PLATFORM="Unix"
+    RENDERER_DEFAULT="SDL2"
+fi
+
+echo "Platform detected: $PLATFORM"
+echo "Default renderer: $RENDERER_DEFAULT"
 echo ""
 
 # Check prerequisites
@@ -25,6 +39,19 @@ fi
 if ! command -v dotnet &> /dev/null; then
     echo "ERROR: .NET SDK is not installed. Please install .NET 9 SDK."
     exit 1
+fi
+
+# Check for SDL2 on non-Windows platforms
+if [[ "$PLATFORM" != "Windows" ]]; then
+    if ! pkg-config --exists sdl2 2>/dev/null; then
+        echo "ERROR: SDL2 is required on $PLATFORM."
+        echo "Please install SDL2 development libraries:"
+        echo "  Ubuntu/Debian: sudo apt-get install libsdl2-dev"
+        echo "  Fedora: sudo dnf install SDL2-devel"
+        echo "  macOS: brew install sdl2"
+        exit 1
+    fi
+    echo "✓ SDL2 found: $(pkg-config --modversion sdl2)"
 fi
 
 echo "✓ CMake found: $(cmake --version | head -n1)"
