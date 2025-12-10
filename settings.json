@@ -1,0 +1,25 @@
+{
+  "renderer": {
+    "backend": "sdl2",
+    "description": "Renderer backend: dx11 (Windows default), dx12 (high-performance), or sdl2 (cross-platform/Linux default)",
+    "windowWidth": 1920,
+    "windowHeight": 1080,
+    "vsync": true,
+    "fullscreen": false
+  },
+  "graphics": {
+    "quality": "high",
+    "antialiasing": true,
+    "shadows": true
+  },
+  "audio": {
+    "masterVolume": 1,
+    "musicVolume": 0.8,
+    "sfxVolume": 1
+  },
+  "gameplay": {
+    "difficulty": "normal",
+    "showTutorials": true
+  },
+  "note": "This configuration file can be modified in the game settings menu. Changing renderer settings will restart the game."
+}
