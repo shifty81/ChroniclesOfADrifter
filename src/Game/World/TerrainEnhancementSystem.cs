@@ -48,6 +48,7 @@ public class TerrainEnhancementSystem
     public float CalculateBiomeBlendFactor(int worldX, BiomeType currentBiome, BiomeType neighborBiome)
     {
         // Use noise to create natural-looking transitions
+        // SimplexNoise.Noise.CalcPixel1D returns values in range 0-255
         float biomeNoise = SimplexNoise.Noise.CalcPixel1D(worldX, 0.02f) / 255.0f;
         
         // Smooth step function for transitions
@@ -89,8 +90,9 @@ public class TerrainEnhancementSystem
     /// </summary>
     public bool ShouldSpawnOreCluster(int worldX, int y, TileType oreType)
     {
-        // Use deterministic random based on position and ore type
-        int hash = HashCode.Combine(seed, worldX, y, oreType);
+        // Use simple hash for better performance in world generation
+        // Deterministic based on position, ore type, and seed
+        int hash = (seed * 31 + worldX) * 31 + y + (int)oreType * 7919;
         var localRandom = new Random(hash);
         
         return localRandom.NextDouble() < ORE_CLUSTER_CHANCE;

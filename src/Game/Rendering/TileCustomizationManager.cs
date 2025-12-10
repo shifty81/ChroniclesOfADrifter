@@ -77,7 +77,8 @@ public class TileCustomizationManager
         tileToTilesetMapping[TileType.Brick] = "brick";
         tileToTilesetMapping[TileType.TreeOak] = "tree";
         tileToTilesetMapping[TileType.Bush] = "bush";
-        tileToTilesetMapping[TileType.Flower] = "flower_red";
+        // Use generic flower name, falls back to tile default if not in tileset
+        tileToTilesetMapping[TileType.Flower] = "flower";
     }
     
     /// <summary>

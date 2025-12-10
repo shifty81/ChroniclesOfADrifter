@@ -43,8 +43,8 @@ public class CustomizationDemoScene
         customizationManager = new TileCustomizationManager(tilesetManager);
         variantManager = new TilesetVariantManager(customizationManager);
         
-        // Initialize world generation
-        int seed = Environment.TickCount;
+        // Initialize world generation with robust random seed
+        int seed = Random.Shared.Next();
         worldConfig = WorldGenerationConfig.FromPreset(WorldPreset.Normal, seed);
         enhancementSystem = new TerrainEnhancementSystem(seed);
         

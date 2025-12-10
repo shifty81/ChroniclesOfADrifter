@@ -37,7 +37,8 @@ public class WorldGenerationConfig
     /// </summary>
     public static WorldGenerationConfig FromPreset(WorldPreset preset, int? seed = null)
     {
-        int actualSeed = seed ?? Environment.TickCount;
+        // Use Random.Shared for better seed generation than Environment.TickCount
+        int actualSeed = seed ?? Random.Shared.Next();
         
         return preset switch
         {
