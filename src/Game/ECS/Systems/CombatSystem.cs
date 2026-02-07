@@ -9,8 +9,6 @@ namespace ChroniclesOfADrifter.ECS.Systems;
 public class CombatSystem : ISystem
 {
     private const int KEY_SPACE = 32;
-    private const float DEFAULT_ATTACK_RANGE = 2.0f;
-    private const float DEFAULT_ATTACK_DAMAGE = 10.0f;
     
     public void Initialize(World world)
     {

@@ -291,17 +291,7 @@ public int SaveFormatVersion { get; set; } = 1;
 
 ### 6. CombatSystem.cs - Improvements
 
-#### 6.1 Extracted Magic Numbers
-
-**Added constants**:
-```csharp
-private const float DEFAULT_ATTACK_RANGE = 2.0f;
-private const float DEFAULT_ATTACK_DAMAGE = 10.0f;
-```
-
-**Note**: These are for documentation. The actual values come from `CombatComponent`, but having constants makes the expected defaults explicit.
-
-#### 6.2 Added Damage Validation
+#### 6.1 Added Damage Validation
 
 **Before**:
 ```csharp
@@ -319,7 +309,7 @@ enemyHealth.CurrentHealth = Math.Max(0, enemyHealth.CurrentHealth - damage);
 - Explicit validation of damage values
 - Applied to both player and enemy attacks
 
-#### 6.3 Added Death Handler TODO
+#### 6.2 Added Death Handler TODO
 
 **Added comment**:
 ```csharp
@@ -357,10 +347,10 @@ All warnings are pre-existing and unrelated to changes made.
 
 ### Reflection Elimination
 
-**Before**: 4 reflection calls per save/load operation
-- 2 calls in `LoadTimeData()` (GetField × 2, SetValue × 2)
-- 4 calls in `SaveWeatherData()` (GetField × 2, GetValue × 2)
-- 4 calls in `LoadWeatherData()` (GetField × 2, SetValue × 2)
+**Before**: 10 reflection calls per save/load operation
+- 2 reflection operations in `LoadTimeData()` (GetField + SetValue for _currentTime, GetField + SetValue for _dayCount)
+- 2 reflection operations in `SaveWeatherData()` (GetField + GetValue for weatherTimer, GetField + GetValue for weatherDuration)
+- 6 reflection operations in `LoadWeatherData()` (SetWeather call + GetField + SetValue for weatherTimer, GetField + SetValue for weatherDuration)
 
 **After**: 0 reflection calls
 
