@@ -9,10 +9,16 @@ public class DeathSystem : ISystem
 {
     private const float RESPAWN_DELAY_SECONDS = 3f; // Seconds until respawn
     private int _lastCountdownSecond = -1;
+    private LootDropSystem? lootDropSystem;
     
     public void Initialize(World world)
     {
         Console.WriteLine("[DeathSystem] Initialized");
+    }
+    
+    public void SetLootDropSystem(LootDropSystem system)
+    {
+        lootDropSystem = system;
     }
     
     public void Update(World world, float deltaTime)
@@ -158,10 +164,14 @@ public class DeathSystem : ISystem
         if (position != null)
         {
             Console.WriteLine($"[DeathSystem] Enemy {entity.Id} defeated at ({position.X}, {position.Y})");
+            
+            // Spawn loot drops
+            var lootDrop = world.GetComponent<LootDropComponent>(entity);
+            if (lootDrop != null && lootDropSystem != null)
+            {
+                lootDropSystem.QueueLootDrop(position.X, position.Y, lootDrop);
+            }
         }
-        
-        // Hook for future loot drop system
-        // TODO: Spawn loot drops here
         
         // Destroy the entity
         world.DestroyEntity(entity);

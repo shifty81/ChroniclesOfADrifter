@@ -27,6 +27,8 @@ public class CompleteGameLoopScene : Scene
     private TimeSystem? timeSystem;
     private WeatherSystem? weatherSystem;
     private SaveSystem? saveSystem;
+    private LootDropSystem? lootDropSystem;
+    private DeathSystem? deathSystem;
     private Entity playerEntity;
     private Entity cameraEntity;
     private float gameTime = 0f;
@@ -137,7 +139,16 @@ public class CompleteGameLoopScene : Scene
         // Combat and AI
         World.AddSystem(new ScriptSystem());
         World.AddSystem(new CombatSystem());
-        World.AddSystem(new DeathSystem());
+        
+        // Loot system (before death system)
+        lootDropSystem = new LootDropSystem(seed: 42069);
+        World.AddSystem(lootDropSystem);
+        
+        // Death system (after loot system)
+        deathSystem = new DeathSystem();
+        World.AddSystem(deathSystem);
+        deathSystem.SetLootDropSystem(lootDropSystem);
+        
         World.AddSystem(new CreatureSpawnSystem(seed: 42069));
         
         // Mining and building
@@ -164,7 +175,7 @@ public class CompleteGameLoopScene : Scene
         // UI
         World.AddSystem(new UISystem());
         
-        Console.WriteLine("  ✓ 25 core systems initialized");
+        Console.WriteLine("  ✓ 27 core systems initialized");
     }
     
     private void CreatePlayer()
@@ -342,6 +353,9 @@ public class CompleteGameLoopScene : Scene
         World.AddComponent(goblin, new HealthComponent(30));
         World.AddComponent(goblin, new CollisionComponent(28, 28, layer: CollisionLayer.Enemy));
         World.AddComponent(goblin, new CombatComponent(damage: 10f, range: 50f, cooldown: 1.5f));
+        
+        // Add loot drops
+        World.AddComponent(goblin, LootDropComponent.CreateGoblinLoot());
         
         // Add Lua AI script
         World.AddComponent(goblin, new ScriptComponent("scripts/lua/goblin_ai.lua"));
