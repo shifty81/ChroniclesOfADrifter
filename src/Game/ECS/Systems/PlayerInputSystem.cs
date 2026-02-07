@@ -41,6 +41,18 @@ public class PlayerInputSystem : ISystem
         {
             var player = world.GetComponent<PlayerComponent>(entity);
             var velocity = world.GetComponent<VelocityComponent>(entity);
+            var respawn = world.GetComponent<RespawnComponent>(entity);
+            
+            // Can't move while dead
+            if (respawn != null && respawn.IsDead)
+            {
+                if (velocity != null)
+                {
+                    velocity.VX = 0;
+                    velocity.VY = 0;
+                }
+                continue;
+            }
             
             if (player != null && velocity != null)
             {

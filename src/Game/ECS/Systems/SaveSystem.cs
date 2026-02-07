@@ -352,6 +352,15 @@ public class SaveSystem : ISystem
             }
         }
         
+        // Save respawn data
+        var respawn = _world.GetComponent<RespawnComponent>(playerEntity);
+        if (respawn != null)
+        {
+            playerData.RespawnX = respawn.RespawnX;
+            playerData.RespawnY = respawn.RespawnY;
+            playerData.DeathCount = respawn.DeathCount;
+        }
+        
         return playerData;
     }
     
@@ -471,6 +480,14 @@ public class SaveSystem : ISystem
                 var quest = ConvertDataToQuest(questData);
                 questComponent.CompletedQuests.Add(quest);
             }
+        }
+        
+        // Load respawn data
+        var respawn = _world.GetComponent<RespawnComponent>(playerEntity);
+        if (respawn != null)
+        {
+            respawn.SetRespawnPoint(playerData.RespawnX, playerData.RespawnY);
+            respawn.DeathCount = playerData.DeathCount;
         }
         
         return true;

@@ -137,6 +137,7 @@ public class CompleteGameLoopScene : Scene
         // Combat and AI
         World.AddSystem(new ScriptSystem());
         World.AddSystem(new CombatSystem());
+        World.AddSystem(new DeathSystem());
         World.AddSystem(new CreatureSpawnSystem(seed: 42069));
         
         // Mining and building
@@ -163,7 +164,7 @@ public class CompleteGameLoopScene : Scene
         // UI
         World.AddSystem(new UISystem());
         
-        Console.WriteLine("  ✓ 24 core systems initialized");
+        Console.WriteLine("  ✓ 25 core systems initialized");
     }
     
     private void CreatePlayer()
@@ -211,6 +212,14 @@ public class CompleteGameLoopScene : Scene
         
         // Swimming capability
         World.AddComponent(playerEntity, new SwimmingComponent());
+        
+        // Respawn and death handling
+        World.AddComponent(playerEntity, new RespawnComponent(
+            respawnX: 500, 
+            respawnY: 150, 
+            deathPenaltyPercent: 10f, 
+            invulnerabilityDuration: 2f
+        ));
         
         Console.WriteLine("  ✓ Player created with full capabilities");
         Console.WriteLine("  ✓ Health: 100");

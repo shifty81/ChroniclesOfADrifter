@@ -32,6 +32,10 @@ public class CombatSystem : ISystem
         {
             var combat = world.GetComponent<CombatComponent>(entity);
             var position = world.GetComponent<PositionComponent>(entity);
+            var respawn = world.GetComponent<RespawnComponent>(entity);
+            
+            // Can't attack while dead
+            if (respawn != null && respawn.IsDead) continue;
             
             if (combat != null && position != null)
             {
@@ -83,6 +87,11 @@ public class CombatSystem : ISystem
                 {
                     var playerPosition = world.GetComponent<PositionComponent>(playerEntity);
                     var playerHealth = world.GetComponent<HealthComponent>(playerEntity);
+                    var playerRespawn = world.GetComponent<RespawnComponent>(playerEntity);
+                    
+                    // Skip if player is dead or invulnerable
+                    if (playerRespawn != null && (playerRespawn.IsDead || playerRespawn.IsInvulnerable))
+                        continue;
                     
                     if (playerPosition != null && playerHealth != null)
                     {
@@ -99,10 +108,9 @@ public class CombatSystem : ISystem
                             
                             if (playerHealth.CurrentHealth <= 0)
                             {
-                                Console.WriteLine("[Combat] Player defeated! Game Over!");
                                 // Heavy shake on player death
                                 TriggerCameraShake(world, ShakeIntensity.Heavy);
-                                // TODO: Trigger death handler when implemented
+                                // DeathSystem will handle the rest
                             }
                             
                             combat.TimeSinceLastAttack = 0;

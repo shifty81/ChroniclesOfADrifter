@@ -38,6 +38,9 @@ public class PlayerData
     public ToolMaterial ToolMaterial { get; set; }
     public List<QuestData> ActiveQuests { get; set; } = new();
     public List<QuestData> CompletedQuests { get; set; } = new();
+    public float RespawnX { get; set; }
+    public float RespawnY { get; set; }
+    public int DeathCount { get; set; }
 }
 
 /// <summary>
