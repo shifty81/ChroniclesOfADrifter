@@ -142,6 +142,13 @@ class Program
             return;
         }
         
+        // Check for save/load system test mode
+        if (args.Length > 0 && args[0].ToLower() == "save-test")
+        {
+            Tests.SaveLoadTest.RunTest();
+            return;
+        }
+        
         // Check if terrain demo was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "terrain")
         {

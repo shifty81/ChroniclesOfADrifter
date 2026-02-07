@@ -26,6 +26,7 @@ public class CompleteGameLoopScene : Scene
     private TerrainGenerator? terrainGenerator;
     private TimeSystem? timeSystem;
     private WeatherSystem? weatherSystem;
+    private SaveSystem? saveSystem;
     private Entity playerEntity;
     private Entity cameraEntity;
     private float gameTime = 0f;
@@ -116,6 +117,10 @@ public class CompleteGameLoopScene : Scene
     private void InitializeECSSystems()
     {
         Console.WriteLine("[GameLoop] Initializing ECS systems...");
+        
+        // Save system
+        saveSystem = new SaveSystem();
+        World.AddSystem(saveSystem);
         
         // Input and movement
         World.AddSystem(new PlayerInputSystem());
@@ -465,6 +470,10 @@ public class CompleteGameLoopScene : Scene
         Console.WriteLine("║  • I Key - Toggle inventory                                      ║");
         Console.WriteLine("║  • C Key - Toggle crafting                                       ║");
         Console.WriteLine("║  • ESC - Close UI/Exit                                           ║");
+        Console.WriteLine("║                                                                  ║");
+        Console.WriteLine("║  SAVE/LOAD                                                       ║");
+        Console.WriteLine("║  • F5 - Quick Save                                               ║");
+        Console.WriteLine("║  • F9 - Quick Load                                               ║");
         Console.WriteLine("╚══════════════════════════════════════════════════════════════════╝\n");
         
         Console.WriteLine("Press Q or ESC to exit the demo\n");
@@ -473,6 +482,9 @@ public class CompleteGameLoopScene : Scene
     public override void Update(float deltaTime)
     {
         gameTime += deltaTime;
+        
+        // Handle save/load keyboard shortcuts
+        HandleSaveLoadInput();
         
         // Update time system
         if (timeSystem != null)
@@ -504,6 +516,60 @@ public class CompleteGameLoopScene : Scene
         if (gameTime % 5f < deltaTime)
         {
             DisplayStats();
+        }
+    }
+    
+    private void HandleSaveLoadInput()
+    {
+        if (Console.KeyAvailable)
+        {
+            var key = Console.ReadKey(true);
+            
+            // F5 - Quick Save
+            if (key.Key == ConsoleKey.F5)
+            {
+                if (saveSystem != null)
+                {
+                    Console.WriteLine("\n[Save] Quick saving...");
+                    if (saveSystem.QuickSave(gameTime))
+                    {
+                        Console.WriteLine("[Save] Game saved successfully!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("[Save] Failed to save game.");
+                    }
+                }
+            }
+            // F9 - Quick Load
+            else if (key.Key == ConsoleKey.F9)
+            {
+                if (saveSystem != null)
+                {
+                    Console.WriteLine("\n[Load] Quick loading...");
+                    if (saveSystem.QuickLoad(out float loadedGameTime))
+                    {
+                        gameTime = loadedGameTime;
+                        Console.WriteLine("[Load] Game loaded successfully!");
+                        
+                        // Update camera to follow player's new position
+                        if (cameraEntity.Id != 0)
+                        {
+                            var playerPos = World.GetComponent<PositionComponent>(playerEntity);
+                            var cameraPos = World.GetComponent<PositionComponent>(cameraEntity);
+                            if (playerPos != null && cameraPos != null)
+                            {
+                                cameraPos.X = playerPos.X;
+                                cameraPos.Y = playerPos.Y;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("[Load] Failed to load game. No save found or save is corrupted.");
+                    }
+                }
+            }
         }
     }
     
