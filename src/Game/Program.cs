@@ -163,6 +163,34 @@ class Program
             return;
         }
         
+        // Check for farming system test mode
+        if (args.Length > 0 && args[0].ToLower() == "farming-test")
+        {
+            Tests.FarmingSystemTest.Run();
+            return;
+        }
+        
+        // Check for status effect system test mode
+        if (args.Length > 0 && args[0].ToLower() == "status-test")
+        {
+            Tests.StatusEffectTest.Run();
+            return;
+        }
+        
+        // Check for ranged combat system test mode
+        if (args.Length > 0 && args[0].ToLower() == "ranged-test")
+        {
+            Tests.RangedCombatTest.Run();
+            return;
+        }
+        
+        // Check for sound system test mode
+        if (args.Length > 0 && args[0].ToLower() == "sound-test")
+        {
+            Tests.SoundSystemTest.Run();
+            return;
+        }
+        
         // Check if terrain demo was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "terrain")
         {
@@ -262,6 +290,10 @@ class Program
         Console.WriteLine("       Run with 'hybrid-test' for hybrid gameplay tests");
         Console.WriteLine("       Run with 'cinematic-test' for cinematic camera tests");
         Console.WriteLine("       Run with 'settings-test' for settings system tests");
+        Console.WriteLine("       Run with 'farming-test' for farming system tests");
+        Console.WriteLine("       Run with 'status-test' for status effect tests");
+        Console.WriteLine("       Run with 'ranged-test' for ranged combat tests");
+        Console.WriteLine("       Run with 'sound-test' for sound system tests");
         Console.WriteLine("       Run with 'terrain' for terrain demo");
         Console.WriteLine("       Run with 'visual' for GRAPHICAL visual demo");
         Console.WriteLine("       Run with 'mining' for mining/digging demo");

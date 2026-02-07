@@ -5,15 +5,34 @@ namespace ChroniclesOfADrifter.ECS.Systems;
 
 /// <summary>
 /// System managing farming mechanics - planting, watering, harvesting
+/// with seasonal effects and fertilizer support
 /// </summary>
 public class FarmingSystem : ISystem
 {
     private float dayTimer = 0f;
     private const float secondsPerDay = 600f; // 10 minutes = 1 in-game day
+    private const int daysPerSeason = 28; // 28 in-game days per season
+    
+    private int totalDaysPassed = 0;
+    
+    /// <summary>
+    /// Get the current season based on total days passed
+    /// </summary>
+    public Season CurrentSeason => (Season)((totalDaysPassed / daysPerSeason) % 4);
+    
+    /// <summary>
+    /// Get the day within the current season (1-28)
+    /// </summary>
+    public int DayInSeason => (totalDaysPassed % daysPerSeason) + 1;
+    
+    /// <summary>
+    /// Get the total number of days passed
+    /// </summary>
+    public int TotalDays => totalDaysPassed;
     
     public void Initialize(World world)
     {
-        Console.WriteLine("[Farming] Farming system initialized");
+        Console.WriteLine("[Farming] Farming system initialized with seasonal support");
     }
     
     public void Update(World world, float deltaTime)
@@ -24,21 +43,26 @@ public class FarmingSystem : ISystem
         if (dayTimer >= secondsPerDay)
         {
             dayTimer -= secondsPerDay;
-            AdvanceAllFarmPlots(world);
+            totalDaysPassed++;
+            
+            var season = CurrentSeason;
+            Console.WriteLine($"[Farming] Day {totalDaysPassed} ({season}, Day {DayInSeason}/{daysPerSeason})");
+            
+            AdvanceAllFarmPlots(world, season);
         }
     }
     
     /// <summary>
     /// Advance all farm plots by one day
     /// </summary>
-    private void AdvanceAllFarmPlots(World world)
+    private void AdvanceAllFarmPlots(World world, Season season)
     {
         foreach (var entity in world.GetEntitiesWithComponent<FarmPlotComponent>())
         {
             var plot = world.GetComponent<FarmPlotComponent>(entity);
             if (plot != null)
             {
-                plot.AdvanceDay();
+                plot.AdvanceDay(season);
                 
                 // Log crop status
                 if (plot.CurrentCrop != null)
@@ -52,6 +76,14 @@ public class FarmingSystem : ISystem
                 }
             }
         }
+    }
+    
+    /// <summary>
+    /// Set the total days passed (for save/load)
+    /// </summary>
+    public void RestoreState(int days)
+    {
+        totalDaysPassed = Math.Max(0, days);
     }
     
     /// <summary>
@@ -79,6 +111,33 @@ public class FarmingSystem : ISystem
         
         Console.WriteLine($"[Farming] Created and tilled new plot at ({x}, {y})");
         return true;
+    }
+    
+    /// <summary>
+    /// Apply fertilizer to a plot
+    /// </summary>
+    public static bool FertilizePlot(World world, int x, int y, FertilizerType type)
+    {
+        foreach (var entity in world.GetEntitiesWithComponent<FarmPlotComponent>())
+        {
+            var plot = world.GetComponent<FarmPlotComponent>(entity);
+            if (plot != null && plot.PlotX == x && plot.PlotY == y)
+            {
+                if (plot.ApplyFertilizer(type))
+                {
+                    Console.WriteLine($"[Farming] Applied {type} to plot at ({x}, {y})");
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine("[Farming] Plot must be tilled first!");
+                    return false;
+                }
+            }
+        }
+        
+        Console.WriteLine("[Farming] No plot found at that location!");
+        return false;
     }
     
     /// <summary>
@@ -193,7 +252,8 @@ public class FarmingSystem : ISystem
                 {
                     var crop = plot.CurrentCrop;
                     float progress = (float)crop.DaysGrowing / crop.Type.GrowthDays * 100f;
-                    return $"{crop.Type.Name} - {crop.Stage} ({progress:F0}% grown)";
+                    string fertInfo = plot.Fertilizer != FertilizerType.None ? $" [{plot.Fertilizer}]" : "";
+                    return $"{crop.Type.Name} - {crop.Stage} ({progress:F0}% grown){fertInfo}";
                 }
                 else if (plot.IsTilled)
                 {
@@ -210,7 +270,7 @@ public class FarmingSystem : ISystem
     }
     
     /// <summary>
-    /// Create common crop types
+    /// Create common crop types with seasonal preferences
     /// </summary>
     public static class CropTypes
     {
@@ -221,7 +281,8 @@ public class FarmingSystem : ISystem
             growthDays: 4,
             minYield: 1,
             maxYield: 3,
-            sellPrice: 10
+            sellPrice: 10,
+            preferredSeason: Season.Summer
         );
         
         public static CropType Corn => new CropType(
@@ -231,7 +292,8 @@ public class FarmingSystem : ISystem
             growthDays: 7,
             minYield: 1,
             maxYield: 2,
-            sellPrice: 25
+            sellPrice: 25,
+            preferredSeason: Season.Summer
         );
         
         public static CropType Tomato => new CropType(
@@ -241,7 +303,8 @@ public class FarmingSystem : ISystem
             growthDays: 5,
             minYield: 2,
             maxYield: 5,
-            sellPrice: 15
+            sellPrice: 15,
+            preferredSeason: Season.Summer
         );
         
         public static CropType Potato => new CropType(
@@ -251,7 +314,71 @@ public class FarmingSystem : ISystem
             growthDays: 6,
             minYield: 3,
             maxYield: 6,
-            sellPrice: 8
+            sellPrice: 8,
+            preferredSeason: Season.Autumn
         );
+        
+        public static CropType Carrot => new CropType(
+            "Carrot",
+            TileType.Grass,
+            TileType.Grass,
+            growthDays: 3,
+            minYield: 2,
+            maxYield: 4,
+            sellPrice: 12,
+            preferredSeason: Season.Spring
+        );
+        
+        public static CropType Pumpkin => new CropType(
+            "Pumpkin",
+            TileType.Grass,
+            TileType.Grass,
+            growthDays: 10,
+            minYield: 1,
+            maxYield: 2,
+            sellPrice: 50,
+            preferredSeason: Season.Autumn
+        );
+        
+        public static CropType Sunflower => new CropType(
+            "Sunflower",
+            TileType.Grass,
+            TileType.Grass,
+            growthDays: 8,
+            minYield: 1,
+            maxYield: 3,
+            sellPrice: 30,
+            preferredSeason: Season.Summer
+        );
+        
+        public static CropType Rice => new CropType(
+            "Rice",
+            TileType.Grass,
+            TileType.Grass,
+            growthDays: 6,
+            minYield: 2,
+            maxYield: 5,
+            sellPrice: 18,
+            preferredSeason: Season.Spring
+        );
+        
+        public static CropType Cotton => new CropType(
+            "Cotton",
+            TileType.Grass,
+            TileType.Grass,
+            growthDays: 7,
+            minYield: 1,
+            maxYield: 3,
+            sellPrice: 22,
+            preferredSeason: Season.Summer
+        );
+        
+        /// <summary>
+        /// Get all available crop types
+        /// </summary>
+        public static List<CropType> GetAll() => new List<CropType>
+        {
+            Wheat, Corn, Tomato, Potato, Carrot, Pumpkin, Sunflower, Rice, Cotton
+        };
     }
 }

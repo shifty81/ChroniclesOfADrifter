@@ -151,6 +151,12 @@ public class CompleteGameLoopScene : Scene
         World.AddSystem(new ScriptSystem());
         World.AddSystem(new CombatSystem());
         
+        // Status effects (before combat so effects are processed each frame)
+        World.AddSystem(new StatusEffectSystem());
+        
+        // Projectile system (ranged combat)
+        World.AddSystem(new ProjectileSystem());
+        
         // Experience system (before loot/death so XP shows before loot messages)
         World.AddSystem(new ExperienceSystem());
         
@@ -172,6 +178,9 @@ public class CompleteGameLoopScene : Scene
         // Crafting and inventory
         World.AddSystem(new CraftingSystem());
         
+        // Farming
+        World.AddSystem(new FarmingSystem());
+        
         // Swimming and water
         World.AddSystem(new SwimmingSystem());
         
@@ -185,6 +194,9 @@ public class CompleteGameLoopScene : Scene
         // Lighting
         World.AddSystem(new LightingSystem());
         
+        // Audio (framework)
+        World.AddSystem(new AudioSystem());
+        
         // Rendering
         World.AddSystem(new TerrainRenderingSystem());
         World.AddSystem(new AnimationSystem());
@@ -192,7 +204,7 @@ public class CompleteGameLoopScene : Scene
         // UI
         World.AddSystem(new UISystem());
         
-        Console.WriteLine("  ✓ 29 core systems initialized");
+        Console.WriteLine("  ✓ 34 core systems initialized");
     }
     
     private void CreatePlayer()
