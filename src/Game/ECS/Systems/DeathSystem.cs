@@ -7,7 +7,7 @@ namespace ChroniclesOfADrifter.ECS.Systems;
 /// </summary>
 public class DeathSystem : ISystem
 {
-    private const float RESPAWN_DELAY = 3f; // Seconds until respawn
+    private const float RESPAWN_DELAY_SECONDS = 3f; // Seconds until respawn
     private int _lastCountdownSecond = -1;
     
     public void Initialize(World world)
@@ -55,8 +55,8 @@ public class DeathSystem : ISystem
         {
             respawn.IsDead = true;
             respawn.DeathCount++;
-            respawn.RespawnTimer = RESPAWN_DELAY;
-            _lastCountdownSecond = (int)Math.Ceiling(RESPAWN_DELAY);
+            respawn.RespawnTimer = RESPAWN_DELAY_SECONDS;
+            _lastCountdownSecond = (int)Math.Ceiling(RESPAWN_DELAY_SECONDS);
             
             Console.WriteLine("\n╔══════════════════════════════════════════════════════════════════╗");
             Console.WriteLine("║                         YOU DIED!                                ║");
