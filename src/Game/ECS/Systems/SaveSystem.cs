@@ -361,6 +361,20 @@ public class SaveSystem : ISystem
             playerData.DeathCount = respawn.DeathCount;
         }
         
+        // Save experience data
+        var experience = _world.GetComponent<ExperienceComponent>(playerEntity);
+        if (experience != null)
+        {
+            playerData.CurrentXP = experience.CurrentXP;
+            playerData.Level = experience.Level;
+            playerData.TotalXPEarned = experience.TotalXPEarned;
+            playerData.AttackBonus = experience.AttackBonus;
+            playerData.DefenseBonus = experience.DefenseBonus;
+            playerData.MaxHealthBonus = experience.MaxHealthBonus;
+            playerData.SpeedBonus = experience.SpeedBonus;
+            playerData.StatPointsAvailable = experience.StatPointsAvailable;
+        }
+        
         return playerData;
     }
     
@@ -488,6 +502,20 @@ public class SaveSystem : ISystem
         {
             respawn.SetRespawnPoint(playerData.RespawnX, playerData.RespawnY);
             respawn.DeathCount = playerData.DeathCount;
+        }
+        
+        // Load experience data
+        var experience = _world.GetComponent<ExperienceComponent>(playerEntity);
+        if (experience != null)
+        {
+            experience.CurrentXP = playerData.CurrentXP;
+            experience.Level = Math.Max(1, playerData.Level);
+            experience.TotalXPEarned = playerData.TotalXPEarned;
+            experience.AttackBonus = playerData.AttackBonus;
+            experience.DefenseBonus = playerData.DefenseBonus;
+            experience.MaxHealthBonus = playerData.MaxHealthBonus;
+            experience.SpeedBonus = playerData.SpeedBonus;
+            experience.StatPointsAvailable = playerData.StatPointsAvailable;
         }
         
         return true;

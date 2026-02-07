@@ -140,6 +140,9 @@ public class CompleteGameLoopScene : Scene
         World.AddSystem(new ScriptSystem());
         World.AddSystem(new CombatSystem());
         
+        // Experience system (before loot/death so XP shows before loot messages)
+        World.AddSystem(new ExperienceSystem());
+        
         // Loot system (before death system)
         lootDropSystem = new LootDropSystem(seed: 42069);
         World.AddSystem(lootDropSystem);
@@ -175,7 +178,7 @@ public class CompleteGameLoopScene : Scene
         // UI
         World.AddSystem(new UISystem());
         
-        Console.WriteLine("  ✓ 27 core systems initialized");
+        Console.WriteLine("  ✓ 28 core systems initialized");
     }
     
     private void CreatePlayer()
@@ -232,11 +235,15 @@ public class CompleteGameLoopScene : Scene
             invulnerabilityDuration: 2f
         ));
         
+        // Experience and leveling
+        World.AddComponent(playerEntity, new ExperienceComponent());
+        
         Console.WriteLine("  ✓ Player created with full capabilities");
         Console.WriteLine("  ✓ Health: 100");
         Console.WriteLine("  ✓ Attack damage: 20");
         Console.WriteLine("  ✓ Inventory slots: 40");
         Console.WriteLine("  ✓ Starting gold: 50");
+        Console.WriteLine("  ✓ Starting level: 1");
     }
     
     private void CreateCamera()
@@ -603,6 +610,7 @@ public class CompleteGameLoopScene : Scene
         var playerHealth = World.GetComponent<HealthComponent>(playerEntity);
         var playerInventory = World.GetComponent<InventoryComponent>(playerEntity);
         var playerQuests = World.GetComponent<QuestComponent>(playerEntity);
+        var playerXP = World.GetComponent<ExperienceComponent>(playerEntity);
         
         Console.WriteLine("\n--- Game Stats ---");
         Console.WriteLine($"Game Time: {timeSystem.CurrentHour:D2}:{timeSystem.CurrentMinute:D2} - {timeSystem.CurrentPhase}");
@@ -615,6 +623,11 @@ public class CompleteGameLoopScene : Scene
         if (playerHealth != null)
         {
             Console.WriteLine($"Health: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}");
+        }
+        
+        if (playerXP != null)
+        {
+            Console.WriteLine($"Level: {playerXP.Level} ({playerXP.CurrentXP}/{playerXP.GetXPForNextLevel()} XP)");
         }
         
         if (playerInventory != null)

@@ -182,6 +182,12 @@ public class BossSystem : ISystem
             Console.WriteLine($"[Boss] Received {boss.GoldReward} gold!");
         }
         
+        // Award XP
+        if (boss.ExperienceReward > 0)
+        {
+            ExperienceSystem.AwardCombatXP(world, playerEntity, boss.ExperienceReward);
+        }
+        
         // Award items
         var inventory = world.GetComponent<InventoryComponent>(playerEntity);
         if (inventory != null && boss.ItemDrops.Count > 0)
