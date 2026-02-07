@@ -26,6 +26,9 @@ public class CompleteGameLoopScene : Scene
     private TerrainGenerator? terrainGenerator;
     private TimeSystem? timeSystem;
     private WeatherSystem? weatherSystem;
+    private SaveSystem? saveSystem;
+    private LootDropSystem? lootDropSystem;
+    private DeathSystem? deathSystem;
     private Entity playerEntity;
     private Entity cameraEntity;
     private float gameTime = 0f;
@@ -117,6 +120,10 @@ public class CompleteGameLoopScene : Scene
     {
         Console.WriteLine("[GameLoop] Initializing ECS systems...");
         
+        // Save system
+        saveSystem = new SaveSystem();
+        World.AddSystem(saveSystem);
+        
         // Input and movement
         World.AddSystem(new PlayerInputSystem());
         World.AddSystem(new CameraInputSystem());
@@ -132,6 +139,16 @@ public class CompleteGameLoopScene : Scene
         // Combat and AI
         World.AddSystem(new ScriptSystem());
         World.AddSystem(new CombatSystem());
+        
+        // Loot system (before death system)
+        lootDropSystem = new LootDropSystem(seed: 42069);
+        World.AddSystem(lootDropSystem);
+        
+        // Death system (after loot system)
+        deathSystem = new DeathSystem();
+        World.AddSystem(deathSystem);
+        deathSystem.SetLootDropSystem(lootDropSystem);
+        
         World.AddSystem(new CreatureSpawnSystem(seed: 42069));
         
         // Mining and building
@@ -158,7 +175,7 @@ public class CompleteGameLoopScene : Scene
         // UI
         World.AddSystem(new UISystem());
         
-        Console.WriteLine("  ✓ 24 core systems initialized");
+        Console.WriteLine("  ✓ 27 core systems initialized");
     }
     
     private void CreatePlayer()
@@ -206,6 +223,14 @@ public class CompleteGameLoopScene : Scene
         
         // Swimming capability
         World.AddComponent(playerEntity, new SwimmingComponent());
+        
+        // Respawn and death handling
+        World.AddComponent(playerEntity, new RespawnComponent(
+            respawnX: 500, 
+            respawnY: 150, 
+            deathPenaltyPercent: 10f, 
+            invulnerabilityDuration: 2f
+        ));
         
         Console.WriteLine("  ✓ Player created with full capabilities");
         Console.WriteLine("  ✓ Health: 100");
@@ -328,6 +353,9 @@ public class CompleteGameLoopScene : Scene
         World.AddComponent(goblin, new HealthComponent(30));
         World.AddComponent(goblin, new CollisionComponent(28, 28, layer: CollisionLayer.Enemy));
         World.AddComponent(goblin, new CombatComponent(damage: 10f, range: 50f, cooldown: 1.5f));
+        
+        // Add loot drops
+        World.AddComponent(goblin, LootDropComponent.CreateGoblinLoot());
         
         // Add Lua AI script
         World.AddComponent(goblin, new ScriptComponent("scripts/lua/goblin_ai.lua"));
@@ -465,6 +493,10 @@ public class CompleteGameLoopScene : Scene
         Console.WriteLine("║  • I Key - Toggle inventory                                      ║");
         Console.WriteLine("║  • C Key - Toggle crafting                                       ║");
         Console.WriteLine("║  • ESC - Close UI/Exit                                           ║");
+        Console.WriteLine("║                                                                  ║");
+        Console.WriteLine("║  SAVE/LOAD                                                       ║");
+        Console.WriteLine("║  • F5 - Quick Save                                               ║");
+        Console.WriteLine("║  • F9 - Quick Load                                               ║");
         Console.WriteLine("╚══════════════════════════════════════════════════════════════════╝\n");
         
         Console.WriteLine("Press Q or ESC to exit the demo\n");
@@ -473,6 +505,9 @@ public class CompleteGameLoopScene : Scene
     public override void Update(float deltaTime)
     {
         gameTime += deltaTime;
+        
+        // Handle save/load keyboard shortcuts
+        HandleSaveLoadInput();
         
         // Update time system
         if (timeSystem != null)
@@ -504,6 +539,60 @@ public class CompleteGameLoopScene : Scene
         if (gameTime % 5f < deltaTime)
         {
             DisplayStats();
+        }
+    }
+    
+    private void HandleSaveLoadInput()
+    {
+        if (Console.KeyAvailable)
+        {
+            var key = Console.ReadKey(true);
+            
+            // F5 - Quick Save
+            if (key.Key == ConsoleKey.F5)
+            {
+                if (saveSystem != null)
+                {
+                    Console.WriteLine("\n[Save] Quick saving...");
+                    if (saveSystem.QuickSave(gameTime))
+                    {
+                        Console.WriteLine("[Save] Game saved successfully!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("[Save] Failed to save game.");
+                    }
+                }
+            }
+            // F9 - Quick Load
+            else if (key.Key == ConsoleKey.F9)
+            {
+                if (saveSystem != null)
+                {
+                    Console.WriteLine("\n[Load] Quick loading...");
+                    if (saveSystem.QuickLoad(out float loadedGameTime))
+                    {
+                        gameTime = loadedGameTime;
+                        Console.WriteLine("[Load] Game loaded successfully!");
+                        
+                        // Update camera to follow player's new position
+                        if (cameraEntity.Id != 0)
+                        {
+                            var playerPos = World.GetComponent<PositionComponent>(playerEntity);
+                            var cameraPos = World.GetComponent<PositionComponent>(cameraEntity);
+                            if (playerPos != null && cameraPos != null)
+                            {
+                                cameraPos.X = playerPos.X;
+                                cameraPos.Y = playerPos.Y;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("[Load] Failed to load game. No save found or save is corrupted.");
+                    }
+                }
+            }
         }
     }
     

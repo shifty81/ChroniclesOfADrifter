@@ -32,6 +32,10 @@ public class CombatSystem : ISystem
         {
             var combat = world.GetComponent<CombatComponent>(entity);
             var position = world.GetComponent<PositionComponent>(entity);
+            var respawn = world.GetComponent<RespawnComponent>(entity);
+            
+            // Can't attack while dead
+            if (respawn != null && respawn.IsDead) continue;
             
             if (combat != null && position != null)
             {
@@ -47,8 +51,9 @@ public class CombatSystem : ISystem
                         var enemyHealth = world.GetComponent<HealthComponent>(targetEnemy.Value);
                         if (enemyHealth != null && enemyHealth.CurrentHealth > 0)
                         {
-                            enemyHealth.CurrentHealth = Math.Max(0, enemyHealth.CurrentHealth - combat.AttackDamage);
-                            Console.WriteLine($"[Combat] Player attacked enemy {targetEnemy.Value.Id} for {combat.AttackDamage} damage! Health: {enemyHealth.CurrentHealth}/{enemyHealth.MaxHealth}");
+                            float damage = Math.Max(0, combat.AttackDamage);
+                            enemyHealth.CurrentHealth = Math.Max(0, enemyHealth.CurrentHealth - damage);
+                            Console.WriteLine($"[Combat] Player attacked enemy {targetEnemy.Value.Id} for {damage} damage! Health: {enemyHealth.CurrentHealth}/{enemyHealth.MaxHealth}");
                             
                             // Trigger screen shake on hit
                             TriggerCameraShake(world, ShakeIntensity.Light);
@@ -82,6 +87,11 @@ public class CombatSystem : ISystem
                 {
                     var playerPosition = world.GetComponent<PositionComponent>(playerEntity);
                     var playerHealth = world.GetComponent<HealthComponent>(playerEntity);
+                    var playerRespawn = world.GetComponent<RespawnComponent>(playerEntity);
+                    
+                    // Skip if player is dead or invulnerable
+                    if (playerRespawn != null && (playerRespawn.IsDead || playerRespawn.IsInvulnerable))
+                        continue;
                     
                     if (playerPosition != null && playerHealth != null)
                     {
@@ -89,17 +99,18 @@ public class CombatSystem : ISystem
                         
                         if (distance <= combat.AttackRange && combat.TimeSinceLastAttack >= combat.AttackCooldown)
                         {
-                            playerHealth.CurrentHealth = Math.Max(0, playerHealth.CurrentHealth - combat.AttackDamage);
-                            Console.WriteLine($"[Combat] Enemy {entity.Id} attacked player for {combat.AttackDamage} damage! Player health: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}");
+                            float damage = Math.Max(0, combat.AttackDamage);
+                            playerHealth.CurrentHealth = Math.Max(0, playerHealth.CurrentHealth - damage);
+                            Console.WriteLine($"[Combat] Enemy {entity.Id} attacked player for {damage} damage! Player health: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}");
                             
                             // Trigger screen shake when player is hit
                             TriggerCameraShake(world, ShakeIntensity.Light);
                             
                             if (playerHealth.CurrentHealth <= 0)
                             {
-                                Console.WriteLine("[Combat] Player defeated! Game Over!");
                                 // Heavy shake on player death
                                 TriggerCameraShake(world, ShakeIntensity.Heavy);
+                                // DeathSystem will handle the rest
                             }
                             
                             combat.TimeSinceLastAttack = 0;

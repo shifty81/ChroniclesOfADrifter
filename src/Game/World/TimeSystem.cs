@@ -261,6 +261,17 @@ public class TimeSystem
     }
     
     /// <summary>
+    /// Restores time state from saved data (used by SaveSystem)
+    /// </summary>
+    /// <param name="currentTime">Time in seconds since midnight (0-86400)</param>
+    /// <param name="dayCount">Number of days elapsed</param>
+    public void RestoreTimeState(float currentTime, int dayCount)
+    {
+        _currentTime = Math.Clamp(currentTime, 0f, SECONDS_PER_GAME_DAY);
+        _dayCount = Math.Max(0, dayCount);
+    }
+    
+    /// <summary>
     /// Gets a formatted time string (HH:MM format)
     /// </summary>
     public string GetTimeString()

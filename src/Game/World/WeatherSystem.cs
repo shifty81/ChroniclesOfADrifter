@@ -205,6 +205,22 @@ public class WeatherSystem
     }
     
     /// <summary>
+    /// Restores weather state from saved data (used by SaveSystem)
+    /// </summary>
+    /// <param name="weather">The weather type to restore</param>
+    /// <param name="intensity">The weather intensity to restore</param>
+    /// <param name="timer">Time elapsed in current weather</param>
+    /// <param name="duration">Total duration of current weather</param>
+    public void RestoreWeatherState(WeatherType weather, WeatherIntensity intensity, float timer, float duration)
+    {
+        currentWeather = weather;
+        currentIntensity = intensity;
+        weatherTimer = Math.Max(0f, timer);
+        weatherDuration = Math.Clamp(duration, MIN_WEATHER_DURATION, MAX_WEATHER_DURATION);
+        isTransitioning = false;
+    }
+    
+    /// <summary>
     /// Gets the current weather effect multiplier (affects visibility, speed, etc.)
     /// Returns a value between 0.0 and 1.0, where 1.0 is no effect
     /// </summary>
