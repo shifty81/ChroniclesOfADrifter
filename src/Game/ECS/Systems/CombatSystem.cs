@@ -9,6 +9,8 @@ namespace ChroniclesOfADrifter.ECS.Systems;
 public class CombatSystem : ISystem
 {
     private const int KEY_SPACE = 32;
+    private const float DEFAULT_ATTACK_RANGE = 2.0f;
+    private const float DEFAULT_ATTACK_DAMAGE = 10.0f;
     
     public void Initialize(World world)
     {
@@ -47,8 +49,9 @@ public class CombatSystem : ISystem
                         var enemyHealth = world.GetComponent<HealthComponent>(targetEnemy.Value);
                         if (enemyHealth != null && enemyHealth.CurrentHealth > 0)
                         {
-                            enemyHealth.CurrentHealth = Math.Max(0, enemyHealth.CurrentHealth - combat.AttackDamage);
-                            Console.WriteLine($"[Combat] Player attacked enemy {targetEnemy.Value.Id} for {combat.AttackDamage} damage! Health: {enemyHealth.CurrentHealth}/{enemyHealth.MaxHealth}");
+                            float damage = Math.Max(0, combat.AttackDamage);
+                            enemyHealth.CurrentHealth = Math.Max(0, enemyHealth.CurrentHealth - damage);
+                            Console.WriteLine($"[Combat] Player attacked enemy {targetEnemy.Value.Id} for {damage} damage! Health: {enemyHealth.CurrentHealth}/{enemyHealth.MaxHealth}");
                             
                             // Trigger screen shake on hit
                             TriggerCameraShake(world, ShakeIntensity.Light);
@@ -89,8 +92,9 @@ public class CombatSystem : ISystem
                         
                         if (distance <= combat.AttackRange && combat.TimeSinceLastAttack >= combat.AttackCooldown)
                         {
-                            playerHealth.CurrentHealth = Math.Max(0, playerHealth.CurrentHealth - combat.AttackDamage);
-                            Console.WriteLine($"[Combat] Enemy {entity.Id} attacked player for {combat.AttackDamage} damage! Player health: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}");
+                            float damage = Math.Max(0, combat.AttackDamage);
+                            playerHealth.CurrentHealth = Math.Max(0, playerHealth.CurrentHealth - damage);
+                            Console.WriteLine($"[Combat] Enemy {entity.Id} attacked player for {damage} damage! Player health: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}");
                             
                             // Trigger screen shake when player is hit
                             TriggerCameraShake(world, ShakeIntensity.Light);
@@ -100,6 +104,7 @@ public class CombatSystem : ISystem
                                 Console.WriteLine("[Combat] Player defeated! Game Over!");
                                 // Heavy shake on player death
                                 TriggerCameraShake(world, ShakeIntensity.Heavy);
+                                // TODO: Trigger death handler when implemented
                             }
                             
                             combat.TimeSinceLastAttack = 0;

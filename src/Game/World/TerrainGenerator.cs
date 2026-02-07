@@ -25,6 +25,8 @@ public class TerrainGenerator
     private VegetationGenerator vegetationGenerator;
     private WaterGenerator waterGenerator;
     
+    public int Seed => seed;
+    
     // Noise parameters
     private const float SURFACE_FREQUENCY = 0.03f;  // Controls surface terrain smoothness
     private const float BIOME_FREQUENCY = 0.005f;   // Controls biome transitions

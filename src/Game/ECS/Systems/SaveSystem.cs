@@ -17,6 +17,7 @@ public class SaveSystem : ISystem
     private string _saveDirectory;
     private const string SAVE_EXTENSION = ".json";
     private const string QUICKSAVE_NAME = "quicksave";
+    private const int CURRENT_SAVE_FORMAT_VERSION = 1;
     
     private static readonly JsonSerializerOptions _jsonOptions = new()
     {
@@ -55,19 +56,20 @@ public class SaveSystem : ISystem
     {
         if (_world == null)
         {
-            Console.WriteLine("[SaveSystem] Error: World not initialized");
+            LogError("World not initialized");
             return false;
         }
         
         try
         {
-            Console.WriteLine($"[SaveSystem] Saving game: {saveName}...");
+            LogInfo($"Saving game: {saveName}...");
             
             var saveData = new SaveData
             {
                 SaveName = saveName,
                 SaveDate = DateTime.Now,
                 GameVersion = "1.0.0",
+                SaveFormatVersion = CURRENT_SAVE_FORMAT_VERSION,
                 GameTime = gameTime
             };
             
@@ -91,12 +93,12 @@ public class SaveSystem : ISystem
             string filePath = GetSaveFilePath(saveName);
             File.WriteAllText(filePath, json);
             
-            Console.WriteLine($"[SaveSystem] Game saved successfully to {filePath}");
+            LogInfo($"Game saved successfully to {filePath}");
             return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[SaveSystem] Error saving game: {ex.Message}");
+            LogError($"Error saving game: {ex.Message}");
             return false;
         }
     }
@@ -110,7 +112,7 @@ public class SaveSystem : ISystem
         
         if (_world == null)
         {
-            Console.WriteLine("[SaveSystem] Error: World not initialized");
+            LogError("World not initialized");
             return false;
         }
         
@@ -118,20 +120,27 @@ public class SaveSystem : ISystem
         
         if (!File.Exists(filePath))
         {
-            Console.WriteLine($"[SaveSystem] Save file not found: {filePath}");
+            LogError($"Save file not found: {filePath}");
             return false;
         }
         
         try
         {
-            Console.WriteLine($"[SaveSystem] Loading game: {saveName}...");
+            LogInfo($"Loading game: {saveName}...");
             
             string json = File.ReadAllText(filePath);
             var saveData = JsonSerializer.Deserialize<SaveData>(json, _jsonOptions);
             
             if (saveData == null)
             {
-                Console.WriteLine("[SaveSystem] Error: Failed to deserialize save data");
+                LogError("Failed to deserialize save data");
+                return false;
+            }
+            
+            // Validate save format version
+            if (!ValidateSaveFormat(saveData))
+            {
+                LogError($"Incompatible save format. Current version: {CURRENT_SAVE_FORMAT_VERSION}, Save version: {saveData.SaveFormatVersion}");
                 return false;
             }
             
@@ -140,7 +149,11 @@ public class SaveSystem : ISystem
             // Load player data
             if (saveData.Player != null)
             {
-                LoadPlayerData(saveData.Player);
+                if (!LoadPlayerData(saveData.Player))
+                {
+                    LogError("Failed to load player data");
+                    return false;
+                }
             }
             
             // Load world data
@@ -167,12 +180,12 @@ public class SaveSystem : ISystem
                 LoadNPCData(saveData.NPCs);
             }
             
-            Console.WriteLine($"[SaveSystem] Game loaded successfully from {filePath}");
+            LogInfo($"Game loaded successfully from {filePath}");
             return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[SaveSystem] Error loading game: {ex.Message}");
+            LogError($"Error loading game: {ex.Message}\n{ex.StackTrace}");
             return false;
         }
     }
@@ -202,19 +215,19 @@ public class SaveSystem : ISystem
         
         if (!File.Exists(filePath))
         {
-            Console.WriteLine($"[SaveSystem] Save file not found: {filePath}");
+            LogError($"Save file not found: {filePath}");
             return false;
         }
         
         try
         {
             File.Delete(filePath);
-            Console.WriteLine($"[SaveSystem] Save file deleted: {filePath}");
+            LogInfo($"Save file deleted: {filePath}");
             return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[SaveSystem] Error deleting save: {ex.Message}");
+            LogError($"Error deleting save: {ex.Message}");
             return false;
         }
     }
@@ -269,7 +282,7 @@ public class SaveSystem : ISystem
         var playerEntities = _world.GetEntitiesWithComponent<PlayerComponent>().ToList();
         if (playerEntities.Count == 0)
         {
-            Console.WriteLine("[SaveSystem] Warning: No player entity found");
+            LogWarning("No player entity found");
             return null;
         }
         
@@ -342,9 +355,16 @@ public class SaveSystem : ISystem
         return playerData;
     }
     
-    private void LoadPlayerData(PlayerData playerData)
+    private bool LoadPlayerData(PlayerData playerData)
     {
-        if (_world == null) return;
+        if (_world == null) return false;
+        
+        // Validate player data
+        if (!ValidatePlayerData(playerData))
+        {
+            LogError("Invalid player data");
+            return false;
+        }
         
         // Find or create player entity
         var playerEntities = _world.GetEntitiesWithComponent<PlayerComponent>().ToList();
@@ -356,8 +376,8 @@ public class SaveSystem : ISystem
         }
         else
         {
-            Console.WriteLine("[SaveSystem] Warning: No player entity found to load into");
-            return;
+            LogWarning("No player entity found to load into");
+            return false;
         }
         
         // Load position
@@ -390,17 +410,38 @@ public class SaveSystem : ISystem
             currency.Gold = playerData.Gold;
         }
         
-        // Load inventory
+        // Load inventory atomically
         var inventory = _world.GetComponent<InventoryComponent>(playerEntity);
         if (inventory != null)
         {
-            inventory.Clear();
+            var tempInventory = new Dictionary<TileType, int>();
+            bool inventoryValid = true;
+            
             foreach (var item in playerData.Inventory)
             {
                 if (Enum.TryParse<TileType>(item.Key, out var tileType))
                 {
-                    inventory.AddItem(tileType, item.Value);
+                    if (item.Value < 0)
+                    {
+                        LogError($"Invalid inventory item count: {item.Key}={item.Value}");
+                        inventoryValid = false;
+                        break;
+                    }
+                    tempInventory[tileType] = item.Value;
                 }
+            }
+            
+            if (inventoryValid)
+            {
+                inventory.Clear();
+                foreach (var item in tempInventory)
+                {
+                    inventory.AddItem(item.Key, item.Value);
+                }
+            }
+            else
+            {
+                LogWarning("Inventory data invalid, keeping existing inventory");
             }
         }
         
@@ -431,6 +472,8 @@ public class SaveSystem : ISystem
                 questComponent.CompletedQuests.Add(quest);
             }
         }
+        
+        return true;
     }
     
     private WorldData? SaveWorldData()
@@ -444,6 +487,13 @@ public class SaveSystem : ISystem
         if (chunkManager != null)
         {
             worldData.ModifiedChunks = SaveModifiedChunks(chunkManager);
+            
+            // Try to get world seed from terrain generator
+            var terrainGen = _world.GetSharedResource<TerrainGenerator>("TerrainGenerator");
+            if (terrainGen != null)
+            {
+                worldData.WorldSeed = terrainGen.Seed;
+            }
         }
         
         return worldData;
@@ -553,15 +603,8 @@ public class SaveSystem : ISystem
         var timeSystem = _world.GetSharedResource<TimeSystem>("TimeSystem");
         if (timeSystem == null) return;
         
-        // Use reflection to set private fields (as TimeSystem doesn't have setters)
-        var timeSystemType = typeof(TimeSystem);
-        var currentTimeField = timeSystemType.GetField("_currentTime", 
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        var dayCountField = timeSystemType.GetField("_dayCount", 
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        
-        currentTimeField?.SetValue(timeSystem, timeData.CurrentTime);
-        dayCountField?.SetValue(timeSystem, timeData.DayCount);
+        // Use public method instead of reflection
+        timeSystem.RestoreTimeState(timeData.CurrentTime, timeData.DayCount);
         timeSystem.TimeScale = timeData.TimeScale;
     }
     
@@ -572,19 +615,13 @@ public class SaveSystem : ISystem
         var weatherSystem = _world.GetSharedResource<WeatherSystem>("WeatherSystem");
         if (weatherSystem == null) return null;
         
-        // Use reflection to get private fields
-        var weatherSystemType = typeof(WeatherSystem);
-        var weatherTimerField = weatherSystemType.GetField("weatherTimer", 
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        var weatherDurationField = weatherSystemType.GetField("weatherDuration", 
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        
+        // Access public properties only
         return new WeatherData
         {
             CurrentWeather = weatherSystem.CurrentWeather.ToString(),
             CurrentIntensity = weatherSystem.CurrentIntensity.ToString(),
-            WeatherTimer = (float)(weatherTimerField?.GetValue(weatherSystem) ?? 0f),
-            WeatherDuration = (float)(weatherDurationField?.GetValue(weatherSystem) ?? 300f)
+            WeatherTimer = 0f,
+            WeatherDuration = 300f
         };
     }
     
@@ -598,17 +635,8 @@ public class SaveSystem : ISystem
         if (Enum.TryParse<WeatherType>(weatherData.CurrentWeather, out var weatherType) &&
             Enum.TryParse<WeatherIntensity>(weatherData.CurrentIntensity, out var intensity))
         {
-            weatherSystem.SetWeather(weatherType, intensity);
-            
-            // Use reflection to set private fields
-            var weatherSystemType = typeof(WeatherSystem);
-            var weatherTimerField = weatherSystemType.GetField("weatherTimer", 
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var weatherDurationField = weatherSystemType.GetField("weatherDuration", 
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            
-            weatherTimerField?.SetValue(weatherSystem, weatherData.WeatherTimer);
-            weatherDurationField?.SetValue(weatherSystem, weatherData.WeatherDuration);
+            // Use public method instead of reflection
+            weatherSystem.RestoreWeatherState(weatherType, intensity, weatherData.WeatherTimer, weatherData.WeatherDuration);
         }
     }
     
@@ -768,5 +796,55 @@ public class SaveSystem : ISystem
         }
         
         return quest;
+    }
+    
+    // Validation methods
+    
+    private bool ValidateSaveFormat(SaveData saveData)
+    {
+        return saveData.SaveFormatVersion == CURRENT_SAVE_FORMAT_VERSION;
+    }
+    
+    private bool ValidatePlayerData(PlayerData playerData)
+    {
+        // Validate health values
+        if (playerData.MaxHealth <= 0 || playerData.CurrentHealth < 0 || playerData.CurrentHealth > playerData.MaxHealth)
+        {
+            LogError($"Invalid health values: Current={playerData.CurrentHealth}, Max={playerData.MaxHealth}");
+            return false;
+        }
+        
+        // Validate currency
+        if (playerData.Gold < 0)
+        {
+            LogError($"Invalid gold value: {playerData.Gold}");
+            return false;
+        }
+        
+        // Validate speed
+        if (playerData.Speed < 0)
+        {
+            LogError($"Invalid speed value: {playerData.Speed}");
+            return false;
+        }
+        
+        return true;
+    }
+    
+    // Logging methods
+    
+    private void LogInfo(string message)
+    {
+        Console.WriteLine($"[SaveSystem] {message}");
+    }
+    
+    private void LogWarning(string message)
+    {
+        Console.WriteLine($"[SaveSystem] Warning: {message}");
+    }
+    
+    private void LogError(string message)
+    {
+        Console.WriteLine($"[SaveSystem] Error: {message}");
     }
 }

@@ -11,6 +11,7 @@ public class SaveData
     public string SaveName { get; set; } = "";
     public DateTime SaveDate { get; set; }
     public string GameVersion { get; set; } = "1.0.0";
+    public int SaveFormatVersion { get; set; } = 1;
     public float GameTime { get; set; }
     
     public PlayerData? Player { get; set; }
