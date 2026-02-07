@@ -67,6 +67,9 @@ public class CompleteGameLoopScene : Scene
         // Spawn initial creatures
         SpawnInitialCreatures();
         
+        // Create boss encounter
+        CreateBossEncounter();
+        
         // Create NPCs and quests
         CreateNPCsAndQuests();
         
@@ -168,6 +171,9 @@ public class CompleteGameLoopScene : Scene
         World.AddSystem(new QuestSystem());
         World.AddSystem(new NPCSystem());
         
+        // Boss encounters
+        World.AddSystem(new BossSystem());
+        
         // Lighting
         World.AddSystem(new LightingSystem());
         
@@ -178,7 +184,7 @@ public class CompleteGameLoopScene : Scene
         // UI
         World.AddSystem(new UISystem());
         
-        Console.WriteLine("  ✓ 28 core systems initialized");
+        Console.WriteLine("  ✓ 29 core systems initialized");
     }
     
     private void CreatePlayer()
@@ -366,6 +372,54 @@ public class CompleteGameLoopScene : Scene
         
         // Add Lua AI script
         World.AddComponent(goblin, new ScriptComponent("scripts/lua/goblin_ai.lua"));
+    }
+    
+    private void CreateBossEncounter()
+    {
+        Console.WriteLine("[GameLoop] Creating boss encounter...");
+        
+        // Create the Forest Guardian boss east of the player start
+        float bossX = 1500f;
+        float bossY = 150f;
+        float arenaX = 1300f;
+        float arenaY = 50f;
+        float arenaWidth = 400f;
+        float arenaHeight = 200f;
+        
+        var bossEntity = BossSystem.CreateBoss(
+            World,
+            BossType.ForestGuardian,
+            "Ancient Forest Guardian",
+            bossX, bossY,
+            arenaX, arenaY, arenaWidth, arenaHeight
+        );
+        
+        // Configure boss rewards
+        var boss = World.GetComponent<BossComponent>(bossEntity);
+        if (boss != null)
+        {
+            boss.GoldReward = 500;
+            boss.ExperienceReward = 200;
+            boss.ItemDrops[TileType.GoldOre] = 5;
+            boss.ItemDrops[TileType.IronOre] = 10;
+            boss.AbilityReward = AbilityType.SwordSpin;
+            boss.UnlockArea = "Deep Forest";
+        }
+        
+        // Override health for this specific boss
+        var bossHealth = World.GetComponent<HealthComponent>(bossEntity);
+        if (bossHealth != null)
+        {
+            bossHealth.MaxHealth = 300;
+            bossHealth.CurrentHealth = 300;
+        }
+        
+        // Add sprite for boss
+        World.AddComponent(bossEntity, new SpriteComponent(4, 64, 64));
+        
+        Console.WriteLine("  ✓ Forest Guardian boss created at eastern forest");
+        Console.WriteLine($"  ✓ Boss arena: ({arenaX}, {arenaY}) {arenaWidth}x{arenaHeight}");
+        Console.WriteLine("  ✓ Rewards: 500 gold, 200 XP, Sword Spin ability");
     }
     
     private void CreateNPCsAndQuests()
