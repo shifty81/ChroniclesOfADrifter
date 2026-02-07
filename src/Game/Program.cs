@@ -149,6 +149,20 @@ class Program
             return;
         }
         
+        // Check for experience/leveling system test mode
+        if (args.Length > 0 && args[0].ToLower() == "xp-test")
+        {
+            Tests.ExperienceLevelingTest.Run();
+            return;
+        }
+        
+        // Check for boss encounter system test mode
+        if (args.Length > 0 && args[0].ToLower() == "boss-test")
+        {
+            Tests.BossEncounterTest.Run();
+            return;
+        }
+        
         // Check if terrain demo was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "terrain")
         {

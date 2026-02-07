@@ -171,6 +171,17 @@ public class DeathSystem : ISystem
             {
                 lootDropSystem.QueueLootDrop(position.X, position.Y, lootDrop);
             }
+            
+            // Award XP to player
+            var creature = world.GetComponent<CreatureComponent>(entity);
+            if (creature != null && creature.ExperienceValue > 0)
+            {
+                foreach (var playerEntity in world.GetEntitiesWithComponent<PlayerComponent>())
+                {
+                    ExperienceSystem.AwardCombatXP(world, playerEntity, creature.ExperienceValue);
+                    break;
+                }
+            }
         }
         
         // Destroy the entity

@@ -17,6 +17,8 @@ public static class StructureGenerationTest
         RunTemplateCreationTest();
         RunStructurePlacementTest();
         RunBiomeStructureTest();
+        RunVillageGenerationTest();
+        RunDungeonGenerationTest();
         
         Console.WriteLine("\n=======================================");
         Console.WriteLine("  All Structure Generation Tests Completed");
@@ -113,6 +115,78 @@ public static class StructureGenerationTest
         
         Console.WriteLine($"✓ Generated structures across multiple biomes");
         Console.WriteLine($"  Structures created: {structuresGenerated}");
+        
+        Console.WriteLine();
+    }
+    
+    private static void RunVillageGenerationTest()
+    {
+        Console.WriteLine("[Test] Village Generation");
+        Console.WriteLine("----------------------------------------");
+        
+        TerrainGenerator terrainGen = new TerrainGenerator(12345);
+        ChunkManager chunkManager = new ChunkManager();
+        chunkManager.SetTerrainGenerator(terrainGen);
+        
+        StructureGenerator structureGen = new StructureGenerator(12345);
+        
+        // Generate chunks first
+        chunkManager.GetChunk(0);
+        chunkManager.GetChunk(1);
+        chunkManager.GetChunk(2);
+        
+        // Generate a village
+        bool villageResult = structureGen.GenerateVillage(chunkManager, 10, 5);
+        System.Diagnostics.Debug.Assert(villageResult, "Village should be generated");
+        Console.WriteLine("✓ Village generated successfully");
+        
+        // Count structure blocks to verify placement
+        int totalBlocks = CountStructureBlocks(chunkManager, 0) + 
+                          CountStructureBlocks(chunkManager, 32) +
+                          CountStructureBlocks(chunkManager, 64);
+        Console.WriteLine($"  Structure blocks placed: {totalBlocks}");
+        System.Diagnostics.Debug.Assert(totalBlocks > 0, "Village should place blocks");
+        Console.WriteLine("✓ Village blocks placed correctly");
+        
+        Console.WriteLine();
+    }
+    
+    private static void RunDungeonGenerationTest()
+    {
+        Console.WriteLine("[Test] Dungeon Generation");
+        Console.WriteLine("----------------------------------------");
+        
+        TerrainGenerator terrainGen = new TerrainGenerator(12345);
+        ChunkManager chunkManager = new ChunkManager();
+        chunkManager.SetTerrainGenerator(terrainGen);
+        
+        StructureGenerator structureGen = new StructureGenerator(12345);
+        
+        // Generate chunks first
+        chunkManager.GetChunk(0);
+        chunkManager.GetChunk(1);
+        
+        // Generate a dungeon underground
+        bool dungeonResult = structureGen.GenerateDungeon(chunkManager, 5, 15);
+        System.Diagnostics.Debug.Assert(dungeonResult, "Dungeon should be generated");
+        Console.WriteLine("✓ Dungeon generated successfully");
+        
+        // Verify that dungeon created air spaces underground
+        int airCount = 0;
+        for (int x = 5; x < 30; x++)
+        {
+            for (int y = 15; y < 25; y++)
+            {
+                var tile = chunkManager.GetTile(x, y);
+                if (tile == TileType.Air)
+                {
+                    airCount++;
+                }
+            }
+        }
+        Console.WriteLine($"  Underground air spaces created: {airCount}");
+        System.Diagnostics.Debug.Assert(airCount > 0, "Dungeon should create air spaces");
+        Console.WriteLine("✓ Dungeon rooms carved correctly");
         
         Console.WriteLine();
     }

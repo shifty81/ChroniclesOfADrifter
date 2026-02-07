@@ -24,6 +24,7 @@ public class CompleteGameLoopScene : Scene
 {
     private ChunkManager? chunkManager;
     private TerrainGenerator? terrainGenerator;
+    private StructureGenerator? structureGenerator;
     private TimeSystem? timeSystem;
     private WeatherSystem? weatherSystem;
     private SaveSystem? saveSystem;
@@ -61,11 +62,17 @@ public class CompleteGameLoopScene : Scene
         // Generate initial terrain
         GenerateInitialTerrain();
         
+        // Generate structures (villages, dungeons)
+        GenerateWorldStructures();
+        
         // Create parallax background
         CreateParallaxLayers();
         
         // Spawn initial creatures
         SpawnInitialCreatures();
+        
+        // Create boss encounter
+        CreateBossEncounter();
         
         // Create NPCs and quests
         CreateNPCsAndQuests();
@@ -90,12 +97,16 @@ public class CompleteGameLoopScene : Scene
         chunkManager = new ChunkManager();
         chunkManager.SetTerrainGenerator(terrainGenerator);
         
+        // Create structure generator
+        structureGenerator = new StructureGenerator(worldSeed);
+        
         // Store chunk manager as shared resource for all systems
         World.SetSharedResource("ChunkManager", chunkManager);
         
         Console.WriteLine($"  ✓ World seed: {worldSeed}");
         Console.WriteLine($"  ✓ Chunk size: 32x30 blocks (surface + 20 underground layers)");
         Console.WriteLine($"  ✓ 8 biomes available");
+        Console.WriteLine($"  ✓ Structure generator initialized");
     }
     
     private void InitializeWorldSystems()
@@ -140,6 +151,9 @@ public class CompleteGameLoopScene : Scene
         World.AddSystem(new ScriptSystem());
         World.AddSystem(new CombatSystem());
         
+        // Experience system (before loot/death so XP shows before loot messages)
+        World.AddSystem(new ExperienceSystem());
+        
         // Loot system (before death system)
         lootDropSystem = new LootDropSystem(seed: 42069);
         World.AddSystem(lootDropSystem);
@@ -165,6 +179,9 @@ public class CompleteGameLoopScene : Scene
         World.AddSystem(new QuestSystem());
         World.AddSystem(new NPCSystem());
         
+        // Boss encounters
+        World.AddSystem(new BossSystem());
+        
         // Lighting
         World.AddSystem(new LightingSystem());
         
@@ -175,7 +192,7 @@ public class CompleteGameLoopScene : Scene
         // UI
         World.AddSystem(new UISystem());
         
-        Console.WriteLine("  ✓ 27 core systems initialized");
+        Console.WriteLine("  ✓ 29 core systems initialized");
     }
     
     private void CreatePlayer()
@@ -232,11 +249,15 @@ public class CompleteGameLoopScene : Scene
             invulnerabilityDuration: 2f
         ));
         
+        // Experience and leveling
+        World.AddComponent(playerEntity, new ExperienceComponent());
+        
         Console.WriteLine("  ✓ Player created with full capabilities");
         Console.WriteLine("  ✓ Health: 100");
         Console.WriteLine("  ✓ Attack damage: 20");
         Console.WriteLine("  ✓ Inventory slots: 40");
         Console.WriteLine("  ✓ Starting gold: 50");
+        Console.WriteLine("  ✓ Starting level: 1");
     }
     
     private void CreateCamera()
@@ -278,6 +299,22 @@ public class CompleteGameLoopScene : Scene
             Console.WriteLine($"  ✓ Generated {chunkCount} initial chunks");
             Console.WriteLine($"  ✓ Player spawned in procedurally generated world");
         }
+    }
+    
+    private void GenerateWorldStructures()
+    {
+        Console.WriteLine("[GameLoop] Generating world structures...");
+        
+        if (structureGenerator == null || chunkManager == null) return;
+        
+        // Generate a village near spawn (east of player start)
+        structureGenerator.GenerateVillage(chunkManager, 700, 5);
+        
+        // Generate a dungeon underground
+        structureGenerator.GenerateDungeon(chunkManager, 400, 15);
+        
+        Console.WriteLine("  ✓ Village generated east of spawn");
+        Console.WriteLine("  ✓ Underground dungeon generated");
     }
     
     private void CreateParallaxLayers()
@@ -359,6 +396,54 @@ public class CompleteGameLoopScene : Scene
         
         // Add Lua AI script
         World.AddComponent(goblin, new ScriptComponent("scripts/lua/goblin_ai.lua"));
+    }
+    
+    private void CreateBossEncounter()
+    {
+        Console.WriteLine("[GameLoop] Creating boss encounter...");
+        
+        // Create the Forest Guardian boss east of the player start
+        float bossX = 1500f;
+        float bossY = 150f;
+        float arenaX = 1300f;
+        float arenaY = 50f;
+        float arenaWidth = 400f;
+        float arenaHeight = 200f;
+        
+        var bossEntity = BossSystem.CreateBoss(
+            World,
+            BossType.ForestGuardian,
+            "Ancient Forest Guardian",
+            bossX, bossY,
+            arenaX, arenaY, arenaWidth, arenaHeight
+        );
+        
+        // Configure boss rewards
+        var boss = World.GetComponent<BossComponent>(bossEntity);
+        if (boss != null)
+        {
+            boss.GoldReward = 500;
+            boss.ExperienceReward = 200;
+            boss.ItemDrops[TileType.GoldOre] = 5;
+            boss.ItemDrops[TileType.IronOre] = 10;
+            boss.AbilityReward = AbilityType.SwordSpin;
+            boss.UnlockArea = "Deep Forest";
+        }
+        
+        // Override health for this specific boss
+        var bossHealth = World.GetComponent<HealthComponent>(bossEntity);
+        if (bossHealth != null)
+        {
+            bossHealth.MaxHealth = 300;
+            bossHealth.CurrentHealth = 300;
+        }
+        
+        // Add sprite for boss
+        World.AddComponent(bossEntity, new SpriteComponent(4, 64, 64));
+        
+        Console.WriteLine("  ✓ Forest Guardian boss created at eastern forest");
+        Console.WriteLine($"  ✓ Boss arena: ({arenaX}, {arenaY}) {arenaWidth}x{arenaHeight}");
+        Console.WriteLine("  ✓ Rewards: 500 gold, 200 XP, Sword Spin ability");
     }
     
     private void CreateNPCsAndQuests()
@@ -603,6 +688,7 @@ public class CompleteGameLoopScene : Scene
         var playerHealth = World.GetComponent<HealthComponent>(playerEntity);
         var playerInventory = World.GetComponent<InventoryComponent>(playerEntity);
         var playerQuests = World.GetComponent<QuestComponent>(playerEntity);
+        var playerXP = World.GetComponent<ExperienceComponent>(playerEntity);
         
         Console.WriteLine("\n--- Game Stats ---");
         Console.WriteLine($"Game Time: {timeSystem.CurrentHour:D2}:{timeSystem.CurrentMinute:D2} - {timeSystem.CurrentPhase}");
@@ -615,6 +701,11 @@ public class CompleteGameLoopScene : Scene
         if (playerHealth != null)
         {
             Console.WriteLine($"Health: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}");
+        }
+        
+        if (playerXP != null)
+        {
+            Console.WriteLine($"Level: {playerXP.Level} ({playerXP.CurrentXP}/{playerXP.GetXPForNextLevel()} XP)");
         }
         
         if (playerInventory != null)

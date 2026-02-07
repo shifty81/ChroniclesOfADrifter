@@ -142,6 +142,12 @@ public class QuestSystem : ISystem
             Console.WriteLine($"[Quest] Received {quest.GoldReward} gold!");
         }
         
+        // Award XP
+        if (quest.ExperienceReward > 0)
+        {
+            ExperienceSystem.AwardQuestXP(world, playerEntity, quest.ExperienceReward);
+        }
+        
         // Award items
         var inventory = world.GetComponent<InventoryComponent>(playerEntity);
         if (inventory != null && quest.ItemRewards.Count > 0)

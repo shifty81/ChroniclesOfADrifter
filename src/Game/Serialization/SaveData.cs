@@ -41,6 +41,16 @@ public class PlayerData
     public float RespawnX { get; set; }
     public float RespawnY { get; set; }
     public int DeathCount { get; set; }
+    
+    // Experience data
+    public int CurrentXP { get; set; }
+    public int Level { get; set; } = 1;
+    public int TotalXPEarned { get; set; }
+    public float AttackBonus { get; set; }
+    public float DefenseBonus { get; set; }
+    public float MaxHealthBonus { get; set; }
+    public float SpeedBonus { get; set; }
+    public int StatPointsAvailable { get; set; }
 }
 
 /// <summary>

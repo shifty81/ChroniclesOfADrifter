@@ -226,42 +226,50 @@ public class StructureGenerator
                 structures.Add(StructureType.SmallHouse);
                 structures.Add(StructureType.Village);
                 structures.Add(StructureType.Well);
+                structures.Add(StructureType.Campsite);
                 break;
                 
             case BiomeType.Forest:
                 structures.Add(StructureType.Tower);
                 structures.Add(StructureType.Campsite);
                 structures.Add(StructureType.SmallHouse);
+                structures.Add(StructureType.CaveEntrance);
                 break;
                 
             case BiomeType.Desert:
                 structures.Add(StructureType.Ruin);
                 structures.Add(StructureType.Tower);
+                structures.Add(StructureType.Campsite);
                 break;
                 
             case BiomeType.Snow:
                 structures.Add(StructureType.SmallHouse);
                 structures.Add(StructureType.Tower);
+                structures.Add(StructureType.Campsite);
                 break;
                 
             case BiomeType.Swamp:
                 structures.Add(StructureType.Ruin);
                 structures.Add(StructureType.Campsite);
+                structures.Add(StructureType.CaveEntrance);
                 break;
                 
             case BiomeType.Rocky:
                 structures.Add(StructureType.CaveEntrance);
                 structures.Add(StructureType.Tower);
+                structures.Add(StructureType.MineShaft);
                 break;
                 
             case BiomeType.Jungle:
                 structures.Add(StructureType.Ruin);
                 structures.Add(StructureType.Campsite);
+                structures.Add(StructureType.CaveEntrance);
                 break;
                 
             case BiomeType.Beach:
                 structures.Add(StructureType.Well);
                 structures.Add(StructureType.Campsite);
+                structures.Add(StructureType.SmallHouse);
                 break;
         }
         
@@ -290,6 +298,14 @@ public class StructureGenerator
         
         // Treasure room template
         CreateTreasureRoomTemplate();
+        
+        // Village template (group of houses)
+        CreateVillageTemplate();
+        
+        // Underground dungeon templates
+        CreateCryptTemplate();
+        CreateMineShaftTemplate();
+        CreateSecretChamberTemplate();
     }
     
     private void CreateSmallHouseTemplate()
@@ -418,6 +434,224 @@ public class StructureGenerator
         template.Creatures.Add((3, 1, CreatureType.Skeleton));
         
         AddTemplate(StructureType.TreasureRoom, template);
+    }
+    
+    private void CreateVillageTemplate()
+    {
+        // Village: a cluster of 3 small houses with a well in the center
+        var template = new StructureTemplate(StructureType.Village, "Village", 25, 7);
+        
+        // House 1 (left)
+        for (int x = 1; x < 6; x++)
+            template.Tiles[x, 6] = ECS.Components.TileType.Wood; // floor
+        for (int y = 3; y < 6; y++)
+        {
+            template.Tiles[0, y] = ECS.Components.TileType.Wood; // left wall
+            template.Tiles[6, y] = ECS.Components.TileType.Wood; // right wall
+        }
+        for (int x = 0; x < 7; x++)
+            template.Tiles[x, 2] = ECS.Components.TileType.Wood; // roof
+        template.Tiles[3, 6] = ECS.Components.TileType.Air; // door
+        
+        // Well (center)
+        template.Tiles[11, 5] = ECS.Components.TileType.Stone;
+        template.Tiles[13, 5] = ECS.Components.TileType.Stone;
+        template.Tiles[12, 6] = ECS.Components.TileType.Water;
+        
+        // House 2 (right)
+        for (int x = 18; x < 23; x++)
+            template.Tiles[x, 6] = ECS.Components.TileType.Wood; // floor
+        for (int y = 3; y < 6; y++)
+        {
+            template.Tiles[17, y] = ECS.Components.TileType.Wood; // left wall
+            template.Tiles[23, y] = ECS.Components.TileType.Wood; // right wall
+        }
+        for (int x = 17; x < 24; x++)
+            template.Tiles[x, 2] = ECS.Components.TileType.Wood; // roof
+        template.Tiles[20, 6] = ECS.Components.TileType.Air; // door
+        
+        AddTemplate(StructureType.Village, template);
+    }
+    
+    private void CreateCryptTemplate()
+    {
+        // Underground crypt with connected rooms
+        var template = new StructureTemplate(StructureType.Crypt, "Ancient Crypt", 15, 8);
+        
+        // Outer walls
+        for (int x = 0; x < 15; x++)
+        {
+            template.Tiles[x, 0] = ECS.Components.TileType.Stone;
+            template.Tiles[x, 7] = ECS.Components.TileType.Stone;
+        }
+        for (int y = 0; y < 8; y++)
+        {
+            template.Tiles[0, y] = ECS.Components.TileType.Stone;
+            template.Tiles[14, y] = ECS.Components.TileType.Stone;
+        }
+        
+        // Interior rooms - dividing wall with doorway
+        for (int y = 0; y < 8; y++)
+        {
+            template.Tiles[7, y] = ECS.Components.TileType.Stone;
+        }
+        template.Tiles[7, 4] = ECS.Components.TileType.Air; // doorway
+        
+        // Interior space (air)
+        for (int x = 1; x < 7; x++)
+            for (int y = 1; y < 7; y++)
+                template.Tiles[x, y] = ECS.Components.TileType.Air;
+        for (int x = 8; x < 14; x++)
+            for (int y = 1; y < 7; y++)
+                template.Tiles[x, y] = ECS.Components.TileType.Air;
+        
+        // Entrance from above
+        template.Tiles[3, 0] = ECS.Components.TileType.Air;
+        
+        // Creatures
+        template.Creatures.Add((3, 3, CreatureType.Skeleton));
+        template.Creatures.Add((11, 3, CreatureType.Skeleton));
+        
+        // Loot
+        template.Loot.Add((11, 5, "treasure_chest"));
+        
+        AddTemplate(StructureType.Crypt, template);
+    }
+    
+    private void CreateMineShaftTemplate()
+    {
+        // Abandoned mine shaft going down
+        var template = new StructureTemplate(StructureType.MineShaft, "Abandoned Mine", 5, 10);
+        
+        // Vertical shaft
+        for (int y = 0; y < 10; y++)
+        {
+            template.Tiles[0, y] = ECS.Components.TileType.Wood; // support beam left
+            template.Tiles[4, y] = ECS.Components.TileType.Wood; // support beam right
+            template.Tiles[1, y] = ECS.Components.TileType.Air;  // shaft
+            template.Tiles[2, y] = ECS.Components.TileType.Air;  // shaft
+            template.Tiles[3, y] = ECS.Components.TileType.Air;  // shaft
+        }
+        
+        // Cross beams at intervals
+        for (int x = 0; x < 5; x++)
+        {
+            template.Tiles[x, 3] = ECS.Components.TileType.Wood;
+            template.Tiles[x, 6] = ECS.Components.TileType.Wood;
+        }
+        // Openings in cross beams
+        template.Tiles[2, 3] = ECS.Components.TileType.Air;
+        template.Tiles[2, 6] = ECS.Components.TileType.Air;
+        
+        // Creatures at bottom
+        template.Creatures.Add((2, 8, CreatureType.CaveBat));
+        template.Creatures.Add((2, 9, CreatureType.CaveSpider));
+        
+        // Loot
+        template.Loot.Add((2, 9, "ore_vein"));
+        
+        AddTemplate(StructureType.MineShaft, template);
+    }
+    
+    private void CreateSecretChamberTemplate()
+    {
+        // Hidden secret chamber with valuable loot
+        var template = new StructureTemplate(StructureType.SecretChamber, "Secret Chamber", 9, 6);
+        
+        // Walls
+        for (int x = 0; x < 9; x++)
+        {
+            template.Tiles[x, 0] = ECS.Components.TileType.Stone;
+            template.Tiles[x, 5] = ECS.Components.TileType.Stone;
+        }
+        for (int y = 0; y < 6; y++)
+        {
+            template.Tiles[0, y] = ECS.Components.TileType.Stone;
+            template.Tiles[8, y] = ECS.Components.TileType.Stone;
+        }
+        
+        // Interior air space
+        for (int x = 1; x < 8; x++)
+            for (int y = 1; y < 5; y++)
+                template.Tiles[x, y] = ECS.Components.TileType.Air;
+        
+        // Hidden entrance (single block)
+        template.Tiles[4, 5] = ECS.Components.TileType.Air;
+        
+        // Treasure
+        template.Loot.Add((4, 2, "rare_treasure"));
+        template.Loot.Add((2, 3, "treasure_chest"));
+        template.Loot.Add((6, 3, "treasure_chest"));
+        
+        AddTemplate(StructureType.SecretChamber, template);
+    }
+    
+    /// <summary>
+    /// Generates a village with multiple structures at a location
+    /// </summary>
+    public bool GenerateVillage(ChunkManager chunkManager, int worldX, int surfaceY)
+    {
+        Console.WriteLine($"[StructureGen] Generating village at ({worldX}, {surfaceY})...");
+        
+        int structuresPlaced = 0;
+        
+        // Place main village template
+        if (TryPlaceStructure(chunkManager, StructureType.Village, worldX, surfaceY))
+        {
+            structuresPlaced++;
+        }
+        
+        // Add extra houses nearby
+        if (TryPlaceStructure(chunkManager, StructureType.SmallHouse, worldX - 10, surfaceY))
+        {
+            structuresPlaced++;
+        }
+        
+        // Add a tower for defense
+        if (TryPlaceStructure(chunkManager, StructureType.Tower, worldX + 28, surfaceY - 2))
+        {
+            structuresPlaced++;
+        }
+        
+        Console.WriteLine($"[StructureGen] Village completed with {structuresPlaced} structures");
+        return structuresPlaced > 0;
+    }
+    
+    /// <summary>
+    /// Generates a dungeon with connected rooms underground
+    /// </summary>
+    public bool GenerateDungeon(ChunkManager chunkManager, int worldX, int depth)
+    {
+        Console.WriteLine($"[StructureGen] Generating dungeon at ({worldX}, depth {depth})...");
+        
+        int roomsPlaced = 0;
+        
+        // Place entry crypt
+        if (TryPlaceStructure(chunkManager, StructureType.Crypt, worldX, depth))
+        {
+            roomsPlaced++;
+        }
+        
+        // Place connecting mine shaft deeper
+        if (TryPlaceStructure(chunkManager, StructureType.MineShaft, worldX + 16, depth))
+        {
+            roomsPlaced++;
+        }
+        
+        // Place treasure room at the end
+        if (TryPlaceStructure(chunkManager, StructureType.TreasureRoom, worldX + 22, depth + 2))
+        {
+            roomsPlaced++;
+        }
+        
+        // Place secret chamber nearby
+        if (TryPlaceStructure(chunkManager, StructureType.SecretChamber, worldX - 10, depth + 1))
+        {
+            roomsPlaced++;
+        }
+        
+        Console.WriteLine($"[StructureGen] Dungeon completed with {roomsPlaced} rooms");
+        return roomsPlaced > 0;
     }
     
     private void AddTemplate(StructureType type, StructureTemplate template)
