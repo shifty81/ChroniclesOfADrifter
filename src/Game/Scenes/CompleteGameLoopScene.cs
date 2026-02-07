@@ -24,6 +24,7 @@ public class CompleteGameLoopScene : Scene
 {
     private ChunkManager? chunkManager;
     private TerrainGenerator? terrainGenerator;
+    private StructureGenerator? structureGenerator;
     private TimeSystem? timeSystem;
     private WeatherSystem? weatherSystem;
     private SaveSystem? saveSystem;
@@ -61,6 +62,9 @@ public class CompleteGameLoopScene : Scene
         // Generate initial terrain
         GenerateInitialTerrain();
         
+        // Generate structures (villages, dungeons)
+        GenerateWorldStructures();
+        
         // Create parallax background
         CreateParallaxLayers();
         
@@ -93,12 +97,16 @@ public class CompleteGameLoopScene : Scene
         chunkManager = new ChunkManager();
         chunkManager.SetTerrainGenerator(terrainGenerator);
         
+        // Create structure generator
+        structureGenerator = new StructureGenerator(worldSeed);
+        
         // Store chunk manager as shared resource for all systems
         World.SetSharedResource("ChunkManager", chunkManager);
         
         Console.WriteLine($"  ✓ World seed: {worldSeed}");
         Console.WriteLine($"  ✓ Chunk size: 32x30 blocks (surface + 20 underground layers)");
         Console.WriteLine($"  ✓ 8 biomes available");
+        Console.WriteLine($"  ✓ Structure generator initialized");
     }
     
     private void InitializeWorldSystems()
@@ -291,6 +299,22 @@ public class CompleteGameLoopScene : Scene
             Console.WriteLine($"  ✓ Generated {chunkCount} initial chunks");
             Console.WriteLine($"  ✓ Player spawned in procedurally generated world");
         }
+    }
+    
+    private void GenerateWorldStructures()
+    {
+        Console.WriteLine("[GameLoop] Generating world structures...");
+        
+        if (structureGenerator == null || chunkManager == null) return;
+        
+        // Generate a village near spawn (east of player start)
+        structureGenerator.GenerateVillage(chunkManager, 700, 5);
+        
+        // Generate a dungeon underground
+        structureGenerator.GenerateDungeon(chunkManager, 400, 15);
+        
+        Console.WriteLine("  ✓ Village generated east of spawn");
+        Console.WriteLine("  ✓ Underground dungeon generated");
     }
     
     private void CreateParallaxLayers()
