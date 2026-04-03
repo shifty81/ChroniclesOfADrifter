@@ -7,6 +7,42 @@
         "DOTNET_ENVIRONMENT": "Development"
       }
     },
+    "Dev World": {
+      "commandName": "Project",
+      "commandLineArgs": "devworld",
+      "nativeDebugging": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "CHRONICLES_RENDERER": "dx11"
+      }
+    },
+    "Dev World (SDL2)": {
+      "commandName": "Project",
+      "commandLineArgs": "devworld",
+      "nativeDebugging": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "CHRONICLES_RENDERER": "sdl2"
+      }
+    },
+    "Map Editor": {
+      "commandName": "Project",
+      "commandLineArgs": "editor",
+      "nativeDebugging": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "CHRONICLES_RENDERER": "dx11"
+      }
+    },
+    "Complete Game Loop": {
+      "commandName": "Project",
+      "commandLineArgs": "complete",
+      "nativeDebugging": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "CHRONICLES_RENDERER": "dx11"
+      }
+    },
     "ChroniclesOfADrifter (SDL2 Renderer)": {
       "commandName": "Project",
       "nativeDebugging": true,
