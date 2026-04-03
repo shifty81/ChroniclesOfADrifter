@@ -81,9 +81,9 @@ public class WorldFileService
     {
         var tiles = new List<TileEntry>();
 
-        for (int cIdx = 0; cIdx < _chunkManager.GetLoadedChunkCount(); cIdx++)
+        for (int chunkIndex = 0; chunkIndex < _chunkManager.GetLoadedChunkCount(); chunkIndex++)
         {
-            var chunk = _chunkManager.GetChunk(cIdx);
+            var chunk = _chunkManager.GetChunk(chunkIndex);
             if (chunk == null) continue;
 
             for (int lx = 0; lx < GridCoordUtility.ChunkWidth; lx++)
@@ -95,7 +95,7 @@ public class WorldFileService
                     {
                         tiles.Add(new TileEntry
                         {
-                            X    = cIdx * GridCoordUtility.ChunkWidth + lx,
+                            X    = chunkIndex * GridCoordUtility.ChunkWidth + lx,
                             Y    = ly,
                             Type = type.ToString()
                         });

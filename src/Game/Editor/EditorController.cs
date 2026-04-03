@@ -18,14 +18,14 @@ namespace ChroniclesOfADrifter.Editor;
 public class EditorController
 {
     // ── Key codes ────────────────────────────────────────────────────────────
-    private const int KEY_Z             = 122;   // Ctrl+Z  → undo
-    private const int KEY_Y             = 121;   // Ctrl+Y  → redo
-    private const int KEY_S             = 115;   // Ctrl+S  → save
-    private const int KEY_L             = 108;   // Ctrl+L  → load
-    private const int KEY_E             = 101;   // E       → toggle erase mode
-    private const int KEY_SPACE         = 32;    // Space   → paint at camera pos
-    private const int KEY_LEFT_BRACKET  = 91;    // [       → prev tile
-    private const int KEY_RIGHT_BRACKET = 93;    // ]       → next tile
+    private const int KEY_Z             = 122;   // Z → undo
+    private const int KEY_Y             = 121;   // Y → redo
+    private const int KEY_S             = 115;   // S → save
+    private const int KEY_L             = 108;   // L → load
+    private const int KEY_E             = 101;   // E → toggle erase mode
+    private const int KEY_SPACE         = 32;    // Space → paint at camera pos
+    private const int KEY_LEFT_BRACKET  = 91;    // [ → prev tile
+    private const int KEY_RIGHT_BRACKET = 93;    // ] → next tile
 
     // ── State ────────────────────────────────────────────────────────────────
     private readonly ChunkManager       _chunkManager;
@@ -127,7 +127,7 @@ public class EditorController
     {
         if (EngineInterop.Input_IsKeyPressed(KEY_S))
         {
-            string path = Path.Combine(_saveDirectory, $"world_{DateTime.Now:yyyyMMdd_HHmmss}.json");
+            string path = Path.Combine(_saveDirectory, $"world_{DateTime.Now:yyyyMMdd_HHmmss_fff}.json");
             _fileService.Save(path);
         }
         if (EngineInterop.Input_IsKeyPressed(KEY_L))
