@@ -12,8 +12,12 @@ out/
 *.sln.docstates
 *.userprefs
 
-# Visual Studio Code
-.vscode/
+# Visual Studio Code — ignore personal/local settings, share project build/launch config
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/extensions.json
 *.code-workspace
 
 # Rider

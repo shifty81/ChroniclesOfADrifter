@@ -205,6 +205,13 @@ class Program
             return;
         }
         
+        // Check if dev world was requested via command line argument
+        if (args.Length > 0 && args[0].ToLower() == "devworld")
+        {
+            RunDevWorld();
+            return;
+        }
+        
         // Check if map editor was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "editor")
         {
@@ -304,6 +311,7 @@ class Program
         Console.WriteLine("       Run with 'hybrid' for hybrid gameplay demo");
         Console.WriteLine("       Run with 'complete' for COMPLETE GAME LOOP demo");
         Console.WriteLine("       Run with 'editor' for MAP EDITOR with tileset support");
+        Console.WriteLine("       Run with 'devworld' for DEV WORLD (editor-first, authoritative)");
         Console.WriteLine("===========================================\n");
         
         // Initialize engine
@@ -777,6 +785,72 @@ class Program
         Console.WriteLine("[Game] Hybrid gameplay demo complete!");
     }
     
+    /// <summary>
+    /// Run the Dev World scene — the single authoritative world with editor-first workflow.
+    /// </summary>
+    static void RunDevWorld()
+    {
+        InitializeSettings();
+
+        Console.WriteLine("===========================================");
+        Console.WriteLine("  Chronicles of a Drifter - DEV WORLD");
+        Console.WriteLine("  Editor-First Authoritative World");
+        Console.WriteLine("===========================================\n");
+
+        string renderer = Environment.GetEnvironmentVariable("CHRONICLES_RENDERER") ?? "dx11";
+        Console.WriteLine($"[Game] Renderer Backend: {renderer.ToUpper()}");
+
+        Console.WriteLine("[Game] Initializing engine...");
+        bool success = EngineInterop.Engine_Initialize(1280, 720, "Chronicles of a Drifter - Dev World");
+
+        if (!success)
+        {
+            Console.WriteLine("[Game] ERROR: Failed to initialize engine!");
+            Console.WriteLine($"[Game] Error: {EngineInterop.Engine_GetErrorMessage()}");
+            return;
+        }
+
+        Console.WriteLine("[Game] Engine initialized successfully\n");
+
+        var scene = new DevWorldScene();
+        scene.OnLoad();
+
+        Console.WriteLine("\n[Game] Dev World running.  Press Q or ESC to exit\n");
+
+        int frameCount = 0;
+        var lastTime = DateTime.Now;
+
+        while (EngineInterop.Engine_IsRunning())
+        {
+            EngineInterop.Engine_BeginFrame();
+
+            float deltaTime = EngineInterop.Engine_GetDeltaTime();
+            scene.Update(deltaTime);
+
+            EngineInterop.Engine_EndFrame();
+
+            frameCount++;
+
+            if (frameCount % 60 == 0)
+            {
+                var currentTime = DateTime.Now;
+                var elapsed = (currentTime - lastTime).TotalSeconds;
+                if (elapsed > 0)
+                {
+                    float fps = 60.0f / (float)elapsed;
+                    Console.WriteLine($"\n[Game] FPS: {fps:F1}");
+                }
+                lastTime = currentTime;
+            }
+        }
+
+        scene.OnUnload();
+
+        Console.WriteLine("\n[Game] Shutting down...");
+        EngineInterop.Engine_Shutdown();
+        Console.WriteLine("[Game] Goodbye!");
+    }
+
     /// <summary>
     /// Run the map editor scene
     /// </summary>
