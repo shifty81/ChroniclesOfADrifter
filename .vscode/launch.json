@@ -1,0 +1,102 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    // ── DevWorld (default / editor-first) ──────────────────────────────────
+    {
+      "name": "🌍 Dev World",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/Game/bin/Debug/net9.0/ChroniclesOfADrifter.dll",
+      "args": ["devworld"],
+      "cwd": "${workspaceFolder}/src/Game/bin/Debug/net9.0",
+      "stopAtEntry": false,
+      "console": "integratedTerminal",
+      "env": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "CHRONICLES_RENDERER": "dx11"
+      },
+      "preLaunchTask": "build: C# Game (Debug)",
+      "requireExactSource": false
+    },
+    // ── Map Editor ─────────────────────────────────────────────────────────
+    {
+      "name": "🗺️ Map Editor",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/Game/bin/Debug/net9.0/ChroniclesOfADrifter.dll",
+      "args": ["editor"],
+      "cwd": "${workspaceFolder}/src/Game/bin/Debug/net9.0",
+      "stopAtEntry": false,
+      "console": "integratedTerminal",
+      "env": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "CHRONICLES_RENDERER": "dx11"
+      },
+      "preLaunchTask": "build: C# Game (Debug)"
+    },
+    // ── Complete Game Loop ──────────────────────────────────────────────────
+    {
+      "name": "🎮 Complete Game Loop",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/Game/bin/Debug/net9.0/ChroniclesOfADrifter.dll",
+      "args": ["complete"],
+      "cwd": "${workspaceFolder}/src/Game/bin/Debug/net9.0",
+      "stopAtEntry": false,
+      "console": "integratedTerminal",
+      "env": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "CHRONICLES_RENDERER": "dx11"
+      },
+      "preLaunchTask": "build: C# Game (Debug)"
+    },
+    // ── Default (no args — shows menu) ─────────────────────────────────────
+    {
+      "name": "🕹️ Default (main menu)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/Game/bin/Debug/net9.0/ChroniclesOfADrifter.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Game/bin/Debug/net9.0",
+      "stopAtEntry": false,
+      "console": "integratedTerminal",
+      "env": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "CHRONICLES_RENDERER": "dx11"
+      },
+      "preLaunchTask": "build: C# Game (Debug)"
+    },
+    // ── SDL2 renderer variants ──────────────────────────────────────────────
+    {
+      "name": "🌍 Dev World (SDL2)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/Game/bin/Debug/net9.0/ChroniclesOfADrifter.dll",
+      "args": ["devworld"],
+      "cwd": "${workspaceFolder}/src/Game/bin/Debug/net9.0",
+      "stopAtEntry": false,
+      "console": "integratedTerminal",
+      "env": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "CHRONICLES_RENDERER": "sdl2"
+      },
+      "preLaunchTask": "build: C# Game (Debug)"
+    },
+    // ── Release builds ─────────────────────────────────────────────────────
+    {
+      "name": "🌍 Dev World (Release)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/Game/bin/Release/net9.0/ChroniclesOfADrifter.dll",
+      "args": ["devworld"],
+      "cwd": "${workspaceFolder}/src/Game/bin/Release/net9.0",
+      "stopAtEntry": false,
+      "console": "integratedTerminal",
+      "env": {
+        "DOTNET_ENVIRONMENT": "Production",
+        "CHRONICLES_RENDERER": "dx11"
+      },
+      "preLaunchTask": "build: C# Game (Release)"
+    }
+  ]
+}

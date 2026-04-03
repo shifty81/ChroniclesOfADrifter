@@ -1,0 +1,34 @@
+{
+  // C# project location (used by the C# DevKit / OmniSharp extension)
+  "dotnet.defaultSolution": "ChroniclesOfADrifter.sln",
+
+  // File explorer: collapse noise
+  "files.exclude": {
+    "**/bin": true,
+    "**/obj": true,
+    "**/.vs": true,
+    "**/build/obj": true
+  },
+
+  // Search: skip generated output
+  "search.exclude": {
+    "**/bin": true,
+    "**/obj": true,
+    "**/build/obj": true
+  },
+
+  // Associate engine source
+  "files.associations": {
+    "*.h": "cpp",
+    "*.cpp": "cpp"
+  },
+
+  // C/C++ IntelliSense (if C/C++ extension is installed)
+  "C_Cpp.default.cppStandard": "c++20",
+  "C_Cpp.default.includePath": [
+    "${workspaceFolder}/src/Engine"
+  ],
+
+  // Terminal defaults
+  "terminal.integrated.cwd": "${workspaceFolder}"
+}
