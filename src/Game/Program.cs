@@ -191,6 +191,34 @@ class Program
             return;
         }
         
+        // Check for achievement system test mode
+        if (args.Length > 0 && args[0].ToLower() == "achievement-test")
+        {
+            Tests.AchievementSystemTest.Run();
+            return;
+        }
+        
+        // Check for minimap system test mode
+        if (args.Length > 0 && args[0].ToLower() == "minimap-test")
+        {
+            Tests.MinimapSystemTest.Run();
+            return;
+        }
+        
+        // Check for dialogue tree system test mode
+        if (args.Length > 0 && args[0].ToLower() == "dialogue-test")
+        {
+            Tests.DialogueSystemTest.Run();
+            return;
+        }
+        
+        // Check for day/night visual cycle test mode
+        if (args.Length > 0 && args[0].ToLower() == "daynight-test")
+        {
+            Tests.DayNightVisualTest.Run();
+            return;
+        }
+        
         // Check if terrain demo was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "terrain")
         {
@@ -301,6 +329,10 @@ class Program
         Console.WriteLine("       Run with 'status-test' for status effect tests");
         Console.WriteLine("       Run with 'ranged-test' for ranged combat tests");
         Console.WriteLine("       Run with 'sound-test' for sound system tests");
+        Console.WriteLine("       Run with 'achievement-test' for achievement system tests");
+        Console.WriteLine("       Run with 'minimap-test' for minimap system tests");
+        Console.WriteLine("       Run with 'dialogue-test' for dialogue tree system tests");
+        Console.WriteLine("       Run with 'daynight-test' for day/night visual cycle tests");
         Console.WriteLine("       Run with 'terrain' for terrain demo");
         Console.WriteLine("       Run with 'visual' for GRAPHICAL visual demo");
         Console.WriteLine("       Run with 'mining' for mining/digging demo");
