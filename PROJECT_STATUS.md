@@ -633,6 +633,10 @@ dotnet run -c Release -- editor
 - ✅ **Environmental hazard system: spikes, lava, acid, gas, bear traps, electric fences** (NEW - Phase 6)
 - ✅ **Object pool system for performance (240 pre-allocated entities)** (NEW - Phase 6)
 - ✅ **Enhanced quest tracker with real event-driven progress** (NEW - Phase 6)
+- ✅ **NPC Relationship system with daily gifts, reputation, and dialogue tiers** (NEW - Phase 7)
+- ✅ **Ability system: energy regen, hotkeys, 17 abilities with combat/utility effects** (NEW - Phase 7)
+- ✅ **A* pathfinding for NPC navigation around static obstacles** (NEW - Phase 7)
+- ✅ **Weather Effect system: speed/visibility scaling, weather damage and status effects** (NEW - Phase 7)
 - ✅ Multiple playable demos showcasing features
 - ✅ Clean architecture with good documentation
 - ✅ Cross-platform support with multiple renderers
@@ -670,10 +674,16 @@ dotnet run -c Release -- editor
 - ✅ Object Pool system (4 named pools, 240 pre-allocated entities, auto-expansion, auto-return)
 - ✅ Enhanced Quest Tracker (event-driven progress via NotifyEnemyKilled/ItemCollected/etc., auto-rewards)
 
+**Phase 7 Complete:**
+- ✅ RelationshipSystem (daily gift reset, passive point accumulation, reputation feed to TradingSystem, dialogue tier unlock)
+- ✅ AbilitySystem (energy regen 10/s, hotkey activation 1–5, 17 seeded abilities, Dash/SwordSpin/MagicBolt/ShieldBash/TorchLight/BowCharge effects)
+- ✅ PathfindingSystem (A* grid pathfinding, obstacle grid from CollisionComponent.IsStatic, NPC path cache refreshed every 0.5s)
+- ✅ WeatherEffectSystem (player speed scaling, LightingComponent.VisibilityMultiplier, weather DPS, Heavy Storm/Sandstorm status effects)
+
 **Remaining:**
 - ⚠️ Actual sprite assets (art/content task, not code)
 
-**Bottom Line:** This is now a **fully-featured, fully-polished playable game** with complete progression, boss encounters, farming seasons, ranged combat, status effects, audio framework, particle effects, enhanced UI, rich animations, achievements, minimap, branching dialogue, a dynamic day/night visual cycle, NPC merchant trading, environmental hazards, object pooling, and event-driven quest tracking! All 6 development phases have been completed successfully.
+**Bottom Line:** This is now a **fully-featured, fully-polished playable game** with complete progression, boss encounters, farming seasons, ranged combat, status effects, audio framework, particle effects, enhanced UI, rich animations, achievements, minimap, branching dialogue, a dynamic day/night visual cycle, NPC merchant trading, environmental hazards, object pooling, event-driven quest tracking, NPC relationships, special abilities, A* pathfinding, and weather gameplay effects! All 7 development phases have been completed successfully.
 
 ---
 
@@ -684,4 +694,5 @@ dotnet run -c Release -- editor
 **Phase 4 Status:** ✅ COMPLETE  
 **Phase 5 Status:** ✅ COMPLETE  
 **Phase 6 Status:** ✅ COMPLETE  
+**Phase 7 Status:** ✅ COMPLETE  
 **All Phases Complete!**

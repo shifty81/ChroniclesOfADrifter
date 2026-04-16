@@ -242,4 +242,20 @@ public class AbilityComponent : IComponent
     {
         CurrentEnergy = Math.Min(CurrentEnergy + amount, MaxEnergy);
     }
+
+    /// <summary>
+    /// Register (seed) an ability definition. If the ability already exists, it is left unchanged.
+    /// </summary>
+    public void RegisterAbility(Ability ability)
+    {
+        abilities.TryAdd(ability.Type, ability);
+    }
+
+    /// <summary>
+    /// Get all registered abilities (unlocked and locked).
+    /// </summary>
+    public IEnumerable<Ability> GetAllAbilities()
+    {
+        return abilities.Values;
+    }
 }

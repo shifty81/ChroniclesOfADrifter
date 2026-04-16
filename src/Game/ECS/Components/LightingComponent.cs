@@ -22,11 +22,19 @@ public class LightingComponent : IComponent
     /// (within light radius and line of sight)
     /// </summary>
     public bool IsCurrentlyVisible { get; set; }
-    
+
+    /// <summary>
+    /// Weather-driven visibility scale applied on top of the base light level.
+    /// 1.0 = full visibility; lower values represent fog, rain, or sandstorm reduction.
+    /// Set by <see cref="ChroniclesOfADrifter.ECS.Systems.WeatherEffectSystem"/>.
+    /// </summary>
+    public float VisibilityMultiplier { get; set; } = 1f;
+
     public LightingComponent(float lightLevel = 0f)
     {
         LightLevel = Math.Clamp(lightLevel, 0f, 1f);
         IsExplored = false;
         IsCurrentlyVisible = false;
+        VisibilityMultiplier = 1f;
     }
 }

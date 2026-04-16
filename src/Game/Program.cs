@@ -243,6 +243,31 @@ class Program
             Tests.EnhancedQuestTrackerTest.Run();
             return;
         }
+
+        // Phase 7 test modes
+        if (args.Length > 0 && args[0].ToLower() == "relationship-test")
+        {
+            Tests.RelationshipSystemTest.Run();
+            return;
+        }
+
+        if (args.Length > 0 && args[0].ToLower() == "ability-test")
+        {
+            Tests.AbilitySystemTest.Run();
+            return;
+        }
+
+        if (args.Length > 0 && args[0].ToLower() == "pathfinding-test")
+        {
+            Tests.PathfindingSystemTest.Run();
+            return;
+        }
+
+        if (args.Length > 0 && args[0].ToLower() == "weathereffect-test")
+        {
+            Tests.WeatherEffectSystemTest.Run();
+            return;
+        }
         
         // Check if terrain demo was requested via command line argument
         if (args.Length > 0 && args[0].ToLower() == "terrain")
@@ -362,6 +387,10 @@ class Program
         Console.WriteLine("       Run with 'hazard-test' for environmental hazard system tests");
         Console.WriteLine("       Run with 'pool-test' for object pool system tests");
         Console.WriteLine("       Run with 'questtracker-test' for enhanced quest tracker tests");
+        Console.WriteLine("       Run with 'relationship-test' for relationship system tests");
+        Console.WriteLine("       Run with 'ability-test' for ability system tests");
+        Console.WriteLine("       Run with 'pathfinding-test' for A* pathfinding system tests");
+        Console.WriteLine("       Run with 'weathereffect-test' for weather effect system tests");
         Console.WriteLine("       Run with 'terrain' for terrain demo");
         Console.WriteLine("       Run with 'visual' for GRAPHICAL visual demo");
         Console.WriteLine("       Run with 'mining' for mining/digging demo");
