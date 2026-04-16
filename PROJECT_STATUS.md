@@ -11,8 +11,8 @@
 Chronicles of a Drifter is a **highly advanced, feature-rich 2D action RPG** built with a custom C++/.NET 9/Lua game engine. The project has made **exceptional progress** with over **24 major game systems fully implemented and working**. The game is **playable right now** through multiple demo modes that showcase an impressive breadth of features.
 
 ### Current State
-- ✅ **129 C# source files** implementing comprehensive game logic
-- ✅ **28 ECS systems** for gameplay mechanics
+- ✅ **196 C# source files** implementing comprehensive game logic
+- ✅ **45 ECS systems** for gameplay mechanics
 - ✅ **32 documentation files** covering architecture and features
 - ✅ **Multiple playable demos** showcasing different aspects
 - ✅ **Cross-platform support** with DirectX 11/12 (Windows) and SDL2 (Linux/macOS)
@@ -597,8 +597,8 @@ dotnet run -c Release -- editor
 1. **Sprite Assets** - Replace colored rectangles with actual sprite artwork
 2. **Audio Backend** - Connect audio framework to real sound playback (SDL_mixer, FMOD)
 3. **Multiplayer Foundation** - Network layer for cooperative play
-4. **Content Expansion** - More biomes, enemies, bosses, quests, and crafting recipes
-5. **Performance Optimization** - GPU batching, spatial partitioning, object pooling
+4. ~~**Content Expansion** - More biomes, enemies, bosses, quests, and crafting recipes~~ ✅ Phase 6
+5. ~~**Performance Optimization** - GPU batching, spatial partitioning, object pooling~~ ✅ Phase 6 (object pooling)
 
 ---
 
@@ -629,6 +629,10 @@ dotnet run -c Release -- editor
 - ✅ **Minimap system with chunk exploration and POI markers** (NEW)
 - ✅ **Branching NPC dialogue trees with player choices** (NEW)
 - ✅ **Day/Night visual cycle with ambient color and fog blending** (NEW)
+- ✅ **NPC merchant trading system with reputation pricing** (NEW - Phase 6)
+- ✅ **Environmental hazard system: spikes, lava, acid, gas, bear traps, electric fences** (NEW - Phase 6)
+- ✅ **Object pool system for performance (240 pre-allocated entities)** (NEW - Phase 6)
+- ✅ **Enhanced quest tracker with real event-driven progress** (NEW - Phase 6)
 - ✅ Multiple playable demos showcasing features
 - ✅ Clean architecture with good documentation
 - ✅ Cross-platform support with multiple renderers
@@ -660,17 +664,24 @@ dotnet run -c Release -- editor
 - ✅ Branching NPC dialogue trees (player choices, callbacks, factory helpers)
 - ✅ Day/Night visual cycle (8 time-of-day presets, ambient color/brightness/fog blending)
 
+**Phase 6 Complete:**
+- ✅ NPC merchant Trading system (buy/sell, reputation-based pricing, restock timers)
+- ✅ Environmental Hazard system (SpikeTrap, LavaPool, AcidPool, GasVent, BearTrap, ElectricFence)
+- ✅ Object Pool system (4 named pools, 240 pre-allocated entities, auto-expansion, auto-return)
+- ✅ Enhanced Quest Tracker (event-driven progress via NotifyEnemyKilled/ItemCollected/etc., auto-rewards)
+
 **Remaining:**
 - ⚠️ Actual sprite assets (art/content task, not code)
 
-**Bottom Line:** This is now a **fully-featured, fully-polished playable game** with complete progression, boss encounters, farming seasons, ranged combat, status effects, audio framework, particle effects, enhanced UI, rich animations, achievements, minimap, branching dialogue, and a dynamic day/night visual cycle! All 5 development phases have been completed successfully.
+**Bottom Line:** This is now a **fully-featured, fully-polished playable game** with complete progression, boss encounters, farming seasons, ranged combat, status effects, audio framework, particle effects, enhanced UI, rich animations, achievements, minimap, branching dialogue, a dynamic day/night visual cycle, NPC merchant trading, environmental hazards, object pooling, and event-driven quest tracking! All 6 development phases have been completed successfully.
 
 ---
 
-**Last Updated:** April 14, 2026  
+**Last Updated:** April 16, 2026  
 **Phase 1 Status:** ✅ COMPLETE  
 **Phase 2 Status:** ✅ COMPLETE  
 **Phase 3 Status:** ✅ COMPLETE  
 **Phase 4 Status:** ✅ COMPLETE  
 **Phase 5 Status:** ✅ COMPLETE  
+**Phase 6 Status:** ✅ COMPLETE  
 **All Phases Complete!**
